@@ -4,6 +4,10 @@ Reproducible evaluation artifact for **ProvShield: Provenance-Typed Runtime Enfo
 
 This package contains the attack suite, benign task suite, ablation configurations, evaluation scripts, and analysis tools needed to reproduce the paper's results.
 
+## Status
+
+**Prototype v0.1 — not yet CCF-A submission ready.** Evaluation results were quarantined on 2026-05-26 due to internal inconsistencies (see `eval/results/.stale/README.md`). Core runtime enforcement needs per-argument provenance source slicing, bridge re-execution, and HMAC label signatures before results can be trusted.
+
 ## Quick Start
 
 ```bash
@@ -85,7 +89,7 @@ Then generate paper-ready tables:
 make paper
 ```
 
-**Expected time:** ~10 seconds (27 scenarios, 6 baselines).
+**Expected time:** ~10 seconds (scenario and baseline counts pending clean rerun).
 **Output:** `eval/results/evaluation_results.json` with all suite/baseline results.
 
 ## Evaluation Suites
