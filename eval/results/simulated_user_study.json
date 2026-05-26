@@ -1,0 +1,31 @@
+{
+  "num_trials": 100,
+  "scenarios": 9,
+  "analysis": {
+    "Careful": {
+      "benign_completion": 0.89,
+      "attack_block_rate_bound": 0.7166666666666667,
+      "incorrect_confirm_rate_bound": 0.2833333333333333,
+      "incorrect_confirm_rate_generic": 0.8683333333333333,
+      "visible_attack_incorrect": 0.43333333333333335,
+      "subtle_attack_incorrect": 0.13333333333333333
+    },
+    "Average": {
+      "benign_completion": 0.9433333333333334,
+      "attack_block_rate_bound": 0.6583333333333333,
+      "incorrect_confirm_rate_bound": 0.3416666666666667,
+      "incorrect_confirm_rate_generic": 0.85,
+      "visible_attack_incorrect": 0.48,
+      "subtle_attack_incorrect": 0.20333333333333334
+    },
+    "Careless": {
+      "benign_completion": 0.9933333333333333,
+      "attack_block_rate_bound": 0.37166666666666665,
+      "incorrect_confirm_rate_bound": 0.6283333333333333,
+      "incorrect_confirm_rate_generic": 0.8433333333333334,
+      "visible_attack_incorrect": 0.6966666666666667,
+      "subtle_attack_incorrect": 0.56
+    }
+  },
+  "detailed_results_count": 4500
+}
