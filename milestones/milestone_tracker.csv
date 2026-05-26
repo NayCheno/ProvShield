@@ -1,0 +1,22 @@
+milestone,task,owner,status,start_date,target_date,exit_criterion
+M0,Threat model,PI,not_started,TBD,TBD,Threat model reviewed
+M0,Related work matrix,PI,not_started,TBD,TBD,Difference from Fides/MCPSHIELD clear
+M0,Label taxonomy,Systems,not_started,TBD,TBD,Lattice frozen v0
+M1,Transition system,Formal,not_started,TBD,TBD,State and transitions written
+M1,Theorem statements,Formal,not_started,TBD,TBD,3 core theorems reviewed
+M1,Proof sketches,Formal,not_started,TBD,TBD,No-secret theorem checked
+M2,Policy engine,Systems,not_started,TBD,TBD,Allow/deny/bridge decisions work
+M2,MCP proxy,Systems,not_started,TBD,TBD,Tool calls intercepted
+M2,Skill loader,Systems,not_started,TBD,TBD,Skills labeled
+M2,Audit log,Systems,not_started,TBD,TBD,Replay works for sample
+M3,Attack harness,Eval,not_started,TBD,TBD,Attack tasks runnable
+M3,Skill attacks,Eval,not_started,TBD,TBD,No-defense ASR measurable
+M3,MCP metadata attacks,Eval,not_started,TBD,TBD,Metadata poisoning reproduced
+M3,Web/email attacks,Eval,not_started,TBD,TBD,Indirect injection reproduced
+M4,Baseline experiments,Eval,not_started,TBD,TBD,Main baselines completed
+M4,ProvShield experiments,Eval,not_started,TBD,TBD,Main results completed
+M4,Ablations,Eval,not_started,TBD,TBD,Ablation table completed
+M4,Performance,Systems,not_started,TBD,TBD,p95 latency measured
+M5,Paper draft,Writing,not_started,TBD,TBD,Full 12-page draft
+M5,Artifact,Artifact,not_started,TBD,TBD,Docker reproduces main subset
+M5,Internal review,PI,not_started,TBD,TBD,Reviewer checklist complete
