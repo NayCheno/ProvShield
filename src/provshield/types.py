@@ -124,6 +124,7 @@ class NormalizedToolCall:
             and token.sink == self.sink.value
             and token.destination == self.destination
             and token.payload_digest == self.payload_digest
+            and token.principal == self.principal
             and not token.expired
             and not token.used
         )

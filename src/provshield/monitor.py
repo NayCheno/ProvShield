@@ -178,7 +178,21 @@ class RuntimeMonitor:
             self.audit_log.record_decision(call, graph, decision, bridge_id)
             self.audit_log.record_bridge_request(bridge_id, call)
             self._record_latency(start)
-            return decision
+            # Attach bridge request info to the decision for the caller
+            from .types import Decision
+            enriched = Decision(
+                kind=decision.kind,
+                reason=decision.reason,
+                bridge_request={
+                    "bridge_id": bridge_req.bridge_id,
+                    "action": bridge_req.action,
+                    "destination": bridge_req.destination,
+                    "payload_digest": bridge_req.payload_digest,
+                    "sources_used": bridge_req.sources_used,
+                    "blocked_or_untrusted_sources": bridge_req.blocked_or_untrusted_sources,
+                },
+            )
+            return enriched
 
         if decision.kind == DecisionKind.DENY:
             self.audit_log.record_decision(call, graph, decision)

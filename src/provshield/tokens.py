@@ -40,6 +40,7 @@ class CapabilityToken:
             and self.sink == call.sink.value
             and self.destination == call.destination
             and self.payload_digest == call.payload_digest
+            and self.principal == call.principal
             and not self.expired
             and not self.used
         )

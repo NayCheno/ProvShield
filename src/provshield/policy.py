@@ -114,6 +114,28 @@ class PolicyEngine:
                     ),
                 )
 
+        # P1b: No low-integrity control of local writes with sensitive payload
+        # This closes the WRITE_LOCAL gap: external content controlling a local
+        # write of private/secret data must require a bridge.
+        if call.effect == Effect.WRITE_LOCAL:
+            low_int_influence = integrity_names & LOW_INTEGRITY_NAMES
+            if low_int_influence:
+                from .labels import Confidentiality
+                if max_conf in {Confidentiality.USER_PRIVATE, Confidentiality.SECRET, Confidentiality.CAPABILITY_TOKEN}:
+                    if self._valid_user_intent_bridge(call, capability_token):
+                        return Decision(
+                            kind=DecisionKind.ALLOW,
+                            reason="Local write of sensitive data authorized by bound bridge.",
+                        )
+                    return Decision(
+                        kind=DecisionKind.REQUIRE_BRIDGE,
+                        reason=(
+                            f"Low-integrity sources {low_int_influence} influenced "
+                            f"local write of sensitive data (confidentiality={max_conf.name}). "
+                            f"User-intent bridge required."
+                        ),
+                    )
+
         # Default: allow
         return Decision(
             kind=DecisionKind.ALLOW,
