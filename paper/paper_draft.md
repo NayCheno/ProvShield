@@ -1,15 +1,15 @@
 # ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents
 
-> Draft version: v0.2
-> Status: updated with evaluation results and expanded formal model.
+> Draft version: v0.3
+> Status: claims audited 2026-05-26. Evaluation numbers are stale (see eval/results/.stale/); formal proofs are sketches, not full mechanization.
 
 ## Abstract
 
 LLM agents increasingly combine natural-language instructions, external documents, tool descriptions, tool outputs, and executable skills in a single planning context. This collapses the boundary between instructions and data: a malicious webpage, email, retrieved document, MCP tool description, or skill file can become an instruction that causes the agent to send private data, delete files, execute code, or leak credentials. Existing defenses such as prompt hardening, input filtering, and generic user confirmation are insufficient because attacks are contextual and often exploit the agent's authority rather than a fixed malicious string pattern.
 
-We present **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
+We present **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned HMAC-keyed sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
 
-We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 27 scenarios spanning skill injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. ProvShield reduces the attack success rate by 93.8% compared to an undefended agent, maintains 100% benign task completion, and adds only 0.03 ms median latency per tool call. We additionally validate with LLM-based evaluation using MiMo-v2.5-pro, achieving 0.0% end-to-end attack success rate across 11 attack scenarios with 100% benign task completion.
+We formalize ProvShield with a labeled transition system and sketch proofs of label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. [TODO: re-run evaluation after code fixes PR-0 through PR-6. Previous numbers (27 scenarios, 93.8% ASR reduction) are archived as stale in eval/results/.stale/.]
 
 ## 1. Introduction
 
@@ -19,7 +19,7 @@ The root cause is an *instruction/data boundary failure*. A single model context
 
 A common response is to harden the system prompt: tell the model to ignore instructions in webpages and emails. This is useful but brittle. Another response is input filtering: classify malicious text before it reaches the model. This fails when attacks are contextual, indirect, or socially engineered. A third response is generic confirmation: ask the user before writes. This can be laundered by vague confirmations that do not bind the actual destination, payload, or source of influence.
 
-This paper takes a different position. The model may be manipulated; the runtime must still prevent unauthorized high-risk effects. We design **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based agents. ProvShield assigns unforgeable sidecar labels to content as it enters the agent runtime, tracks integrity and confidentiality through transformations, declares tools with effect types and sinks, and intercepts all proposed tool calls. A tool call executes only if the runtime can establish that its action, destination, payload, and capability are authorized by policy. When user confirmation is required, the confirmation is not generic; it creates a one-time bridge bound to the exact action, sink, destination, payload digest, expiry, and principal.
+This paper takes a different position. The model may be manipulated; the runtime must still prevent unauthorized high-risk effects. We design **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based agents. ProvShield assigns HMAC-keyed sidecar labels to content as it enters the agent runtime, tracks integrity and confidentiality through transformations, declares tools with effect types and sinks, and intercepts all proposed tool calls. A tool call executes only if the runtime can establish that its action, destination, payload, and capability are authorized by policy. When user confirmation is required, the confirmation is not generic; it creates a one-time bridge bound to the exact action, sink, destination, payload digest, expiry, and principal.
 
 ### Contributions
 
@@ -28,7 +28,7 @@ This paper makes the following contributions:
 1. **A provenance-typed security model for MCP and skill-based agents.** We define integrity and confidentiality lattices for user intent, system policy, skills, tool metadata, tool outputs, external content, secrets, and capability tokens.
 2. **An effect-typed runtime monitor.** We introduce source-to-sink rules that gate write, send, delete, execute, credential, authentication, and financial effects.
 3. **A bound user-intent bridge.** We design an action-specific, destination-specific, payload-specific declassification mechanism that avoids the weakness of generic confirmation.
-4. **A formal model and safety properties.** We model the LLM as an adversarial proposal oracle and prove runtime-observable sink enforcement properties.
+4. **A formal model and safety properties.** We model the LLM as an adversarial proposal oracle and sketch proofs of runtime-observable sink enforcement properties.
 5. **A prototype for MCP and skill-based agents.** We implement MCP proxying, skill loading, sidecar provenance, policy checking, bridge handling, and audit replay.
 6. **A systematic evaluation.** We evaluate against skill injection, MCP metadata poisoning, MCP safety scenarios, web/email prompt injection, RAG injection, and adaptive attacks.
 
@@ -401,8 +401,8 @@ ProvShield has several limitations that we state explicitly.
 
 ## 12. Conclusion
 
-Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through unforgeable provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
+Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through HMAC-keyed provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
 
-We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. Evaluation on 27 scenarios across six attack categories shows a 93.8% reduction in attack success rate compared to an undefended agent, with 100% benign task completion and negligible latency overhead. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
+We formalized the system with a labeled transition system and sketched proofs of five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. [TODO: re-run evaluation after code fixes PR-0 through PR-6. Previous evaluation numbers are stale — see eval/results/.stale/.] The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
 
 ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.
