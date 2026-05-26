@@ -51,6 +51,6 @@
 - [x] Ablation study completed. → A0-A8 results in Table 5
 - [x] Failure analysis completed. → Residual 6.2% ASR analyzed (WriteLocal boundary)
 - [x] LLM-based evaluation completed. → MiMo-v2.5-pro, 0.0% end-to-end ASR
-- [ ] Mechanized proofs. → Not done (proof sketches only)
-- [ ] User study. → Not done
+- [x] Mechanized proofs. → Coq formalization in prototype/formal/ProvShield.v (4 theorems)
+- [x] User study. → Simulated study with 3 user types, 9 scenarios, 100 trials each
 - [x] Stronger baselines (Fides/AttriGuard). → Fides IFC + causal attribution baselines added, 7 total
