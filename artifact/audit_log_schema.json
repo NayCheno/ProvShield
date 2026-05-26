@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProvShieldAuditLogEntry",
+  "type": "object",
+  "required": [
+    "trace_id",
+    "event_id",
+    "timestamp",
+    "event_type"
+  ],
+  "properties": {
+    "trace_id": {
+      "type": "string"
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "event_type": {
+      "enum": [
+        "context_ingest",
+        "tool_register",
+        "model_propose",
+        "monitor_decision",
+        "bridge_request",
+        "bridge_confirm",
+        "tool_execute",
+        "tool_output",
+        "deny"
+      ]
+    },
+    "normalized_call": {
+      "type": "object"
+    },
+    "provenance_summary": {
+      "type": "object"
+    },
+    "policy_decision": {
+      "type": "object"
+    },
+    "bridge_id": {
+      "type": "string"
+    },
+    "capability_token_id": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "replay_hash": {
+      "type": "string"
+    }
+  }
+}

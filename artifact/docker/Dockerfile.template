@@ -1,0 +1,10 @@
+# Template only. Fill in actual dependencies after prototype implementation.
+FROM python:3.12-slim
+
+WORKDIR /provshield
+
+COPY . /provshield
+
+RUN pip install --no-cache-dir -r requirements.txt || true
+
+CMD ["bash"]

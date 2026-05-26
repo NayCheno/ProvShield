@@ -1,0 +1,10 @@
+services:
+  provshield:
+    build:
+      context: ../..
+      dockerfile: artifact/docker/Dockerfile.template
+    volumes:
+      - ../../:/provshield
+    environment:
+      - PROVSHIELD_POLICY=prototype/policy/core_rules.yaml
+    command: bash

@@ -1,0 +1,19 @@
+.PHONY: smoke attack benign ablation paper clean
+
+smoke:
+	@echo "Run smoke tests once prototype scripts are implemented."
+
+attack:
+	@echo "Run attack suite."
+
+benign:
+	@echo "Run benign suite."
+
+ablation:
+	@echo "Run ablation suite."
+
+paper:
+	@echo "Build paper."
+
+clean:
+	@echo "Clean generated artifacts."
