@@ -1,4 +1,4 @@
-.PHONY: smoke attack benign ablation paper clean install check eval
+.PHONY: smoke eval eval-subset eval-expanded paper clean install check all
 
 PYTHON ?= python
 RESULTS_DIR ?= eval/results
@@ -11,16 +11,30 @@ check:
 	$(PYTHON) -m pytest tests/ -v --tb=short
 
 # ---------------------------------------------------------------------------
-# Level 1: Smoke test — 5 attacks + 5 benign, ~10s
+# Level 1: Smoke test — 10 scenarios, ~10s
 # ---------------------------------------------------------------------------
 smoke:
 	$(PYTHON) artifact/scripts/run_smoke_test.py
 
 # ---------------------------------------------------------------------------
-# Level 2+3: Full evaluation via harness
+# Level 2: Standard evaluation — 32 scenarios + baselines
 # ---------------------------------------------------------------------------
 eval:
 	$(PYTHON) eval/scripts/run_evaluation.py
+
+# ---------------------------------------------------------------------------
+# Level 2: Subset evaluation — standard eval + smoke test
+# ---------------------------------------------------------------------------
+eval-subset:
+	$(PYTHON) eval/scripts/run_evaluation.py
+	$(PYTHON) artifact/scripts/run_smoke_test.py
+
+# ---------------------------------------------------------------------------
+# Level 3: Expanded evaluation — 700+ scenarios
+# ---------------------------------------------------------------------------
+eval-expanded:
+	$(PYTHON) eval/scripts/generate_llm_scenarios.py 500 200
+	$(PYTHON) eval/scripts/run_expanded_eval.py
 
 # ---------------------------------------------------------------------------
 # Analysis — generate tables from completed results

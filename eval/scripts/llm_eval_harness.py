@@ -766,6 +766,15 @@ class LLMEvaluationHarness:
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="ProvShield LLM-Based Evaluation")
+    parser.add_argument("--model", default=None, help="LLM model name (overrides LLM_MODEL env)")
+    args = parser.parse_args()
+
+    if args.model:
+        global MODEL
+        MODEL = args.model
+
     print("=" * 60)
     print(" ProvShield LLM-Based Evaluation")
     print(f" Model: {MODEL}")
