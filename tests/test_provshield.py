@@ -1765,4 +1765,71 @@ class TestArgumentSources:
         graph = store.build_argument_graph(call)
 
         # No matching object → empty source_labels
+        # No matching object → empty source_labels
         assert len(graph.source_labels) == 0
+
+
+# ---------------------------------------------------------------------------
+# PR-2: Unknown tool default deny
+# ---------------------------------------------------------------------------
+
+class TestUnknownToolDeny:
+    """Test that unregistered tools are denied by default."""
+
+    def test_unknown_tool_denied_by_policy(self):
+        """Policy engine denies calls to unregistered tools."""
+        monitor = RuntimeMonitor()
+        with pytest.raises(PermissionError, match="not registered"):
+            monitor.check_and_execute(
+                {"tool_name": "format_document", "arguments": {"text": "hello"}},
+                lambda call: "formatted",
+            )
+
+    def test_unknown_tool_with_custom_name_denied(self):
+        """Any tool not in TOOL_PROFILES is denied."""
+        monitor = RuntimeMonitor()
+        with pytest.raises(PermissionError, match="not registered"):
+            monitor.check_and_execute(
+                {"tool_name": "list_github_issues", "arguments": {"repo": "test"}},
+                lambda call: "[]",
+            )
+
+    def test_registered_tool_still_works(self):
+        """Registered tools continue to work normally."""
+        monitor = RuntimeMonitor()
+        result = monitor.check_and_execute(
+            {"tool_name": "read_webpage", "arguments": {"url": "https://example.com"}},
+            lambda call: "<html>ok</html>",
+        )
+        assert result.value == "<html>ok</html>"
+
+    def test_dynamically_registered_tool_allowed(self):
+        """Tools registered via register_tool() are allowed."""
+        from provshield.monitor import register_tool
+        register_tool("my_custom_tool", {
+            "effects": [Effect.READ_PUBLIC],
+            "sink": Sink.LOCAL_READ,
+        })
+        try:
+            monitor = RuntimeMonitor()
+            result = monitor.check_and_execute(
+                {"tool_name": "my_custom_tool", "arguments": {}},
+                lambda call: "ok",
+            )
+            assert result.value == "ok"
+        finally:
+            # Cleanup
+            from provshield.monitor import TOOL_PROFILES
+            TOOL_PROFILES.pop("my_custom_tool", None)
+
+    def test_unknown_tool_normalize_sets_flag(self):
+        """normalize_call sets tool_registered=False for unknown tools."""
+        monitor = RuntimeMonitor()
+        call = monitor.normalize_call({"tool_name": "unknown_thing", "arguments": {}})
+        assert call.tool_registered is False
+
+    def test_registered_tool_normalize_sets_flag(self):
+        """normalize_call sets tool_registered=True for known tools."""
+        monitor = RuntimeMonitor()
+        call = monitor.normalize_call({"tool_name": "send_email", "arguments": {}})
+        assert call.tool_registered is True

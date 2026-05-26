@@ -46,10 +46,13 @@ class MCPProxy:
         schema: dict[str, Any],
         executor: Callable[..., Any],
         attested: bool = False,
+        effects: list[Effect] | None = None,
+        sink: Sink | None = None,
     ) -> None:
         """Register a tool through the proxy.
 
         Unattested metadata is labeled as low-integrity ToolMetadata.
+        Also registers the tool in TOOL_PROFILES so the monitor recognizes it.
         """
         self._registered_tools[name] = {
             "name": name,
@@ -58,6 +61,13 @@ class MCPProxy:
             "attested": attested,
         }
         self._tool_executors[name] = executor
+
+        # PR-2: Register in TOOL_PROFILES so the monitor doesn't deny as unknown
+        from .monitor import register_tool as _register_tool_profile
+        _register_tool_profile(name, {
+            "effects": effects or [Effect.READ_PUBLIC],
+            "sink": sink or Sink.LOCAL_READ,
+        })
 
         # Label metadata in context
         self.context.ingest_tool_metadata(

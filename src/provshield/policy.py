@@ -53,6 +53,18 @@ class PolicyEngine:
         integrity_names = {self._integrity_name(lbl) for lbl in labels}
         max_conf = provenance_graph.max_confidentiality()
 
+        # P0 (PR-2): Unregistered tools are denied by default
+        if not call.tool_registered:
+            return Decision(
+                kind=DecisionKind.DENY,
+                reason=(
+                    f"Tool '{call.tool_name}' is not registered in the tool profile. "
+                    f"Unregistered tools are denied by default. "
+                    f"Register via register_tool() or add to TOOL_PROFILES."
+                ),
+            )
+
+
         # P2: No secret exfiltration without declassification
         if call.sink in {Sink.EXTERNAL_WRITE, Sink.NETWORK_SEND}:
             from .labels import Confidentiality

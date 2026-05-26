@@ -116,8 +116,8 @@ class NormalizedToolCall:
     destination: Optional[str] = None
     payload_digest: Optional[str] = None
     principal: str = "user"
-    # PR-3: explicit provenance tracking — maps argument keys to source object IDs
     argument_sources: Optional[tuple[tuple[str, str], ...]] = None  # ((arg_key, obj_id), ...)
+    tool_registered: bool = True  # PR-2: False when tool not in registry
 
     def matches_token(self, token: CapabilityToken) -> bool:  # noqa: F821
         """Check if a capability token authorizes this exact call."""

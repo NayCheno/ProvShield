@@ -213,7 +213,11 @@ class RuntimeMonitor:
         tool_name = proposed_call.get("tool_name", proposed_call.get("tool", "unknown"))
         arguments = proposed_call.get("arguments", proposed_call.get("args", {}))
 
-        profile = TOOL_PROFILES.get(tool_name, {})
+        profile = TOOL_PROFILES.get(tool_name)
+        is_registered = profile is not None
+        if profile is None:
+            # PR-2: Unknown tools default to high-risk — must be explicitly registered
+            profile = {}
         effects = profile.get("effects", [Effect.READ_PUBLIC])
         effect = effects[0] if effects else Effect.READ_PUBLIC
         sink = profile.get("sink", EFFECT_SINK_MAP.get(effect, Sink.LOCAL_READ))
@@ -264,6 +268,7 @@ class RuntimeMonitor:
             payload_digest=payload_digest,
             principal=principal,
             argument_sources=argument_sources,
+            tool_registered=is_registered,
         )
 
     def apply_sanitizer(
