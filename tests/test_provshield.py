@@ -1,7 +1,7 @@
 """Unit tests for ProvShield core modules."""
 
 from __future__ import annotations
-
+import json
 import time
 
 import pytest
@@ -1483,3 +1483,145 @@ class TestSkillBypass:
         )
         obj = loader.load_skill(manifest)
         assert obj.label.integrity == Integrity.UNSKILLED
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: MCP transport tests
+# ---------------------------------------------------------------------------
+
+class TestMCPTransport:
+    """Phase 2: MCP stdio transport tests."""
+
+    def test_stdio_transport_processes_message(self):
+        """Stdio transport reads JSON-RPC and writes response."""
+        import io
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPStdioTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        # Register a tool
+        proxy.register_tool(
+            name="reader",
+            description="Read",
+            schema={},
+            executor=lambda url: "content",
+        )
+
+        # Create transport with mock streams
+        input_stream = io.StringIO(
+            '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"reader","arguments":{"url":"https://example.com"}}}\n'
+        )
+        output_stream = io.StringIO()
+        transport = MCPStdioTransport(proxy, input_stream, output_stream)
+
+        transport.run()
+
+        output = output_stream.getvalue().strip()
+        assert output
+        response = json.loads(output)
+        assert response["id"] == 1
+        assert "result" in response or "error" in response
+
+    def test_stdio_transport_handles_tools_list(self):
+        """Stdio transport handles tools/list message."""
+        import io
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPStdioTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        input_stream = io.StringIO(
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{"tools":[{"name":"test_tool","description":"Test","inputSchema":{}}]}}\n'
+        )
+        output_stream = io.StringIO()
+        transport = MCPStdioTransport(proxy, input_stream, output_stream)
+
+        transport.run()
+
+        output = output_stream.getvalue().strip()
+        response = json.loads(output)
+        assert response["id"] == 2
+        assert "result" in response
+
+    def test_stdio_transport_handles_invalid_json(self):
+        """Stdio transport handles invalid JSON gracefully."""
+        import io
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPStdioTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        input_stream = io.StringIO("not valid json\n")
+        output_stream = io.StringIO()
+        transport = MCPStdioTransport(proxy, input_stream, output_stream)
+
+        transport.run()
+
+        output = output_stream.getvalue().strip()
+        response = json.loads(output)
+        assert "error" in response
+        assert response["error"]["code"] == -32700
+
+    def test_stdio_transport_handles_eof(self):
+        """Stdio transport stops on EOF."""
+        import io
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPStdioTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        input_stream = io.StringIO("")  # Empty = immediate EOF
+        output_stream = io.StringIO()
+        transport = MCPStdioTransport(proxy, input_stream, output_stream)
+
+        transport.run()  # Should return without hanging
+        assert output_stream.getvalue() == ""
+
+    def test_http_transport_handles_request(self):
+        """HTTP transport handles a single request."""
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPHttpTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        proxy.register_tool(
+            name="reader",
+            description="Read",
+            schema={},
+            executor=lambda url: "content",
+        )
+
+        transport = MCPHttpTransport(proxy)
+        response_str = transport.handle_request(
+            '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"reader","arguments":{"url":"https://example.com"}}}'
+        )
+
+        response = json.loads(response_str)
+        assert response["id"] == 3
+        assert "result" in response or "error" in response
+
+    def test_http_transport_handles_invalid_json(self):
+        """HTTP transport handles invalid JSON gracefully."""
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.mcp_transport import MCPHttpTransport
+
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        transport = MCPHttpTransport(proxy)
+        response_str = transport.handle_request("not valid json")
+
+        response = json.loads(response_str)
+        assert "error" in response

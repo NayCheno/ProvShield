@@ -257,9 +257,9 @@ def generate_attack_scenarios(count: int = 100) -> list[dict]:
     scenarios = []
     idx = 0
 
-    for family in ATTACK_FAMILIES:
+    for fi, family in enumerate(ATTACK_FAMILIES):
         methods = INJECTION_METHODS[family]
-        per_family = count // len(ATTACK_FAMILIES)
+        per_family = count // len(ATTACK_FAMILIES) + (1 if fi < count % len(ATTACK_FAMILIES) else 0)
 
         for i in range(per_family):
             method = methods[i % len(methods)]

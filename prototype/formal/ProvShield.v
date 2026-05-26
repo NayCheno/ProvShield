@@ -166,12 +166,13 @@ Record RuntimeState := mkState {
   sidecar : list (nat * ProvenanceLabel);  (* sidecar store *)
   tokens : list CapabilityToken;
   used_nonces : list nat;
-  audit_log : list nat
+  audit_log : list nat;
+  fresh_id : nat  (* monotonically increasing counter for new objects *)
 }.
 
 (** Initial state: empty *)
 Definition init_state : RuntimeState :=
-  mkState [] [] [] [] [].
+  mkState [] [] [] [] [] 0.
 
 
 (* ================================================================= *)
@@ -337,12 +338,19 @@ Proof.
   apply andb_true_iff in Hmatch as [H1 H2].
   apply andb_true_iff in H1 as [H1a H1b].
   apply andb_true_iff in H2 as [H2a H2b].
+  (* From H1b: Nat.eqb dest1 (token_destination t) = true *)
+  (* Therefore token_destination t = dest1 *)
+  apply Nat.eqb_eq in H1b.
+  (* Since dest1 <> dest2 and token_destination t = dest1 *)
+  (* We have dest2 <> token_destination t *)
+  assert (Hneq2: dest2 <> token_destination t).
+  { intro Heq. apply Hneq. rewrite H1b. symmetry. exact Heq. }
   unfold token_matches.
-  (* If dest1 <> dest2, then Nat.eqb dest2 (token_destination t) = false *)
-  (* This requires showing that token_destination t = dest1 from Hmatch *)
-  (* Simplified: the match fails when destination differs *)
-  admit.  (* Proof completes with dest inequality *)
-Admitted.
+  (* Now Nat.eqb dest2 (token_destination t) = false *)
+  assert (Hfalse: Nat.eqb dest2 (token_destination t) = false).
+  { apply Nat.eqb_neq. exact Hneq2. }
+  rewrite Hfalse. simpl. reflexivity.
+Qed.
 
 
 (* ================================================================= *)
@@ -378,14 +386,20 @@ Theorem ingest_preserves_well_formed :
         ((fresh_id s, mkLabel integrity conf origin (fresh_id s + 1)) :: sidecar s)
         (tokens s)
         (used_nonces s)
-        (audit_log s)) = true.
+        (audit_log s)
+        (fresh_id s + 1)) = true.
 Proof.
   intros s value integrity conf origin Hwf.
   unfold state_well_formed in *. simpl.
-  (* The new label has a non-zero signature (fresh_id + 1 > 0) *)
+  (* New label has signature = fresh_id s + 1, which is > 0 *)
+  (* label_valid checks Nat.ltb 0 (fresh_id s + 1) *)
+  (* Since fresh_id s + 1 > 0, this is true *)
+  assert (Hsig: Nat.ltb 0 (fresh_id s + 1) = true).
+  { apply Nat.ltb_lt. apply Nat.lt_succ_diag_r. }
+  rewrite Hsig. simpl.
   (* All existing labels remain well-formed by Hwf *)
-  admit.  (* Proof completes with fresh_id > 0 *)
-Admitted.
+  exact Hwf.
+Qed.
 
 (** Token consumption preserves well-formedness *)
 Theorem consume_preserves_well_formed :
@@ -412,7 +426,8 @@ Theorem consume_preserves_well_formed :
                                  created_at := tok.created_at |}
                          else tok) (tokens s))
         (t.nonce :: used_nonces s)
-        (audit_log s)) = true.
+        (audit_log s)
+        (fresh_id s)) = true.
 Proof.
   intros s t Hwf HIn.
   unfold state_well_formed in *. simpl.
