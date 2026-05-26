@@ -23,7 +23,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.1238999975612387,
+      "latency_ms": 0.15500000154133886,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -57,7 +57,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.06459999713115394,
+      "latency_ms": 0.06340000254567713,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -91,7 +91,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.032800002372823656,
+      "latency_ms": 0.03290000313427299,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -125,7 +125,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.02850001328624785,
+      "latency_ms": 0.028700000257231295,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -159,7 +159,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.03779999678954482,
+      "latency_ms": 0.03809999907389283,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -193,7 +193,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.01999999221879989,
+      "latency_ms": 0.019700004486367106,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -227,7 +227,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.028800001018680632,
+      "latency_ms": 0.028700000257231295,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -261,7 +261,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.030199997127056122,
+      "latency_ms": 0.03060000017285347,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -295,7 +295,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.029700007871724665,
+      "latency_ms": 0.029799994081258774,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -329,7 +329,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.03670000296551734,
+      "latency_ms": 0.036600002204068005,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": true,
       "attack_succeeded_baselines": {
@@ -363,7 +363,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.029499991796910763,
+      "latency_ms": 0.02989999484270811,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -397,7 +397,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.029600007110275328,
+      "latency_ms": 0.02990000939462334,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -431,7 +431,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.02749999111983925,
+      "latency_ms": 0.0278999941656366,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -465,7 +465,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.026300011086277664,
+      "latency_ms": 0.032199997804127634,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -499,7 +499,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.02749999111983925,
+      "latency_ms": 0.027600006433203816,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -533,7 +533,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.021100000594742596,
+      "latency_ms": 0.021200001356191933,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -567,7 +567,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.0247000134550035,
+      "latency_ms": 0.025500004994682968,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -601,7 +601,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.023199987481348217,
+      "latency_ms": 0.02379999205004424,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -635,7 +635,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.01679999695625156,
+      "latency_ms": 0.01750000228639692,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -669,7 +669,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.0168999977177009,
+      "latency_ms": 0.017099999240599573,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -703,7 +703,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.020899999071843922,
+      "latency_ms": 0.021199986804276705,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -737,7 +737,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.01650000922381878,
+      "latency_ms": 0.016599995433352888,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -771,7 +771,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.02099999983329326,
+      "latency_ms": 0.020499996026046574,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -805,7 +805,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.0202999945031479,
+      "latency_ms": 0.020899999071843922,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -839,7 +839,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.021499989088624716,
+      "latency_ms": 0.02139998832717538,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -873,7 +873,7 @@
         "static_allowlist": true,
         "generic_confirmation": true
       },
-      "latency_ms": 0.02130000211764127,
+      "latency_ms": 0.021299987565726042,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -907,7 +907,7 @@
         "static_allowlist": false,
         "generic_confirmation": true
       },
-      "latency_ms": 0.026900001103058457,
+      "latency_ms": 0.026999987312592566,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -985,8 +985,8 @@
     "btcr_no_defense": 1.0,
     "false_block_rate": 0.0,
     "bridge_burden": 0.0,
-    "latency_p50_ms": 0.026900001103058457,
-    "latency_p95_ms": 0.06459999713115394,
-    "latency_mean_ms": 0.030537036730459443
+    "latency_p50_ms": 0.027600006433203816,
+    "latency_p95_ms": 0.06340000254567713,
+    "latency_mean_ms": 0.03203703521716374
   }
 }

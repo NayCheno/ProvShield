@@ -64,9 +64,10 @@ build/
 
 # Generated paper and presentation exports
 paper/*.pdf
-paper/*.ps
-paper/*.dvi
-paper/*.pptx
+paper_draft.pdf
+*.ps
+*.dvi
+*.pptx
 
 # Evaluation and experiment outputs
 eval/results/
