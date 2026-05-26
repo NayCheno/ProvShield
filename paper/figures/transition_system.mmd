@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> ContextIngest
+    ContextIngest --> ModelStep
+    ModelStep --> ToolProposed
+    ToolProposed --> MonitorCheck
+    MonitorCheck --> Denied: policy deny
+    MonitorCheck --> BridgeRequired: bridge needed
+    MonitorCheck --> Allowed: policy allow
+    BridgeRequired --> BridgeDenied: user rejects / mismatch
+    BridgeRequired --> BridgeConfirmed: exact action confirmed
+    BridgeConfirmed --> Allowed: token valid
+    Allowed --> ToolExecuted
+    ToolExecuted --> LabelPropagated
+    LabelPropagated --> AuditLogged
+    Denied --> AuditLogged
+    BridgeDenied --> AuditLogged
+    AuditLogged --> [*]

@@ -1,0 +1,46 @@
+\documentclass[sigconf,anonymous,review]{acmart}
+
+\title{ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents}
+
+\begin{document}
+
+\begin{abstract}
+LLM agents increasingly combine natural-language instructions, external documents, tool descriptions, tool outputs, and executable skills in a single planning context. This collapses the boundary between instructions and data. We present ProvShield, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge specific to the action, sink, destination, payload digest, principal, and expiration. We formalize ProvShield with a labeled transition system and evaluate it against skill injection, MCP metadata poisoning, web/email injection, RAG injection, and adaptive attacks.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+% TODO: Convert paper_draft.md introduction into ACM format.
+
+\section{Motivating Attacks}
+% TODO: Web/email, MCP metadata poisoning, skill injection, confirmation laundering.
+
+\section{Threat Model}
+% TODO: Attacker capabilities, TCB, non-goals.
+
+\section{Design}
+% TODO: Labels, lattices, sidecar provenance, effects, monitor, bridge.
+
+\section{Formal Model}
+% TODO: State, transitions, theorems.
+
+\section{Implementation}
+% TODO: MCP proxy, skill loader, policy engine, audit replay.
+
+\section{Evaluation}
+% TODO: Attack suites, baselines, metrics, results.
+
+\section{Discussion}
+% TODO: Limitations and deployment considerations.
+
+\section{Related Work}
+% TODO: Agent IFC, MCP security, prompt injection defenses, capability systems.
+
+\section{Conclusion}
+% TODO.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

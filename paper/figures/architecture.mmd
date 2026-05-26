@@ -1,0 +1,17 @@
+flowchart TD
+    U[User UI] --> CB[Context Builder]
+    Web[Web / Email / RAG / Files] --> CB
+    Skill[Skill Loader] --> CB
+    CB --> Store[Sidecar Provenance Store]
+    CB --> LLM[LLM Planner]
+    LLM -->|Proposed Tool Call| Mon[ProvShield Runtime Monitor]
+    Store --> Mon
+    Policy[Policy Engine] --> Mon
+    Bridge[User-Intent Bridge Manager] --> Mon
+    Mon -->|Allow| MCP[MCP Proxy]
+    Mon -->|Deny| Audit[Audit Log]
+    Mon -->|Require Bridge| Bridge
+    Bridge -->|Capability Token| Mon
+    MCP --> Tools[MCP / Local Tools]
+    Tools -->|Labeled Tool Output| CB
+    Mon --> Audit
