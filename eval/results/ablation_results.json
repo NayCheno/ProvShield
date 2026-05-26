@@ -1,6 +1,6 @@
 {
   "A0_full": {
-    "overall_asr": 0.0625,
+    "overall_asr": 0.047619047619047616,
     "asr_by_suite": {
       "skill_injection": 0.0,
       "mcp_metadata_poisoning": 0.0,
@@ -9,21 +9,21 @@
       "rag_injection": 0.0,
       "adaptive_white_box": 0.0
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 1
   },
   "A1_no_labels": {
-    "overall_asr": 0.8125,
+    "overall_asr": 0.8095238095238095,
     "asr_by_suite": {
       "skill_injection": 0.6666666666666666,
       "mcp_metadata_poisoning": 1.0,
       "mcp_safety": 0.5,
       "web_email_injection": 1.0,
       "rag_injection": 1.0,
-      "adaptive_white_box": 0.75
+      "adaptive_white_box": 0.7777777777777778
     },
-    "total_scenarios": 16,
-    "attacks_succeeded": 13
+    "total_scenarios": 21,
+    "attacks_succeeded": 17
   },
   "A2_no_monitor": {
     "overall_asr": 1.0,
@@ -35,24 +35,24 @@
       "rag_injection": 1.0,
       "adaptive_white_box": 1.0
     },
-    "total_scenarios": 16,
-    "attacks_succeeded": 16
+    "total_scenarios": 21,
+    "attacks_succeeded": 21
   },
   "A3_no_bridge_binding": {
-    "overall_asr": 0.5,
+    "overall_asr": 0.38095238095238093,
     "asr_by_suite": {
       "skill_injection": 0.3333333333333333,
       "mcp_metadata_poisoning": 0.5,
       "mcp_safety": 0.5,
       "web_email_injection": 0.6666666666666666,
       "rag_injection": 0.5,
-      "adaptive_white_box": 0.5
+      "adaptive_white_box": 0.2222222222222222
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 8
   },
   "A4_trust_metadata": {
-    "overall_asr": 0.1875,
+    "overall_asr": 0.14285714285714285,
     "asr_by_suite": {
       "skill_injection": 0.0,
       "mcp_metadata_poisoning": 1.0,
@@ -61,11 +61,11 @@
       "rag_injection": 0.0,
       "adaptive_white_box": 0.0
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 3
   },
   "A5_no_capability_token": {
-    "overall_asr": 0.0625,
+    "overall_asr": 0.047619047619047616,
     "asr_by_suite": {
       "skill_injection": 0.0,
       "mcp_metadata_poisoning": 0.0,
@@ -74,11 +74,11 @@
       "rag_injection": 0.0,
       "adaptive_white_box": 0.0
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 1
   },
   "A6_confidentiality_only": {
-    "overall_asr": 0.0625,
+    "overall_asr": 0.047619047619047616,
     "asr_by_suite": {
       "skill_injection": 0.0,
       "mcp_metadata_poisoning": 0.0,
@@ -87,24 +87,24 @@
       "rag_injection": 0.0,
       "adaptive_white_box": 0.0
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 1
   },
   "A7_integrity_only": {
-    "overall_asr": 0.3125,
+    "overall_asr": 0.42857142857142855,
     "asr_by_suite": {
       "skill_injection": 0.3333333333333333,
       "mcp_metadata_poisoning": 0.0,
       "mcp_safety": 0.0,
       "web_email_injection": 0.6666666666666666,
       "rag_injection": 0.5,
-      "adaptive_white_box": 0.25
+      "adaptive_white_box": 0.5555555555555556
     },
-    "total_scenarios": 16,
-    "attacks_succeeded": 5
+    "total_scenarios": 21,
+    "attacks_succeeded": 9
   },
   "A8_no_audit": {
-    "overall_asr": 0.0625,
+    "overall_asr": 0.047619047619047616,
     "asr_by_suite": {
       "skill_injection": 0.0,
       "mcp_metadata_poisoning": 0.0,
@@ -113,7 +113,7 @@
       "rag_injection": 0.0,
       "adaptive_white_box": 0.0
     },
-    "total_scenarios": 16,
+    "total_scenarios": 21,
     "attacks_succeeded": 1
   }
 }

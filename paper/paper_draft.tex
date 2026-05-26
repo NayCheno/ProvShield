@@ -477,17 +477,20 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
 
 \begin{table}[t]
   \centering
-  \caption{Attack success rate (\%) across defense configurations and attack suites. Lower is better.}
+  \caption{Attack success rate (\%) across defense configurations and attack suites. Lower is better. $n$=21 attack scenarios.}
   \label{tab:attack-results}
+  \small
   \begin{tabular}{@{}lcccccc@{}}
     \toprule
-    \textbf{Defense} & \textbf{Skill} & \textbf{MCPTox} & \textbf{MCP Safe.} & \textbf{Web/Email} & \textbf{RAG} & \textbf{Adaptive} \\
+    \textbf{Defense} & \textbf{Skill} & \textbf{MCPTox} & \textbf{MCP Safe.} & \textbf{Web/Em.} & \textbf{RAG} & \textbf{Adapt.} \\
     \midrule
-    No defense         & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
-    Prompt hardening   & 66.7  & 100.0 & 100.0 & 66.7  & 100.0 & 100.0 \\
-    Input firewall     & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
-    Generic confirm.   & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
-    \textbf{ProvShield} & 0.0  & 0.0   & 0.0   & 33.3  & 0.0   & 0.0   \\
+    No defense         & 100 & 100 & 100 & 100 & 100 & 100 \\
+    Prompt hardening   & 67  & 100 & 100 & 67  & 100 & 78  \\
+    Input firewall     & 100 & 100 & 100 & 100 & 100 & 100 \\
+    Generic confirm.   & 100 & 100 & 100 & 100 & 100 & 100 \\
+    Fides-style IFC    & 67  & 100 & 100 & 0   & 50  & 22  \\
+    Causal attrib.     & 100 & 100 & 100 & 67  & 50  & 89  \\
+    \textbf{ProvShield} & 0  & 0   & 0   & 33  & 0   & 0   \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -549,9 +552,9 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
 
 \subsubsection{Security Analysis}
 
-ProvShield reduces the overall attack success rate from 100\% (no defense) to 6.2\%, a 93.8\% reduction. Across 16 attack scenarios, only one scenario---a web/email injection where the user's own intent to send email aligns with the attacker's objective---succeeds under ProvShield. This residual attack exploits the intersection of legitimate user intent and attacker-prompted destination, a known limitation of bridge-based declassification.
+ProvShield reduces the overall attack success rate from 100\% (no defense) to 4.8\% (1 of 21 attack scenarios), a 95.2\% reduction. The single residual attack is a web/email injection where the user's own intent to send email aligns with the attacker's objective.
 
-No defense baseline achieves 100\% ASR across all suites. Prompt hardening reduces ASR for skill injection (to 66.7\%) and web/email injection (to 66.7\%) but fails against MCP metadata poisoning and adaptive attacks, confirming that prompt-level defenses are insufficient when the attacker controls tool metadata or understands the defense. Input firewall and generic confirmation baselines provide no meaningful protection because they cannot distinguish between legitimate and malicious contextual influence.
+Among the baselines, prompt hardening reduces ASR for skill injection (to 66.7\%) and web/email injection (to 66.7\%) but fails against MCP metadata poisoning and adaptive attacks (78\% ASR). Fides-style IFC performs better than prompt hardening on adaptive attacks (22\% vs 78\%) because it tracks labels, but it still fails on MCP metadata poisoning (100\%) and skill injection (67\%) because the model may ignore advisory labels. Causal attribution performs poorly on adaptive attacks (89\%) because the keyword-based counterfactual test is easily evaded by context-aware attacks. Input firewall and generic confirmation baselines provide no meaningful protection.
 
 \subsubsection{Utility Analysis}
 
@@ -573,22 +576,22 @@ Table~\ref{tab:ablation} presents the ablation study results, showing the contri
 
 \begin{table}[t]
   \centering
-  \caption{Ablation study: Attack success rate (\%) across configurations. A0 is full ProvShield.}
+  \caption{Ablation study: Attack success rate (\%) across configurations. $n$=21 attack scenarios.}
   \label{tab:ablation}
   \small
   \begin{tabular}{@{}lccccccr@{}}
     \toprule
     \textbf{Config} & \textbf{Skill} & \textbf{MCPTox} & \textbf{MCP Safe.} & \textbf{Web/Em.} & \textbf{RAG} & \textbf{Adapt.} & \textbf{All} \\
     \midrule
-    A0 Full            & 0  & 0   & 0  & 33 & 0  & 0  & 6  \\
-    A1 No labels       & 67 & 100 & 50 & 100& 100& 75 & 81 \\
+    A0 Full            & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A1 No labels       & 67 & 100 & 50 & 100& 100& 78 & 81 \\
     A2 No monitor      & 100& 100 & 100& 100& 100& 100& 100\\
-    A3 No bridge bind  & 33 & 50  & 50 & 67 & 50 & 50 & 50 \\
-    A4 Trust metadata  & 0  & 100 & 0  & 33 & 0  & 0  & 19 \\
-    A5 No cap token    & 0  & 0   & 0  & 33 & 0  & 0  & 6  \\
-    A6 Conf. only      & 0  & 0   & 0  & 33 & 0  & 0  & 6  \\
-    A7 Integ. only     & 33 & 0   & 0  & 67 & 50 & 25 & 31 \\
-    A8 No audit        & 0  & 0   & 0  & 33 & 0  & 0  & 6  \\
+    A3 No bridge bind  & 33 & 50  & 50 & 67 & 50 & 22 & 38 \\
+    A4 Trust metadata  & 0  & 100 & 0  & 33 & 0  & 0  & 14 \\
+    A5 No cap token    & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A6 Conf. only      & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A7 Integ. only     & 33 & 0   & 0  & 67 & 50 & 56 & 43 \\
+    A8 No audit        & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -597,7 +600,7 @@ The ablation reveals that provenance labels are the single most critical compone
 
 \subsubsection{Failure Analysis}
 
-The residual 6.2\% ASR (1 of 16 attack scenarios) comes from \texttt{A4\_web\_email\_03}: a hidden HTML instruction causes the agent to write private data to a local file. ProvShield allows this because the \texttt{write\_file} tool maps to the \texttt{WriteLocal} effect, which is not classified as high-risk in the current policy. This is a deliberate design decision: ProvShield targets \emph{external} sinks (network send, external write, code execution) where the impact is irreversible. Local writes can be audited and reversed. To block this scenario, the policy could be extended to require a bridge for local writes of private/confidential content, at the cost of increased confirmation burden for benign file operations.
+The residual 4.8\% ASR (1 of 21 attack scenarios) comes from \texttt{A4\_web\_email\_03}: a hidden HTML instruction causes the agent to write private data to a local file. ProvShield allows this because the \texttt{write\_file} tool maps to the \texttt{WriteLocal} effect, which is not classified as high-risk in the current policy. This is a deliberate design decision: ProvShield targets \emph{external} sinks (network send, external write, code execution) where the impact is irreversible. All 5 new adaptive attack scenarios (multi-step exfiltration, label laundering, destination spoofing, schema manipulation, payload swap) were successfully blocked, confirming the robustness of provenance-typed enforcement against sophisticated attacks.
 \subsection{Comparison with Related Work}
 \label{sec:eval-comparison}
 

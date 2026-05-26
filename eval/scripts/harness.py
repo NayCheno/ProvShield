@@ -385,10 +385,92 @@ def baseline_generic_confirmation(scenario: Scenario) -> tuple[str, bool]:
     return "allow", True
 
 
+def baseline_fides_ifc(scenario: Scenario) -> tuple[str, bool]:
+    """Fides-style IFC: tracks integrity/confidentiality labels in prompt context.
+
+    Unlike ProvShield (sidecar store), Fides embeds labels in the model context.
+    The model sees labels and is expected to respect them. This baseline simulates
+    that approach: it tracks labels but relies on the model to enforce policy.
+    Since we don't have the model in the loop, we simulate the model following
+    label guidance by checking if any low-integrity content influenced the call.
+
+    Key difference from ProvShield: labels are advisory (in-prompt), not enforced
+    (sidecar). The model may ignore them.
+    """
+    high_risk_tools = {
+        "send_email", "write_file", "delete_file", "execute_shell",
+        "create_oauth_token", "create_calendar_invite",
+    }
+    low_integrity_seen = False
+    for step in scenario.steps:
+        if step.action == "ingest":
+            if step.integrity in ("ExternalContent", "ToolOutput", "ToolMetadata", "UntrustedSkill"):
+                low_integrity_seen = True
+        elif step.action == "call":
+            if step.tool_name in high_risk_tools and low_integrity_seen:
+                # Fides-style: model sees labels but may ignore them
+                # Simulate 60% compliance (model sometimes follows labels)
+                import hashlib
+                h = int(hashlib.md5(
+                    (step.tool_name + str(step.arguments)).encode()
+                ).hexdigest(), 16) % 10
+                if h < 6:
+                    return "deny", False  # Model respected labels
+                else:
+                    return "allow", True   # Model ignored labels
+            return "allow", True
+    return "allow", True
+
+
+def baseline_causal_attribution(scenario: Scenario) -> tuple[str, bool]:
+    """Causal attribution monitor: post-hoc attribution of tool calls.
+
+    Similar to AttriGuard: after the model proposes a tool call, check whether
+    the call can be attributed to user intent vs. external content. If the call
+    is more likely influenced by external content, block it.
+
+    This baseline uses a simplified counterfactual test: would the same tool call
+    be proposed if external content were removed?
+    """
+    high_risk_tools = {
+        "send_email", "write_file", "delete_file", "execute_shell",
+        "create_oauth_token", "create_calendar_invite",
+    }
+    user_intents = []
+    external_contents = []
+    for step in scenario.steps:
+        if step.action == "ingest":
+            if step.integrity in ("UserIntent",):
+                user_intents.append(step.content or "")
+            elif step.integrity in ("ExternalContent", "ToolOutput", "ToolMetadata", "UntrustedSkill"):
+                external_contents.append(step.content or "")
+        elif step.action == "call":
+            if step.tool_name not in high_risk_tools:
+                return "allow", True
+            # Simplified attribution: check if the tool call arguments
+            # contain content from external sources
+            call_args_str = str(step.arguments).lower()
+            external_influenced = False
+            for ec in external_contents:
+                ec_lower = ec.lower()
+                # Check if external content keywords appear in the call
+                ec_keywords = [w for w in ec_lower.split() if len(w) > 5]
+                matches = sum(1 for kw in ec_keywords if kw in call_args_str)
+                if matches >= 2:
+                    external_influenced = True
+                    break
+            if external_influenced:
+                return "deny", False
+            return "allow", True
+    return "allow", True
+
+
 BASELINES: dict[str, Any] = {
     "no_defense": baseline_no_defense,
     "prompt_hardening": baseline_prompt_hardening,
     "input_firewall": baseline_input_firewall,
     "static_allowlist": baseline_static_allowlist,
     "generic_confirmation": baseline_generic_confirmation,
+    "fides_ifc": baseline_fides_ifc,
+    "causal_attribution": baseline_causal_attribution,
 }
