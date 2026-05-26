@@ -1,0 +1,43 @@
+effects:
+  ReadPublic:
+    risk: low
+    sinks: [LocalReadSink]
+  ReadPrivate:
+    risk: medium
+    sinks: [PrivateReadSink]
+  ReadSecret:
+    risk: high
+    sinks: [SecretReadSink]
+  WriteLocal:
+    risk: medium
+    sinks: [LocalWriteSink]
+  WriteExternal:
+    risk: high
+    sinks: [ExternalWriteSink]
+  DeleteLocal:
+    risk: high
+    sinks: [LocalWriteSink]
+  DeleteExternal:
+    risk: high
+    sinks: [ExternalWriteSink]
+  SendNetwork:
+    risk: high
+    sinks: [NetworkSendSink]
+  ExecuteCode:
+    risk: critical
+    sinks: [CodeExecutionSink]
+  InstallPackage:
+    risk: critical
+    sinks: [CodeExecutionSink]
+  ModifyAuth:
+    risk: critical
+    sinks: [AuthModificationSink]
+  CreateCredential:
+    risk: critical
+    sinks: [CredentialSink]
+  FinancialAction:
+    risk: critical
+    sinks: [FinancialSink]
+  CalendarInvite:
+    risk: high
+    sinks: [CalendarSink]

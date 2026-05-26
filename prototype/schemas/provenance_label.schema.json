@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProvenanceLabel",
+  "type": "object",
+  "required": [
+    "integrity",
+    "confidentiality",
+    "origin",
+    "nonce",
+    "runtime_signature"
+  ],
+  "properties": {
+    "integrity": {
+      "enum": [
+        "SystemPolicy",
+        "UserIntent",
+        "TrustedSkill",
+        "AttestedToolMetadata",
+        "ToolMetadata",
+        "ToolOutput",
+        "ExternalContent",
+        "UntrustedSkill"
+      ]
+    },
+    "confidentiality": {
+      "enum": [
+        "Public",
+        "UserPrivate",
+        "Secret",
+        "CapabilityToken"
+      ]
+    },
+    "origin": {
+      "type": "object",
+      "required": [
+        "kind",
+        "uri_or_id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "user",
+            "system",
+            "skill",
+            "mcp_metadata",
+            "tool_output",
+            "web",
+            "email",
+            "rag",
+            "file",
+            "secret_store"
+          ]
+        },
+        "uri_or_id": {
+          "type": "string"
+        },
+        "principal": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "principals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transform_history": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nonce": {
+      "type": "string"
+    },
+    "runtime_signature": {
+      "type": "string"
+    }
+  }
+}

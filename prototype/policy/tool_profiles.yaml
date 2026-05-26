@@ -1,0 +1,46 @@
+tools:
+  send_email:
+    effects: [SendNetwork]
+    sinks: [NetworkSendSink]
+    high_risk_arguments: [to, cc, bcc, subject, body, attachments]
+    requires_bridge: true
+    destination_argument: to
+    payload_arguments: [subject, body, attachments]
+
+  write_file:
+    effects: [WriteLocal]
+    sinks: [LocalWriteSink]
+    high_risk_arguments: [path, content]
+    requires_bridge: conditional
+    destination_argument: path
+    payload_arguments: [content]
+
+  delete_file:
+    effects: [DeleteLocal]
+    sinks: [LocalWriteSink]
+    high_risk_arguments: [path]
+    requires_bridge: true
+    destination_argument: path
+
+  execute_shell:
+    effects: [ExecuteCode]
+    sinks: [CodeExecutionSink]
+    high_risk_arguments: [command, cwd, env]
+    requires_bridge: true
+    deny_by_default: true
+
+  read_webpage:
+    effects: [ReadPublic]
+    sinks: [LocalReadSink]
+    requires_bridge: false
+
+  read_email:
+    effects: [ReadPrivate]
+    sinks: [PrivateReadSink]
+    requires_bridge: false
+
+  create_oauth_token:
+    effects: [CreateCredential]
+    sinks: [CredentialSink]
+    requires_bridge: true
+    deny_by_default: true

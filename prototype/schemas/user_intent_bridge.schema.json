@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UserIntentBridge",
+  "type": "object",
+  "required": [
+    "bridge_id",
+    "user_id",
+    "proposed_action",
+    "effect",
+    "sink",
+    "destination",
+    "payload_digest",
+    "expires_at",
+    "nonce"
+  ],
+  "properties": {
+    "bridge_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "original_user_goal": {
+      "type": "string"
+    },
+    "proposed_action": {
+      "type": "string"
+    },
+    "effect": {
+      "type": "string"
+    },
+    "sink": {
+      "type": "string"
+    },
+    "destination": {
+      "type": "string"
+    },
+    "payload_digest": {
+      "type": "string"
+    },
+    "visible_diff_digest": {
+      "type": "string"
+    },
+    "sources_used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocked_or_untrusted_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "declassification": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expires_at": {
+      "type": "string"
+    },
+    "nonce": {
+      "type": "string"
+    },
+    "one_time": {
+      "type": "boolean"
+    },
+    "runtime_signature": {
+      "type": "string"
+    }
+  }
+}

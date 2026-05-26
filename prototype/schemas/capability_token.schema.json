@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CapabilityToken",
+  "type": "object",
+  "required": [
+    "token_id",
+    "scope",
+    "effect",
+    "sink",
+    "destination",
+    "payload_digest",
+    "expires_at",
+    "nonce",
+    "runtime_signature"
+  ],
+  "properties": {
+    "token_id": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "effect": {
+      "type": "string"
+    },
+    "sink": {
+      "type": "string"
+    },
+    "destination": {
+      "type": "string"
+    },
+    "payload_digest": {
+      "type": "string"
+    },
+    "principal": {
+      "type": "string"
+    },
+    "bridge_id": {
+      "type": "string"
+    },
+    "issued_at": {
+      "type": "string"
+    },
+    "expires_at": {
+      "type": "string"
+    },
+    "nonce": {
+      "type": "string"
+    },
+    "one_time": {
+      "type": "boolean"
+    },
+    "runtime_signature": {
+      "type": "string"
+    }
+  }
+}

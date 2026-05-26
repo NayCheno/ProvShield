@@ -1,0 +1,52 @@
+rules:
+  - id: no_secret_to_external_without_bridge
+    when:
+      payload_confidentiality_at_least: Secret
+      sink_in: [ExternalWriteSink, NetworkSendSink]
+      valid_declassification_bridge: false
+    decision: deny
+    reason: Secret cannot flow to external sink without explicit declassification.
+
+  - id: external_content_cannot_drive_high_risk
+    when:
+      effect_risk_at_least: high
+      influenced_by_any: [ExternalContent, ToolOutput, ToolMetadata, UntrustedSkill]
+      valid_user_intent_bridge: false
+    decision: require_bridge
+    reason: Low-integrity content influenced high-risk effect.
+
+  - id: metadata_cannot_authorize_itself
+    when:
+      influenced_by_any: [ToolMetadata]
+      action_in: [ModifyPolicy, GrantPermission, CreateCredential, ModifyAuth]
+    decision: deny
+    reason: Tool metadata cannot grant authority.
+
+  - id: untrusted_skill_cannot_modify_policy
+    when:
+      influenced_by_any: [UntrustedSkill]
+      action_in: [ModifyPolicy, ModifyAuth, CreateCredential]
+    decision: deny
+    reason: Untrusted skill cannot modify policy or authority.
+
+  - id: execution_requires_user_intent
+    when:
+      effect_in: [ExecuteCode, InstallPackage]
+      direct_user_intent_for_action: false
+    decision: deny
+    reason: Code execution requires direct user intent.
+
+  - id: read_public_auto_allow
+    when:
+      effect_in: [ReadPublic]
+      payload_confidentiality_at_most: Public
+    decision: allow
+    reason: Public read-only operation.
+
+  - id: private_local_summary_allow
+    when:
+      effect_in: [ReadPrivate]
+      sink_in: [PrivateReadSink, LocalReadSink]
+      external_destination: false
+    decision: allow
+    reason: Private data remains local.
