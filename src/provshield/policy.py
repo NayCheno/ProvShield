@@ -49,7 +49,7 @@ class PolicyEngine:
         capability_token: Optional[CapabilityToken] = None,
     ) -> Decision:
         """Evaluate a proposed tool call against policy rules."""
-        labels = provenance_graph.labels()
+        labels = provenance_graph.policy_labels()
         integrity_names = {self._integrity_name(lbl) for lbl in labels}
         max_conf = provenance_graph.max_confidentiality()
 

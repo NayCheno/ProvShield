@@ -29,27 +29,48 @@ class LabeledObject:
 
 @dataclass(frozen=True)
 class ProvenanceGraph:
-    """Argument provenance graph for a tool call."""
+    """Argument provenance graph for a tool call.
+
+    Fields:
+      call:           the normalized tool call
+      source_labels:  labels on objects that contributed to call arguments
+      payload_labels:  labels on objects embedded in the call payload
+      all_labels:     ALL labels in the store (for audit only, not policy)
+    """
     call: NormalizedToolCall
     source_labels: tuple[ProvenanceLabel, ...]
     payload_labels: tuple[ProvenanceLabel, ...]
-    all_labels: tuple[ProvenanceLabel, ...]
+    all_labels: tuple[ProvenanceLabel, ...]  # audit only
+
+    def policy_labels(self) -> list[ProvenanceLabel]:
+        """Labels relevant to authorization: source + payload only."""
+        seen: set[int] = set()
+        result: list[ProvenanceLabel] = []
+        for lbl in self.source_labels + self.payload_labels:
+            lid = id(lbl)
+            if lid not in seen:
+                seen.add(lid)
+                result.append(lbl)
+        return result
 
     def labels(self) -> list[ProvenanceLabel]:
+        """DEPRECATED: returns all_labels. Use policy_labels() for authorization."""
         return list(self.all_labels)
 
     def max_confidentiality(self) -> Confidentiality:
-        if not self.all_labels:
+        relevant = self.policy_labels()
+        if not relevant:
             return Confidentiality.PUBLIC
-        return max(lbl.confidentiality for lbl in self.all_labels)
+        return max(lbl.confidentiality for lbl in relevant)
 
     def min_integrity(self) -> Integrity:
-        if not self.all_labels:
+        relevant = self.policy_labels()
+        if not relevant:
             return Integrity.EXTERNAL
-        return min(lbl.integrity for lbl in self.all_labels)
+        return min(lbl.integrity for lbl in relevant)
 
     def has_low_integrity_influence(self) -> bool:
-        return any(lbl.is_low_integrity() for lbl in self.all_labels)
+        return any(lbl.is_low_integrity() for lbl in self.policy_labels())
 
     def has_direct_user_intent(self, call: NormalizedToolCall | None = None) -> bool:
         return any(
@@ -61,7 +82,7 @@ class ProvenanceGraph:
         if integrity_name not in NAME_TO_INTEGRITY:
             return False
         target = NAME_TO_INTEGRITY[integrity_name]
-        return any(lbl.integrity == target for lbl in self.all_labels)
+        return any(lbl.integrity == target for lbl in self.policy_labels())
 
 
 class SidecarProvenanceStore:
