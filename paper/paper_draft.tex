@@ -478,6 +478,46 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
   \end{tabular}
 \end{table}
 
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[scale=0.85]
+    % Axes
+    \draw[->] (0,0) -- (7.5,0) node[right] {\small Attack Suite};
+    \draw[->] (0,0) -- (0,5.5) node[above] {\small ASR (\%)};
+
+    % Y-axis labels
+    \foreach \y/\lbl in {0/0, 1/20, 2/40, 3/60, 4/80, 5/100} {
+      \draw (-0.1,\y) -- (0.1,\y) node[left, font=\scriptsize] {\lbl};
+    }
+
+    % X-axis labels (suites)
+    \foreach \x/\lbl [count=\i] in {0.8/Skill, 2.0/MCPTox, 3.2/MCP Safe., 4.4/Web/Email, 5.6/RAG, 6.8/Adapt.} {
+      \node[below, font=\scriptsize, text width=1.2cm, align=center] at (\x, -0.1) {\lbl};
+    }
+
+    % No defense bars (100% = 5cm)
+    \foreach \x in {0.5, 1.7, 2.9, 4.1, 5.3, 6.5} {
+      \fill[gray!30] (\x, 0) rectangle (\x+0.4, 5);
+    }
+
+    % ProvShield bars
+    \fill[black!70] (0.9, 0) rectangle (1.3, 0);    % Skill 0%
+    \fill[black!70] (2.1, 0) rectangle (2.5, 0);    % MCPTox 0%
+    \fill[black!70] (3.3, 0) rectangle (3.7, 0);    % MCP Safe 0%
+    \fill[black!70] (4.5, 0) rectangle (4.9, 1.67); % Web/Email 33.3%
+    \fill[black!70] (5.7, 0) rectangle (6.1, 0);    % RAG 0%
+    \fill[black!70] (6.9, 0) rectangle (7.3, 0);    % Adaptive 0%
+
+    % Legend
+    \fill[gray!30] (0.5, 5.8) rectangle (0.9, 6.1);
+    \node[right, font=\scriptsize] at (1.0, 5.95) {No defense};
+    \fill[black!70] (3.0, 5.8) rectangle (3.4, 6.1);
+    \node[right, font=\scriptsize] at (3.5, 5.95) {ProvShield};
+  \end{tikzpicture}
+  \caption{Attack success rate by suite. Gray bars: no defense (100\% across all suites). Dark bars: ProvShield (0\% except 33.3\% for Web/Email).}
+  \label{fig:asr-comparison}
+\end{figure}
+
 \subsubsection{Security Analysis}
 
 ProvShield reduces the overall attack success rate from 100\% (no defense) to 6.2\%, a 93.8\% reduction. Across 16 attack scenarios, only one scenario---a web/email injection where the user's own intent to send email aligns with the attacker's objective---succeeds under ProvShield. This residual attack exploits the intersection of legitimate user intent and attacker-prompted destination, a known limitation of bridge-based declassification.
