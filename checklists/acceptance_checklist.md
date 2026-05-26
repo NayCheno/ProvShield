@@ -53,4 +53,4 @@
 - [x] LLM-based evaluation completed. → MiMo-v2.5-pro, 0.0% end-to-end ASR
 - [ ] Mechanized proofs. → Not done (proof sketches only)
 - [ ] User study. → Not done
-- [ ] Stronger baselines (Fides/AttriGuard). → Not done
+- [x] Stronger baselines (Fides/AttriGuard). → Fides IFC + causal attribution baselines added, 7 total
