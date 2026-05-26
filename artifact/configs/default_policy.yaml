@@ -1,0 +1,88 @@
+# ProvShield Default Policy
+# ==========================
+# Source-to-sink rules for the runtime monitor.
+#
+# Each rule matches when all conditions in `when` are true.
+# Decisions: allow, deny, require_bridge.
+#
+# Rule evaluation is first-match: the first matching rule wins.
+# If no rule matches, the default decision is deny (fail-closed).
+
+rules:
+  # --- Confidentiality enforcement ---
+
+  # R1: Secret data cannot leave to external sinks without a declassification bridge.
+  # This is the primary anti-exfiltration rule. A bridge must bind the exact
+  # destination, payload digest, and expiration for the declassification to be valid.
+  - id: no_secret_to_external_without_bridge
+    when:
+      payload_confidentiality_at_least: Secret
+      sink_in: [ExternalWriteSink, NetworkSendSink]
+      valid_declassification_bridge: false
+    decision: deny
+    reason: Secret cannot flow to external sink without explicit declassification.
+
+  # --- Integrity enforcement ---
+
+  # R2: Low-integrity content (external pages, tool output, tool metadata, untrusted
+  # skills) cannot drive high-risk effects without a bound user-intent bridge.
+  # Prevents prompt injection from triggering destructive or privileged actions.
+  - id: external_content_cannot_drive_high_risk
+    when:
+      effect_risk_at_least: high
+      influenced_by_any: [ExternalContent, ToolOutput, ToolMetadata, UntrustedSkill]
+      valid_user_intent_bridge: false
+    decision: require_bridge
+    reason: Low-integrity content influenced high-risk effect.
+
+  # --- Authority enforcement ---
+
+  # R3: Tool metadata (MCP server descriptions) cannot grant themselves authority.
+  # A tool description that says "include all credentials" does not create a valid
+  # authorization to read or send secrets.
+  - id: metadata_cannot_authorize_itself
+    when:
+      influenced_by_any: [ToolMetadata]
+      action_in: [ModifyPolicy, GrantPermission, CreateCredential, ModifyAuth]
+    decision: deny
+    reason: Tool metadata cannot grant authority.
+
+  # R4: Untrusted skill files cannot modify system policy or authentication state.
+  # Skills are third-party content and must not be able to escalate their own privileges.
+  - id: untrusted_skill_cannot_modify_policy
+    when:
+      influenced_by_any: [UntrustedSkill]
+      action_in: [ModifyPolicy, ModifyAuth, CreateCredential]
+    decision: deny
+    reason: Untrusted skill cannot modify policy or authority.
+
+  # R5: Code execution and package installation require direct user intent.
+  # Prevents indirect injection from triggering shell commands or dependency installs.
+  - id: execution_requires_user_intent
+    when:
+      effect_in: [ExecuteCode, InstallPackage]
+      direct_user_intent_for_action: false
+    decision: deny
+    reason: Code execution requires direct user intent.
+
+  # --- Auto-allow rules (low-risk operations) ---
+
+  # R6: Public read-only operations are automatically allowed.
+  # Reading public webpages, public documentation, etc. poses no security risk.
+  - id: read_public_auto_allow
+    when:
+      effect_in: [ReadPublic]
+      payload_confidentiality_at_most: Public
+    decision: allow
+    reason: Public read-only operation.
+
+  # R7: Private data reads that stay local are allowed without bridge.
+  # Summarizing emails, reading private docs for local use — data never leaves the
+  # boundary, so no declassification is needed.
+  - id: private_local_summary_allow
+    when:
+      effect_in: [ReadPrivate]
+      sink_in: [PrivateReadSink, LocalReadSink]
+      external_destination: false
+    decision: allow
+    reason: Private data remains local.
