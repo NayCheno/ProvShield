@@ -60,44 +60,33 @@ The artifact supports three reproducibility levels as described in the reproduci
 ### Level 1: Smoke Test
 
 Runs 5 representative attack scenarios and 5 benign tasks to verify basic monitor behavior.
-
 ```bash
 make smoke
 # or directly:
-bash artifact/scripts/run_smoke_test.sh
+python artifact/scripts/run_smoke_test.py
 ```
 
-**Expected time:** ~2 minutes.
+**Expected time:** ~10 seconds.
 **Output:** `artifact/results/smoke/` with per-scenario decision logs.
 
-### Level 2: Paper Subset
+### Level 2+3: Full Evaluation
 
-Runs representative tasks from each attack suite and benign category.
-
-```bash
-make attack     # Attack suites only
-make benign     # Benign tasks only
-```
-
-**Expected time:** ~10 minutes.
-**Output:** `artifact/results/attacks/` and `artifact/results/benign/`.
-
-### Level 3: Full Evaluation
-
-Runs all attack suites, benign tasks, ablation study, and baseline comparisons.
+Runs all attack suites, benign tasks, and baseline comparisons in a single pass.
 
 ```bash
-make ablation   # All ablation configurations (A0-A8)
+make eval
+# or directly:
+python eval/scripts/run_evaluation.py
 ```
 
-Or run everything end-to-end:
+Then generate paper-ready tables:
 
 ```bash
-bash artifact/scripts/run_full_evaluation.sh
+make paper
 ```
 
-**Expected time:** ~30 minutes.
-**Output:** `artifact/results/` with all suites, baselines, and ablations.
+**Expected time:** ~10 seconds (27 scenarios, 6 baselines).
+**Output:** `eval/results/evaluation_results.json` with all suite/baseline results.
 
 ## Evaluation Suites
 
