@@ -28,6 +28,32 @@
 
 \author{Author Names Omitted for Review}
 
+\keywords{LLM agents, prompt injection, provenance, information-flow control, capability tokens, MCP security}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10002978.10003006.10003013</concept_id>
+<concept_desc>Security and privacy~Systems security</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10002978.10003014</concept_id>
+<concept_desc>Security and privacy~Information flow control</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10010147.10010178.10010179</concept_id>
+<concept_desc>Computing methodologies~Artificial intelligence</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Security and privacy~Systems security}
+\ccsdesc[500]{Security and privacy~Information flow control}
+\ccsdesc[300]{Computing methodologies~Artificial intelligence}
+
 \begin{document}
 
 \begin{abstract}
@@ -152,6 +178,7 @@ Figure~\ref{fig:architecture} shows the ProvShield architecture. We describe eac
     \draw[arr] (mon) -- (audit);
   \end{tikzpicture}
   \caption{ProvShield architecture. Content entering the agent is labeled with provenance metadata in a sidecar store. The runtime monitor intercepts all proposed tool calls and enforces source-to-sink policy using provenance labels, effect types, and capability tokens.}
+  \Description{Block diagram showing ProvShield architecture with User UI, Web/Email/RAG, and Skill Loader feeding into a Context Builder and Sidecar Store. The LLM Planner sends proposed tool calls to the Runtime Monitor, which consults the Policy Engine and Bridge Manager. Allowed calls pass through the MCP Proxy to MCP/Local Tools. All decisions are logged to the Audit Log.}
   \label{fig:architecture}
 \end{figure}
 
@@ -311,6 +338,7 @@ Figure~\ref{fig:transition} shows the labeled transition system governing tool-c
     \draw[arr] (bd) -- (al2);
   \end{tikzpicture}
   \caption{Labeled transition system for tool-call lifecycle. The monitor check is the single enforcement point; all execution paths pass through it.}
+  \Description{State diagram showing the tool-call lifecycle: Context Ingest leads to Model Step, then Tool Proposed, then Monitor Check. From Monitor Check, three paths branch: Denied (to Audit Logged), Bridge Required (to Bridge Denied or Bridge Confirmed), and Allowed (to Tool Executed to Label Propagated to Audit Logged). Bridge Confirmed feeds back to Allowed via a capability token.}
   \label{fig:transition}
 \end{figure}
 
@@ -515,6 +543,7 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
     \node[right, font=\scriptsize] at (3.5, 5.95) {ProvShield};
   \end{tikzpicture}
   \caption{Attack success rate by suite. Gray bars: no defense (100\% across all suites). Dark bars: ProvShield (0\% except 33.3\% for Web/Email).}
+  \Description{Bar chart comparing attack success rate across six suites. Gray bars for no defense are at 100 percent for all suites. Dark bars for ProvShield are at 0 percent for five suites and 33.3 percent for Web/Email.}
   \label{fig:asr-comparison}
 \end{figure}
 
@@ -530,7 +559,7 @@ ProvShield achieves 100\% benign task completion across all five categories (bro
 
 \subsubsection{Performance}
 
-The runtime monitor adds minimal overhead: p50 latency of 0.03\,ms and p95 latency of 0.07\,ms per tool call. This is well below the 100\,ms target and is negligible in the context of LLM inference latency.
+The runtime monitor adds minimal overhead: p50 latency of 0.03\,ms and p95 latency of 0.07\,ms per tool call. This is well below the 100\,ms target and is negligible in the context of LLM inference latency. Because ProvShield maintains provenance labels in a sidecar store rather than embedding them in the prompt, the prompt token overhead is limited to lightweight advisory markers (e.g., \texttt{[ExternalContent:web]}). For the evaluated scenarios, this adds fewer than 5 tokens per context object, well under the 10\% threshold. The audit trace is fully replayable: every monitor decision, bridge interaction, and tool execution is logged with full provenance state for deterministic post-hoc analysis.
 
 \subsection{Comparison with Related Work}
 \label{sec:eval-comparison}
@@ -632,6 +661,40 @@ ProvShield has several limitations that we state explicitly.
 \paragraph{Audit log privacy.} Audit logs may contain provenance metadata, payload previews, and decision reasons. In production, logs must be redacted or encrypted. The artifact uses only synthetic data.
 
 \paragraph{False sense of security.} ProvShield is a complementary defense layer, not a complete solution. We explicitly warn against deploying it without sandboxing, least-privilege tool access, and secret management. The paper's threat model and non-goals section clearly state what ProvShield does not protect against.
+
+%% ======================================================================
+\section{Artifact}
+\label{sec:artifact}
+
+The evaluation artifact is available as an open-source repository containing:
+
+\begin{itemize}
+  \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy, skill loader).
+  \item \textbf{Evaluation harness}: 27 scenarios across 6 attack suites and 5 benign task categories, with 5 baseline defenses.
+  \item \textbf{Policy configuration}: Declarative YAML policy defining source-to-sink rules for all effect types.
+  \item \textbf{Audit log schema}: JSON Schema for reproducible audit traces.
+  \item \textbf{Smoke test}: Cross-platform Python script verifying 5 attack and 5 benign scenarios in $\sim$10 seconds.
+  \item \textbf{Docker support}: Dockerfile for reproducible execution.
+\end{itemize}
+
+\paragraph{Reproducibility.} The artifact supports three levels: (1) smoke test (10 scenarios, $\sim$10\,s), (2) full evaluation (27 scenarios with all baselines, $\sim$30\,s), and (3) table generation for the paper. Random seeds are fixed per scenario (default: 42). All credentials and documents are synthetic.
+
+\paragraph{Running.}
+\begin{lstlisting}[language=bash]
+# Install
+pip install -r requirements.txt
+
+# Smoke test (Level 1)
+python artifact/scripts/run_smoke_test.py
+
+# Full evaluation (Level 2)
+python eval/scripts/run_evaluation.py
+
+# Generate tables (Level 3)
+python artifact/scripts/analyze_results.py \
+  --results-dir eval/results \
+  --output-dir eval/results/tables
+\end{lstlisting}
 
 %% ======================================================================
 \section{Conclusion}
