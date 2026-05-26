@@ -27,7 +27,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.19279999833088368,
+      "latency_ms": 0.2607000060379505,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -67,7 +67,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.08189999789465219,
+      "latency_ms": 0.08850000449456275,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -107,7 +107,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.04430000262800604,
+      "latency_ms": 0.11669998639263213,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -147,7 +147,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.038300000596791506,
+      "latency_ms": 0.06580000626854599,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -187,7 +187,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.048000001697801054,
+      "latency_ms": 0.06350000330712646,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -227,7 +227,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.02269999822601676,
+      "latency_ms": 0.026699999580159783,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -267,7 +267,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.03609999839682132,
+      "latency_ms": 0.04509999416768551,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -307,7 +307,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.03749999450519681,
+      "latency_ms": 0.05019998934585601,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -347,7 +347,7 @@
         "fides_ifc": false,
         "causal_attribution": false
       },
-      "latency_ms": 0.03619999915827066,
+      "latency_ms": 0.03989999822806567,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -387,7 +387,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.04410000110510737,
+      "latency_ms": 0.047900000936351717,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -427,7 +427,7 @@
         "fides_ifc": false,
         "causal_attribution": false
       },
-      "latency_ms": 0.0357000099029392,
+      "latency_ms": 0.03739999374374747,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -467,7 +467,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.03800001286435872,
+      "latency_ms": 0.04149999585933983,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -507,7 +507,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.03530000685714185,
+      "latency_ms": 0.0405999890062958,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -547,7 +547,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.033199990866705775,
+      "latency_ms": 0.040099999750964344,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -587,7 +587,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.04549999721348286,
+      "latency_ms": 0.0357000099029392,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -627,7 +627,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.028800001018680632,
+      "latency_ms": 0.027900008717551827,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -667,7 +667,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.04119999357499182,
+      "latency_ms": 0.0346999877365306,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -707,7 +707,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.03480000304989517,
+      "latency_ms": 0.02920000406447798,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -747,7 +747,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.022299995180219412,
+      "latency_ms": 0.01999999221879989,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -787,7 +787,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.019099999917671084,
+      "latency_ms": 0.020000006770715117,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -827,7 +827,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.024299995857290924,
+      "latency_ms": 0.02580000727903098,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -867,7 +867,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.018499995348975062,
+      "latency_ms": 0.018699996871873736,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -907,7 +907,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.02370000584051013,
+      "latency_ms": 0.024599998141638935,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -947,7 +947,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.023899992811493576,
+      "latency_ms": 0.03090000245720148,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -987,7 +987,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.025000001187436283,
+      "latency_ms": 0.03480000304989517,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1027,7 +1027,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.024100008886307478,
+      "latency_ms": 0.029600007110275328,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1067,7 +1067,7 @@
         "fides_ifc": true,
         "causal_attribution": true
       },
-      "latency_ms": 0.030399998649954796,
+      "latency_ms": 0.031200004741549492,
       "attack_succeeded_no_defense": false,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1107,7 +1107,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.03290000313427299,
+      "latency_ms": 0.033499993151053786,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1147,7 +1147,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.02710000262595713,
+      "latency_ms": 0.028599999495781958,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1187,7 +1187,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.03159999323543161,
+      "latency_ms": 0.03199999628122896,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1227,7 +1227,7 @@
         "fides_ifc": false,
         "causal_attribution": true
       },
-      "latency_ms": 0.030800001695752144,
+      "latency_ms": 0.032199997804127634,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1267,7 +1267,7 @@
         "fides_ifc": true,
         "causal_attribution": false
       },
-      "latency_ms": 0.036299999919719994,
+      "latency_ms": 0.037300007534213364,
       "attack_succeeded_no_defense": true,
       "attack_succeeded_provshield": false,
       "attack_succeeded_baselines": {
@@ -1360,7 +1360,7 @@
     "false_block_rate": 0.0,
     "bridge_burden": 0.0,
     "latency_p50_ms": 0.03480000304989517,
-    "latency_p95_ms": 0.08189999789465219,
-    "latency_mean_ms": 0.0388875000680855
+    "latency_p95_ms": 0.11669998639263213,
+    "latency_mean_ms": 0.046603124701505294
   }
 }
