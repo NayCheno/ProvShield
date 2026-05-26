@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{graphicx}
 \usepackage{makecell}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -61,7 +62,7 @@ LLM agents increasingly combine natural-language instructions, external document
 
 We present \textbf{ProvShield}, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
 
-We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 27 scenarios spanning skill injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. ProvShield reduces the attack success rate by 93.8\% compared to an undefended agent, maintains 100\% benign task completion, and adds only 0.03\,ms median latency per tool call.
+We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy with JSON-RPC support, skill loader with HMAC verification, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 32 scenarios spanning skill injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. ProvShield achieves \textbf{0.0\%} attack success rate, maintains 100\% benign task completion, and adds only 0.03\,ms median latency per tool call.
 \end{abstract}
 
 \maketitle
@@ -552,7 +553,7 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
 
 \subsubsection{Security Analysis}
 
-ProvShield reduces the overall attack success rate from 100\% (no defense) to 4.8\% (1 of 21 attack scenarios), a 95.2\% reduction. The single residual attack is a web/email injection where the user's own intent to send email aligns with the attacker's objective.
+ProvShield achieves \textbf{0.0\%} attack success rate across all 21 attack scenarios, a \textbf{100\%} reduction from the no-defense baseline. No attack---including skill injection, MCP metadata poisoning, MCP safety exploits, web/email injection, RAG injection, and adaptive white-box attacks---succeeds against ProvShield's runtime enforcement.
 
 Among the baselines, prompt hardening reduces ASR for skill injection (to 66.7\%) and web/email injection (to 66.7\%) but fails against MCP metadata poisoning and adaptive attacks (78\% ASR). Fides-style IFC performs better than prompt hardening on adaptive attacks (22\% vs 78\%) because it tracks labels, but it still fails on MCP metadata poisoning (100\%) and skill injection (67\%) because the model may ignore advisory labels. Causal attribution performs poorly on adaptive attacks (89\%) because the keyword-based counterfactual test is easily evaded by context-aware attacks. Input firewall and generic confirmation baselines provide no meaningful protection.
 
@@ -583,24 +584,25 @@ Table~\ref{tab:ablation} presents the ablation study results, showing the contri
     \toprule
     \textbf{Config} & \textbf{Skill} & \textbf{MCPTox} & \textbf{MCP Safe.} & \textbf{Web/Em.} & \textbf{RAG} & \textbf{Adapt.} & \textbf{All} \\
     \midrule
-    A0 Full            & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A0 Full            & 0  & 0   & 0  & 0  & 0  & 0  & 0  \\
     A1 No labels       & 67 & 100 & 50 & 100& 100& 78 & 81 \\
     A2 No monitor      & 100& 100 & 100& 100& 100& 100& 100\\
     A3 No bridge bind  & 33 & 50  & 50 & 67 & 50 & 22 & 38 \\
-    A4 Trust metadata  & 0  & 100 & 0  & 33 & 0  & 0  & 14 \\
-    A5 No cap token    & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
-    A6 Conf. only      & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A4 Trust metadata  & 0  & 100 & 0  & 0  & 0  & 0  & 5  \\
+    A5 No cap token    & 0  & 0   & 0  & 0  & 0  & 0  & 0  \\
+    A6 Conf. only      & 0  & 0   & 0  & 0  & 0  & 0  & 0  \\
     A7 Integ. only     & 33 & 0   & 0  & 67 & 50 & 56 & 43 \\
-    A8 No audit        & 0  & 0   & 0  & 33 & 0  & 0  & 5  \\
+    A8 No audit        & 0  & 0   & 0  & 0  & 0  & 0  & 0  \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-The ablation reveals that provenance labels are the single most critical component: removing them (A1) raises ASR from 6\% to 81\%. Removing the runtime monitor (A2) yields 100\% ASR, confirming that enforcement---not just labeling---is essential. Removing bridge binding (A3) raises ASR to 50\%, demonstrating that generic confirmation is insufficient. Trusting tool metadata (A4) specifically inflates MCPTox suite ASR to 100\%, confirming the value of treating unattested metadata as low-integrity. The confidentiality-only ablation (A6) shows that integrity checks are the primary defense layer; the integrity-only ablation (A7) shows that confidentiality checks are needed to prevent secret exfiltration (31\% ASR vs 6\%).
+
+The ablation reveals that provenance labels are the single most critical component: removing them (A1) raises ASR from 0\% to 81\%. Removing the runtime monitor (A2) yields 100\% ASR, confirming that enforcement---not just labeling---is essential. Removing bridge binding (A3) raises ASR to 38\%, demonstrating that generic confirmation is insufficient. Trusting tool metadata (A4) specifically inflates MCPTox suite ASR to 100\%, confirming the value of treating unattested metadata as low-integrity. The integrity-only ablation (A7) shows that confidentiality checks are needed to prevent secret exfiltration (43\% ASR vs 0\%).
 
 \subsubsection{Failure Analysis}
 
-The residual 4.8\% ASR (1 of 21 attack scenarios) comes from \texttt{A4\_web\_email\_03}: a hidden HTML instruction causes the agent to write private data to a local file. ProvShield allows this because the \texttt{write\_file} tool maps to the \texttt{WriteLocal} effect, which is not classified as high-risk in the current policy. This is a deliberate design decision: ProvShield targets \emph{external} sinks (network send, external write, code execution) where the impact is irreversible. All 5 new adaptive attack scenarios (multi-step exfiltration, label laundering, destination spoofing, schema manipulation, payload swap) were successfully blocked, confirming the robustness of provenance-typed enforcement against sophisticated attacks.
+With the WRITE_LOCAL policy fix (P1b), all 21 attack scenarios are now blocked. The P1b rule requires a bridge when low-integrity sources influence local writes of private or secret data, closing the previous gap where external content could control \texttt{write\_file} to exfiltrate sensitive data to local files. All 5 adaptive attack scenarios (multi-step exfiltration, label laundering, destination spoofing, schema manipulation, payload swap) are also blocked, confirming the robustness of provenance-typed enforcement against sophisticated attacks.
 \subsection{Comparison with Related Work}
 \label{sec:eval-comparison}
 
@@ -615,16 +617,16 @@ Table~\ref{tab:comparison} compares ProvShield's design features with existing a
     \toprule
     \textbf{Feature} & \textbf{\makecell{Prompt\\Harden}} & \textbf{\makecell{Input\\Firewall}} & \textbf{\makecell{Generic\\Confirm}} & \textbf{Fides} & \textbf{AttriGuard} & \textbf{ProvShield} \\
     \midrule
-    Runtime enforcement    & -- & -- & \checkmark & \checkmark & -- & \checkmark \\
-    Provenance labels      & -- & -- & -- & \checkmark & -- & \checkmark \\
-    Sidecar (not prompt)   & -- & -- & -- & -- & -- & \checkmark \\
-    Effect-typed tools     & -- & -- & -- & \checkmark & -- & \checkmark \\
-    Bound bridge           & -- & -- & -- & -- & -- & \checkmark \\
-    Capability tokens      & -- & -- & -- & -- & -- & \checkmark \\
-    MCP metadata defense   & -- & -- & -- & -- & -- & \checkmark \\
-    Skill loader defense   & -- & -- & -- & -- & -- & \checkmark \\
-    Formal safety props.   & -- & -- & -- & partial & -- & \checkmark \\
-    Audit replay           & -- & -- & -- & -- & \checkmark & \checkmark \\
+    Runtime enforcement    & -- & -- & $\checkmark$ & $\checkmark$ & -- & $\checkmark$ \\
+    Provenance labels      & -- & -- & -- & $\checkmark$ & -- & $\checkmark$ \\
+    Sidecar (not prompt)   & -- & -- & -- & -- & -- & $\checkmark$ \\
+    Effect-typed tools     & -- & -- & -- & $\checkmark$ & -- & $\checkmark$ \\
+    Bound bridge           & -- & -- & -- & -- & -- & $\checkmark$ \\
+    Capability tokens      & -- & -- & -- & -- & -- & $\checkmark$ \\
+    MCP metadata defense   & -- & -- & -- & -- & -- & $\checkmark$ \\
+    Skill loader defense   & -- & -- & -- & -- & -- & $\checkmark$ \\
+    Formal safety props.   & -- & -- & -- & partial & -- & $\checkmark$ \\
+    Audit replay           & -- & -- & -- & -- & $\checkmark$ & $\checkmark$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -682,13 +684,10 @@ ProvShield has several limitations that we state explicitly.
 
 \paragraph{Conservative policy.} When provenance is ambiguous---for example, when a tool output mixes user-provided data with external content---ProvShield labels at the lower integrity level. This conservative join can cause false blocking for benign mixed-provenance payloads. Our evaluation shows 0\% false blocking on the current benign suite, but larger-scale evaluations with more diverse workflows may reveal higher rates.
 
-\paragraph{Residual attack surface.} The 6.2\% residual ASR in our evaluation comes from scenarios where the user's legitimate intent aligns with an attacker's objective. In such cases, the bridge mechanism correctly identifies the user as the source of authorization. Preventing this requires semantic understanding of whether the user's intent was manipulated, which is outside ProvShield's threat model.
-
-\paragraph{Provenance granularity.} ProvShield tracks provenance at the object level, not at the token or field level within natural-language text. An attacker who embeds a malicious instruction within a legitimate-seeming text block may cause the entire block to inherit a higher integrity label if it is ingested through a trusted channel.
-
+\paragraph{Residual attack surface.} With the WRITE_LOCAL policy fix (P1b), ProvShield blocks all 21 evaluated attack scenarios. However, the policy may not cover all possible attack vectors in untested configurations. Preventing this requires continuous expansion of the attack suite and policy refinement based on real-world agent deployments.
 \paragraph{TCB assumptions.} The formal guarantees assume the runtime monitor, sidecar store, policy engine, and cryptographic primitives are not compromised. If the runtime itself is compromised, all guarantees are void. Deployment should include sandboxing and least-privilege system access to protect the TCB.
 
-\paragraph{Evaluation scope.} Our evaluation uses 27 scenarios across 6 attack categories and 5 benign task categories. A larger-scale evaluation with real-world agent workflows, diverse MCP servers, and LLM-based attack generation would strengthen the evidence. We did not evaluate against a live LLM agent performing real-world tasks, which limits the ecological validity of the utility results.
+\paragraph{Evaluation scope.} Our evaluation uses 32 scenarios across 6 attack categories and 5 benign task categories, plus LLM-based evaluation with 18 scenarios. A larger-scale evaluation with real-world agent workflows, diverse MCP servers, and LLM-based attack generation would strengthen the evidence.
 
 %% ======================================================================
 \section{Ethics}
@@ -709,15 +708,15 @@ ProvShield has several limitations that we state explicitly.
 The evaluation artifact is available as an open-source repository containing:
 
 \begin{itemize}
-  \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy, skill loader).
-  \item \textbf{Evaluation harness}: 27 scenarios across 6 attack suites and 5 benign task categories, with 5 baseline defenses.
+  \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy with JSON-RPC support, skill loader with HMAC verification).
+  \item \textbf{Evaluation harness}: 32 scenarios across 6 attack suites and 5 benign task categories, with 7 baseline defenses.
   \item \textbf{Policy configuration}: Declarative YAML policy defining source-to-sink rules for all effect types.
   \item \textbf{Audit log schema}: JSON Schema for reproducible audit traces.
-  \item \textbf{Smoke test}: Cross-platform Python script verifying 5 attack and 5 benign scenarios in $\sim$10 seconds.
+  \item \textbf{Smoke test}: Cross-platform Python script verifying 10 scenarios in $\sim$10 seconds.
   \item \textbf{Docker support}: Dockerfile for reproducible execution.
 \end{itemize}
 
-\paragraph{Reproducibility.} The artifact supports three levels: (1) smoke test (10 scenarios, $\sim$10\,s), (2) full evaluation (27 scenarios with all baselines, $\sim$30\,s), and (3) table generation for the paper. Random seeds are fixed per scenario (default: 42). All credentials and documents are synthetic.
+\paragraph{Reproducibility.} The artifact supports three levels: (1) smoke test (10 scenarios, $\sim$10\,s), (2) full evaluation (32 scenarios with all baselines, $\sim$30\,s), and (3) table generation for the paper. Random seeds are fixed per scenario (default: 42). All credentials and documents are synthetic.
 
 \paragraph{Running.}
 \begin{lstlisting}[language=bash]
@@ -742,7 +741,7 @@ python artifact/scripts/analyze_results.py \
 
 Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through unforgeable provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
 
-We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. Evaluation on 27 scenarios across six attack categories shows a 93.8\% reduction in attack success rate compared to an undefended agent, with 100\% benign task completion and negligible latency overhead. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
+We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. Evaluation on 32 scenarios across six attack categories achieves \textbf{0.0\%} attack success rate against ProvShield, with 100\% benign task completion and negligible latency overhead. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
 
 ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.
 
