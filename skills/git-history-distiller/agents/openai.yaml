@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git History Distiller"
+  short_description: "Distill credible Git commit histories."
+  default_prompt: "Distill this repository into a mature open-source style Git commit history."
