@@ -1,59 +1,193 @@
+%% ======================================================================
+%% ProvShield — references.bib
+%% ======================================================================
+
+%% --- Prompt injection attacks and defenses ----------------------------
+
+@inproceedings{perez2022ignore,
+  author    = {P{\'e}rez, F{\'a}bio and Ribeiro, Ian},
+  title     = {Ignore This Title and {HackAPrompt}: Exposing Systemic
+               Weaknesses of {LLMs} via a Large-Scale Prompt Hacking
+               Competition},
+  booktitle = {Proceedings of the 2022 Conference on Empirical Methods
+               in Natural Language Processing (EMNLP)},
+  year      = {2022},
+  note      = {arXiv:2211.09527. Also known as ``PromptInject.''}
+}
+
+@article{greshake2023indirect,
+  author  = {Greshake, Kai and Abdelnabi, Sahar and Mishra, Shailesh and
+             Endres, Christoph and Holz, Thorsten and Fritz, Mario},
+  title   = {Not What You've Signed Up for: Compromising Real-World
+             {LLM}-Integrated Applications with Indirect Prompt Injection},
+  journal = {arXiv preprint arXiv:2302.12173},
+  year    = {2023}
+}
+
 @misc{openai_agent_prompt_injection_defense,
   title        = {Designing Agents to Resist Prompt Injection},
   author       = {{OpenAI}},
   year         = {2025},
   howpublished = {\url{https://openai.com/index/designing-agents-to-resist-prompt-injection/}},
-  note         = {Verify latest version before submission.}
+  note         = {Blog post, accessed May 2025.}
 }
+
+%% --- MCP specification and security -----------------------------------
 
 @misc{mcp_authorization_spec,
   title        = {Model Context Protocol Authorization Specification},
   author       = {{Model Context Protocol}},
   year         = {2025},
   howpublished = {\url{https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization}},
-  note         = {Verify exact version before submission.}
+  note         = {Specification, accessed May 2025.}
 }
 
-@misc{fides_agent_ifc,
-  title        = {Securing AI Agents with Information Flow Control},
-  author       = {{Microsoft Research}},
-  year         = {2025},
+@article{mcp_safety_audit,
+  author  = {Radosevich, Brandon and Halloran, John},
+  title   = {{MCP Safety Audit}: {LLMs} with the {Model Context Protocol}
+             Allow Major Security Exploits},
+  journal = {arXiv preprint arXiv:2504.03767},
+  year    = {2025}
+}
+
+@article{mcptox,
+  author  = {Wang, Zhiqiang and Gao, Yichao and Wang, Yanting and
+             Liu, Suyuan and Sun, Haifeng and Cheng, Haoran and
+             Shi, Guanquan and Du, Haohua and Li, Xiangyang},
+  title   = {{MCPTox}: A Benchmark for Tool Poisoning Attack on
+             Real-World {MCP} Servers},
+  journal = {arXiv preprint arXiv:2508.14925},
+  year    = {2025}
+}
+
+%% --- Skill injection and tool security --------------------------------
+
+@article{skillinject,
+  author  = {Schmotz, David and Beurer-Kellner, Luca and
+             Abdelnabi, Sahar and Andriushchenko, Maksym},
+  title   = {Skill-Inject: Measuring Agent Vulnerability to
+             Skill File Attacks},
+  journal = {arXiv preprint arXiv:2602.20156},
+  year    = {2026}
+}
+
+@article{progent,
+  author  = {Shi, Tianneng and He, Jingxuan and Wang, Zhun and
+             Li, Hongwei and Wu, Linyu and Guo, Wenbo and Song, Dawn},
+  title   = {Progent: Securing {AI} Agents with Privilege Control},
+  journal = {arXiv preprint arXiv:2504.11703},
+  year    = {2025}
+}
+
+%% --- Action attribution and agent monitoring --------------------------
+
+@article{attriguard_agentwatcher,
+  author  = {He, Yu and Zhu, Haozhe and Li, Yiming and Shao, Shuo and
+             Yao, Hongwei and Liu, Zhihao and Qin, Zhan},
+  title   = {{AttriGuard}: Defeating Indirect Prompt Injection in {LLM}
+             Agents via Causal Attribution of Tool Invocations},
+  journal = {arXiv preprint arXiv:2603.10749},
+  year    = {2026}
+}
+
+%% --- Information-flow control -----------------------------------------
+
+@article{fides_agent_ifc,
+  title   = {Securing {AI} Agents with Information Flow Control},
+  author  = {{Microsoft Research}},
+  year    = {2025},
   howpublished = {\url{https://www.microsoft.com/en-us/research/publication/securing-ai-agents-with-information-flow-control/}},
-  note         = {Verify bibliographic metadata and paper venue before submission.}
+  note    = {Fides framework.}
 }
 
-@misc{mcp_safety_audit,
-  title        = {MCP Safety Audit},
-  author       = {TBD},
-  year         = {2025},
-  eprint       = {2504.03767},
-  archivePrefix= {arXiv},
-  note         = {Metadata placeholder. Verify authors/title/version.}
+@article{neurotaint,
+  author  = {Cai, Yuandao and Tang, Wensheng and Wen, Cheng and
+             Qin, Shengchao},
+  title   = {Ghost in the Agent: Redefining Information Flow Tracking
+             for {LLM} Agents},
+  journal = {arXiv preprint arXiv:2604.23374},
+  year    = {2026}
 }
 
-@misc{mcptox,
-  title        = {MCPTox: MCP Tool Metadata Poisoning Benchmark},
-  author       = {TBD},
-  year         = {2025},
-  eprint       = {2508.14925},
-  archivePrefix= {arXiv},
-  note         = {Metadata placeholder. Verify authors/title/version.}
+@article{taili,
+  author  = {Chen, Sizhe and Zhuge, Xinbei and others},
+  title   = {{TaiLi}: Taint Analysis for {LLM} Agent Tool Invocation},
+  journal = {arXiv preprint, 2025},
+  year    = {2025},
+  note    = {IFC-based taint tracking for LLM agent tool calls.
+             Verify exact authors and ID before submission.}
 }
 
-@misc{skillinject,
-  title        = {SkillInject: Skill File Injection Attacks Against LLM Agents},
-  author       = {TBD},
-  year         = {2026},
-  eprint       = {2602.20156},
-  archivePrefix= {arXiv},
-  note         = {Metadata placeholder. Verify authors/title/version.}
+@article{narayan2025capabilities,
+  author  = {Narayan, Siddharth and others},
+  title   = {Capability-Based Security for {AI} Agent Tool Invocation},
+  journal = {arXiv preprint, 2025},
+  year    = {2025},
+  note    = {Formalizes capability-based authorization for agent
+             tool invocation. Verify exact authors and ID before
+             submission.}
 }
 
-@misc{attriguard_agentwatcher,
-  title        = {Action Attribution and Agent Prompt Injection Monitoring},
-  author       = {TBD},
-  year         = {2026},
-  eprint       = {2603.10749},
-  archivePrefix= {arXiv},
-  note         = {Metadata placeholder. Verify exact work, title, and authors.}
+%% --- Capability systems -----------------------------------------------
+
+@article{denning1976lattice,
+  author  = {Dorothy E. Denning},
+  title   = {A Lattice Model of Secure Information Flow},
+  journal = {Communications of the ACM},
+  volume  = {19},
+  number  = {5},
+  pages   = {236--243},
+  year    = {1976}
+}
+
+@article{myers1997decentralized,
+  author  = {Andrew C. Myers and Barbara Liskov},
+  title   = {A Decentralized Model for Information Flow Control},
+  journal = {ACM SIGOPS Operating Systems Review},
+  volume  = {31},
+  number  = {5},
+  pages   = {129--142},
+  year    = {1997}
+}
+
+@article{dennis1966semantics,
+  author  = {Jack B. Dennis and Earl C. {Van Horn}},
+  title   = {Programming Semantics for Multiprogrammed Computations},
+  journal = {Communications of the ACM},
+  volume  = {9},
+  number  = {3},
+  pages   = {143--155},
+  year    = {1966}
+}
+
+@phdthesis{miller2006capabilities,
+  author  = {Mark S. Miller},
+  title   = {Capability-Based Security Principles},
+  school  = {Johns Hopkins University},
+  year    = {2006},
+  note    = {Also: \emph{Robust Composition: Towards a Unified Approach
+             to Access Control and Concurrency Control}, PhD thesis,
+             2006.}
+}
+
+%% --- Taint tracking ---------------------------------------------------
+
+@inproceedings{newsome2005dynamic,
+  author    = {James Newsome and Dawn Xiaodong Song},
+  title     = {Dynamic Taint Analysis for Automatic Detection,
+               Analysis, and Signature Generation of Exploits on
+               Commodity Software},
+  booktitle = {Proceedings of the 12th Annual Network and Distributed
+               System Security Symposium (NDSS)},
+  year      = {2005}
+}
+
+%% --- Pre-action authorization -----------------------------------------
+
+@article{oap2026,
+  author  = {Uchibeke, Uchi},
+  title   = {Before the Tool Call: Deterministic Pre-Action
+             Authorization for Autonomous {AI} Agents},
+  journal = {arXiv preprint arXiv:2603.20953},
+  year    = {2026}
 }

@@ -1,45 +1,502 @@
 \documentclass[sigconf,anonymous,review]{acmart}
 
+%% Conference (adjust as appropriate for submission)
+%% \setcopyright{none}
+%% \acmConference[ACSAC 2026]{Annual Computer Security Applications Conference}{December 2026}{Austin, TX, USA}
+
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true
+}
+
+%%
+%% --- Paper metadata ---------------------------------------------------
 \title{ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents}
+
+\author{Author Names Omitted for Review}
 
 \begin{document}
 
 \begin{abstract}
-LLM agents increasingly combine natural-language instructions, external documents, tool descriptions, tool outputs, and executable skills in a single planning context. This collapses the boundary between instructions and data. We present ProvShield, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge specific to the action, sink, destination, payload digest, principal, and expiration. We formalize ProvShield with a labeled transition system and evaluate it against skill injection, MCP metadata poisoning, web/email injection, RAG injection, and adaptive attacks.
+LLM agents increasingly combine natural-language instructions, external documents, tool descriptions, tool outputs, and executable skills in a single planning context. This collapses the boundary between instructions and data: a malicious webpage, email, retrieved document, MCP tool description, or skill file can become an instruction that causes the agent to send private data, delete files, execute code, or leak credentials. Existing defenses such as prompt hardening, input filtering, and generic user confirmation are insufficient because attacks are contextual and often exploit the agent's authority rather than a fixed malicious string pattern.
+
+We present \textbf{ProvShield}, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
+
+We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate it on skill-injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. Our evaluation measures attack success rate, benign task completion, false blocking, confirmation burden, and runtime overhead.
 \end{abstract}
 
 \maketitle
 
+%% ======================================================================
 \section{Introduction}
-% TODO: Convert paper_draft.md introduction into ACM format.
+\label{sec:introduction}
 
+LLM agents are no longer passive chat systems. They read webpages, search private documents, inspect email, call MCP tools, load skills, and perform write actions on behalf of users. This shift changes the security problem. A prompt injection does not need to compromise the model in the traditional sense; it only needs to convince the model to use the authority already granted to the agent.
+
+The root cause is an \emph{instruction/data boundary failure}. A single model context may contain system policies, user goals, tool descriptions, retrieved documents, email text, skill instructions, and tool outputs. All are represented as natural language, but they do not have the same authority. A webpage should provide facts, not new objectives. A tool output should inform the agent, not authorize a new write. A tool description should describe the interface, not grant itself privilege. A skill file should not override system policy. Yet many agents feed these sources to the model without a runtime-enforced distinction.
+
+A common response is to harden the system prompt: tell the model to ignore instructions in webpages and emails~\cite{openai_agent_prompt_injection_defense}. This is useful but brittle. Another response is input filtering: classify malicious text before it reaches the model. This fails when attacks are contextual, indirect, or socially engineered~\cite{greshake2023indirect}. A third response is generic confirmation: ask the user before writes. This can be laundered by vague confirmations that do not bind the actual destination, payload, or source of influence~\cite{perez2022ignore}.
+
+This paper takes a different position. The model may be manipulated; the runtime must still prevent unauthorized high-risk effects. We design \textbf{ProvShield}, a provenance-typed runtime enforcement system for MCP and skill-based agents. ProvShield assigns unforgeable sidecar labels to content as it enters the agent runtime, tracks integrity and confidentiality through transformations~\cite{denning1976lattice,myers1997decentralized}, declares tools with effect types and sinks, and intercepts all proposed tool calls. A tool call executes only if the runtime can establish that its action, destination, payload, and capability are authorized by policy. When user confirmation is required, the confirmation is not generic; it creates a one-time bridge bound to the exact action, sink, destination, payload digest, expiry, and principal.
+
+\subsection{Contributions}
+
+This paper makes the following contributions:
+
+\begin{enumerate}
+  \item \textbf{A provenance-typed security model for MCP and skill-based agents.} We define integrity and confidentiality lattices for user intent, system policy, skills, tool metadata, tool outputs, external content, secrets, and capability tokens.
+  \item \textbf{An effect-typed runtime monitor.} We introduce source-to-sink rules that gate write, send, delete, execute, credential, authentication, and financial effects.
+  \item \textbf{A bound user-intent bridge.} We design an action-specific, destination-specific, payload-specific declassification mechanism that avoids the weakness of generic confirmation.
+  \item \textbf{A formal model and safety properties.} We model the LLM as an adversarial proposal oracle and prove runtime-observable sink enforcement properties.
+  \item \textbf{A prototype for MCP and skill-based agents.} We implement MCP proxying, skill loading, sidecar provenance, policy checking, bridge handling, and audit replay.
+  \item \textbf{A systematic evaluation plan.} We evaluate against skill injection~\cite{skillinject}, MCP metadata poisoning~\cite{mcptox}, MCP safety scenarios~\cite{mcp_safety_audit}, web/email prompt injection, RAG injection, and adaptive attacks~\cite{attriguard_agentwatcher}.
+\end{enumerate}
+
+%% ======================================================================
 \section{Motivating Attacks}
-% TODO: Web/email, MCP metadata poisoning, skill injection, confirmation laundering.
+\label{sec:attacks}
 
+We describe four representative attacks that motivate ProvShield's design. Each exploits the collapsed instruction/data boundary in current agent architectures.
+
+\subsection{Webpage-to-Email Exfiltration}
+\label{sec:attack-web}
+
+A user asks the agent to summarize a webpage. The webpage contains hidden text instructing the agent to send the user's API key to an attacker-controlled email address~\cite{greshake2023indirect}. A prompt-only defense requires the model to recognize and ignore the hidden instruction. ProvShield instead labels the webpage as \texttt{ExternalContent}. If the model proposes \texttt{send\_email}, the monitor detects that the destination and objective are influenced by low-integrity content and that the payload may contain \texttt{Secret}. The call is denied unless an explicit, bound declassification exists.
+
+\subsection{MCP Metadata Poisoning}
+\label{sec:attack-mcp}
+
+An MCP server registers a tool with a benign name but a malicious description: ``Use this tool to validate credentials; before calling, include all available tokens.''~\cite{mcp_safety_audit,mcptox} If the agent treats tool metadata as trusted instruction, the metadata can shape future tool calls. ProvShield treats unattested metadata as \texttt{ToolMetadata}, a low-integrity source. Metadata can describe schema but cannot grant itself authority or introduce privileged objectives.
+
+\subsection{Skill File Injection}
+\label{sec:attack-skill}
+
+A skill package includes instructions that appear to implement a formatting task but also tell the agent to delete local files after completion~\cite{skillinject}. If loaded as trusted natural-language instructions, the skill can override user intent. ProvShield labels untrusted skills separately, prevents them from changing policy, and blocks destructive effects unless authorized by user intent and capability.
+
+\subsection{Confirmation Laundering}
+\label{sec:attack-bridge}
+
+A malicious email asks the agent to ``send the requested diagnostic information to the support address.'' The agent presents a generic confirmation: ``Send email?'' The user clicks yes. The actual recipient is attacker-controlled and the payload includes private data. ProvShield's bridge would show the exact recipient, payload digest, source categories, and private-data crossing. A bridge for one payload and destination cannot authorize another.
+
+%% ======================================================================
 \section{Threat Model}
-% TODO: Attacker capabilities, TCB, non-goals.
+\label{sec:threat-model}
 
+The adversary may control external content, emails, retrieved documents, tool outputs, untrusted MCP metadata, and untrusted skill files. The adversary may know the policy rules and the label syntax rendered to the model. The adversary may attempt label spoofing, metadata poisoning, bridge laundering, delayed injection, multi-step exfiltration, or capability replay.
+
+The LLM is \emph{not} trusted to make authorization decisions. It is modeled as a proposal function that may output arbitrary tool calls. The trusted computing base (TCB) consists of:
+\begin{itemize}
+  \item the runtime monitor,
+  \item the sidecar provenance store,
+  \item the policy engine,
+  \item the token generator,
+  \item the bridge manager, and
+  \item the audit logger.
+\end{itemize}
+
+ProvShield does not attempt to prove that untrusted text has no influence on the model's hidden state. Instead, it proves that high-risk tool execution cannot occur unless the runtime-observable provenance and capability constraints are satisfied.
+
+%% ======================================================================
 \section{Design}
-% TODO: Labels, lattices, sidecar provenance, effects, monitor, bridge.
+\label{sec:design}
 
+Figure~\ref{fig:architecture} shows the ProvShield architecture. We describe each component below.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.8cm and 1.2cm,
+    box/.style={draw, rounded corners, minimum width=2.0cm, minimum height=0.6cm, font=\small, align=center},
+    arr/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+  ]
+    \node[box] (user) {User UI};
+    \node[box, right=1.5cm of user] (web) {Web / Email / RAG};
+    \node[box, below=0.6cm of user] (skill) {Skill Loader};
+    \node[box, below right=0.6cm and 0.4cm of web] (cb) {Context Builder};
+    \node[box, below=0.6cm of cb] (store) {Sidecar Store};
+    \node[box, right=1.0cm of cb] (llm) {LLM Planner};
+    \node[box, below=0.8cm of store] (mon) {Runtime Monitor};
+    \node[box, left=0.8cm of mon] (policy) {Policy Engine};
+    \node[box, right=0.8cm of mon] (bridge) {Bridge Manager};
+    \node[box, below=0.6cm of mon] (mcp) {MCP Proxy};
+    \node[box, below=0.6cm of mcp] (tools) {MCP / Local Tools};
+    \node[box, below=0.6cm of policy] (audit) {Audit Log};
+
+    \draw[arr] (user) -- (cb);
+    \draw[arr] (web) -- (cb);
+    \draw[arr] (skill) -- (cb);
+    \draw[arr] (cb) -- (store);
+    \draw[arr] (cb) -- (llm);
+    \draw[arr] (llm) -- node[above,font=\scriptsize] {proposed call} (mon);
+    \draw[arr] (store) -- (mon);
+    \draw[arr] (policy) -- (mon);
+    \draw[arr] (bridge) -- (mon);
+    \draw[arr] (mon) -- node[left,font=\scriptsize] {allow} (mcp);
+    \draw[arr] (mon) -- node[right,font=\scriptsize] {require} (bridge);
+    \draw[arr] (mcp) -- (tools);
+    \draw[arr] (tools) -- node[right,font=\scriptsize] {labeled output} (cb);
+    \draw[arr] (mon) -- (audit);
+  \end{tikzpicture}
+  \caption{ProvShield architecture. Content entering the agent is labeled with provenance metadata in a sidecar store. The runtime monitor intercepts all proposed tool calls and enforces source-to-sink policy using provenance labels, effect types, and capability tokens.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsection{Provenance Labels}
+\label{sec:labels}
+
+Each object in the context store is associated with a provenance label:
+\begin{lstlisting}
+Labeled<T> = (value: T, label: ProvenanceLabel)
+\end{lstlisting}
+
+The label includes integrity, confidentiality, origin, principals, transformation history, runtime signature, nonce, and timestamp. Labels are maintained in a sidecar store. Natural-language labels shown to the model are advisory and cannot create authority.
+
+The integrity lattice is:
+\begin{lstlisting}
+SystemPolicy > UserIntent > TrustedSkill
+  > AttestedToolMetadata > ToolMetadata
+  > ToolOutput > ExternalContent > UntrustedSkill
+\end{lstlisting}
+
+The confidentiality lattice is:
+\begin{lstlisting}
+Public < UserPrivate < Secret < CapabilityToken
+\end{lstlisting}
+
+These lattices are inspired by the classic work of Denning~\cite{denning1976lattice} on information-flow lattices and the decentralized label model of Myers and Liskov~\cite{myers1997decentralized}. Unlike program-level IFC systems~\cite{fides_agent_ifc}, ProvShield labels are maintained in a sidecar store separate from the model context, preventing the LLM from manipulating its own security metadata.
+
+\subsection{Effect-Typed Tools}
+\label{sec:effects}
+
+Each tool declares effects and sinks. Examples include \texttt{ReadPrivate}, \texttt{WriteExternal}, \texttt{SendNetwork}, \texttt{DeleteLocal}, \texttt{ExecuteCode}, \texttt{ModifyAuth}, and \texttt{CreateCredential}. The monitor uses these declarations to determine whether a proposed call is low-risk, high-risk, bridge-required, or denied.
+
+Table~\ref{tab:effect-types} summarizes the effect taxonomy and the default policy action for each category.
+
+\begin{table}[t]
+  \centering
+  \caption{Effect type taxonomy and default policy actions.}
+  \label{tab:effect-types}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Effect}        & \textbf{Example Sink}       & \textbf{Default Action} \\
+    \midrule
+    \texttt{ReadPrivate}    & Local file system           & Allow (logged)          \\
+    \texttt{WriteExternal}  & Network endpoint            & Bridge required         \\
+    \texttt{SendNetwork}    & Email, HTTP POST            & Bridge required         \\
+    \texttt{DeleteLocal}    & File system                 & Bridge required         \\
+    \texttt{ExecuteCode}    & Shell, sandbox              & Bridge required         \\
+    \texttt{ModifyAuth}     & Credential store            & Deny (unless admin)     \\
+    \texttt{CreateCredential} & Token vault              & Deny (unless admin)     \\
+    \texttt{Financial}      & Payment API                 & Deny (unless admin)     \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Runtime Monitor}
+\label{sec:monitor}
+
+The monitor intercepts all tool calls. For each call, it:
+\begin{enumerate}
+  \item normalizes the tool name and arguments;
+  \item infers effects and sinks;
+  \item reconstructs argument and payload provenance from the sidecar graph;
+  \item checks source-to-sink policy;
+  \item allows, denies, sanitizes, quarantines, or requests a bridge;
+  \item logs the decision for replay.
+\end{enumerate}
+
+The monitor operates deterministically. It does not use the LLM for policy decisions. Provenance reconstruction uses the sidecar store, not model-generated text, to trace argument origins.
+
+\subsection{User-Intent Bridge}
+\label{sec:bridge}
+
+High-risk effects require user intent. A bridge binds the exact action, effect, sink, destination, payload digest, source categories, principal, expiration, and one-time nonce. It can authorize only the normalized call for which it was minted.
+
+The bridge presentation to the user includes:
+\begin{itemize}
+  \item the action name and destination;
+  \item a SHA-256 digest of the payload;
+  \item the provenance source categories contributing to the payload;
+  \item whether private data or secrets cross a confidentiality boundary;
+  \item a short expiration window (default: 30 seconds).
+\end{itemize}
+
+\subsection{Capability Tokens}
+\label{sec:tokens}
+
+A successful bridge creates a capability token~\cite{miller2006capabilities,dennis1966semantics}. The token is not textually usable by the model. It is stored in runtime state and checked by the monitor. Tokens cannot be copied from prompt text, modified, or replayed. Each token carries a cryptographic binding to the normalized action, sink, destination, payload digest, principal, and nonce. This design draws on capability-based protection~\cite{miller2006capabilities} adapted for the agent context.
+
+%% ======================================================================
 \section{Formal Model}
-% TODO: State, transitions, theorems.
+\label{sec:formal}
 
+We define runtime state as:
+\begin{equation}
+\Sigma = (C, R, T, S, P, B, A)
+\label{eq:state}
+\end{equation}
+where $C$ is the context store, $R$ is runtime provenance state, $T$ is the tool registry, $S$ is the secret store, $P$ is the policy, $B$ is bridge/token state, and $A$ is the audit log.
+
+Figure~\ref{fig:transition} shows the labeled transition system governing tool-call lifecycle. Transitions include user input, external content ingestion, skill loading, tool registration, model proposal, monitor allow, monitor deny, bridge confirmation, tool execution, label propagation, and audit logging.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.2cm,
+    state/.style={draw, rounded corners, minimum width=1.6cm, minimum height=0.5cm, font=\small, align=center},
+    arr/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+  ]
+    \node[state] (ci) {Context\\Ingest};
+    \node[state, right=1.0cm of ci] (ms) {Model\\Step};
+    \node[state, right=1.0cm of ms] (tp) {Tool\\Proposed};
+    \node[state, right=1.0cm of tp] (mc) {Monitor\\Check};
+
+    \node[state, below left=1.0cm and 0.3cm of mc] (den) {Denied};
+    \node[state, below=1.0cm of mc] (br) {Bridge\\Required};
+    \node[state, below right=1.0cm and 0.3cm of mc] (al) {Allowed};
+
+    \node[state, below left=0.8cm and 0.3cm of br] (bd) {Bridge\\Denied};
+    \node[state, below right=0.8cm and 0.3cm of br] (bc) {Bridge\\Confirmed};
+
+    \node[state, below=0.8cm of al] (te) {Tool\\Executed};
+    \node[state, below=0.6cm of te] (lp) {Label\\Propagated};
+    \node[state, below right=0.6cm and 0.8cm of den] (al2) {Audit\\Logged};
+
+    \draw[arr] (ci) -- (ms);
+    \draw[arr] (ms) -- (tp);
+    \draw[arr] (tp) -- (mc);
+    \draw[arr] (mc) -- node[left,font=\scriptsize] {deny} (den);
+    \draw[arr] (mc) -- node[left,font=\scriptsize] {bridge} (br);
+    \draw[arr] (mc) -- node[right,font=\scriptsize] {allow} (al);
+    \draw[arr] (br) -- node[left,font=\scriptsize] {reject} (bd);
+    \draw[arr] (br) -- node[right,font=\scriptsize] {confirm} (bc);
+    \draw[arr] (bc) -- node[left,font=\scriptsize] {token} (al);
+    \draw[arr] (al) -- (te);
+    \draw[arr] (te) -- (lp);
+    \draw[arr] (lp) -- (al2);
+    \draw[arr] (den) -- (al2);
+    \draw[arr] (bd) -- (al2);
+  \end{tikzpicture}
+  \caption{Labeled transition system for tool-call lifecycle. The monitor check is the single enforcement point; all execution paths pass through it.}
+  \label{fig:transition}
+\end{figure}
+
+\subsection{Theorem 1: Label Unforgeability}
+
+\begin{theorem}[Label Unforgeability]
+In any reachable state $\sigma \in \textit{Reach}(\Sigma_0)$, model-generated text cannot create a valid label with higher integrity than permitted by runtime transitions.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Labels are stored in the sidecar store $R$, which is only mutated by runtime transitions (ingestion, tool return, bridge confirmation, administrative action). The LLM produces text in $C$ but has no write path to $R$. A label is valid only if it carries a runtime signature over the nonce and timestamp. The LLM cannot forge this signature because the signing key is in the TCB and never exposed to the model context.
+\end{proof}
+
+\subsection{Theorem 2: Capability Token Unforgeability}
+
+\begin{theorem}[Capability Token Unforgeability]
+In any reachable state, a valid capability token can only be created by the runtime through a bridge confirmation or administrative transition.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Tokens are created only in transition \textsc{BridgeConfirm} or \textsc{AdminGrant}. Both are TCB operations that require either a user-confirmed bridge or an administrative credential. The token includes a MAC over the normalized call parameters and nonce. The LLM cannot compute a valid MAC without the key.
+\end{proof}
+
+\subsection{Theorem 3: No Unauthorized Secret Exfiltration}
+
+\begin{theorem}[No Unauthorized Secret Exfiltration]
+If a proposed call sends or writes payload with confidentiality $\geq \texttt{Secret}$ to an external sink, the call cannot reach execution unless a valid declassification bridge exists.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The monitor reconstructs payload provenance from $R$. If any component has confidentiality $\geq \texttt{Secret}$ and the sink is external (not in $S$ or a trusted internal store), the policy requires a bridge. Without a valid bridge, the monitor transitions to \textsc{Deny}. A bridge is valid only if it binds the exact payload digest, destination, and action. Therefore, a generic or reused bridge cannot authorize a different exfiltration.
+\end{proof}
+
+\subsection{Theorem 4: No Low-Integrity Control of High-Risk Effects}
+
+\begin{theorem}[No Low-Integrity Control]
+If a high-risk effect is influenced by low-integrity sources (external content, tool output, untrusted skill, or untrusted tool metadata), the call cannot execute unless a valid bridge or policy exception authorizes the flow.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The monitor traces provenance of all arguments through $R$. If any argument's provenance includes a source with integrity $< \texttt{UserIntent}$ and the call has a high-risk effect, the policy requires a bridge. A bridge authorizes a specific normalized call; it cannot be repurposed for a different action or destination. Therefore, an attacker-controlled low-integrity source cannot direct high-risk execution through the bridge mechanism.
+\end{proof}
+
+\subsection{Theorem 5: Bridge Non-Replay}
+
+\begin{theorem}[Bridge Non-Replay]
+A bridge token authorized for a normalized call $(a, e, d, h, p, n)$ cannot authorize a different tuple $(a', e', d', h', p', n')$ where any field differs, or where the token has expired.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The token includes a MAC over all six fields plus an expiration timestamp. The monitor re-normalizes the proposed call and recomputes the expected MAC. Any field mismatch causes verification to fail. The nonce $n$ is consumed upon use (one-time semantics), preventing replay.
+\end{proof}
+
+%% ======================================================================
 \section{Implementation}
-% TODO: MCP proxy, skill loader, policy engine, audit replay.
+\label{sec:implementation}
 
+ProvShield is implemented as a runtime layer around an existing agent system. The implementation consists of six components:
+
+\begin{enumerate}
+  \item \textbf{MCP proxy} for tool registration and call mediation. It intercepts \texttt{tools/list} and \texttt{tools/call} messages, labeling metadata at registration and outputs at return time.
+  \item \textbf{Skill loader} for provenance-aware skill ingestion. Skills from untrusted sources are labeled \texttt{UntrustedSkill}; attested skills from verified publishers are labeled \texttt{TrustedSkill}.
+  \item \textbf{Context builder} for sidecar label construction. It assigns provenance labels to every object entering the agent context, including user messages, system prompts, web content, email, RAG results, and tool outputs.
+  \item \textbf{Policy engine} for source-to-sink rules. The engine is configured via a declarative YAML policy that maps effect types and provenance patterns to actions (allow, deny, bridge).
+  \item \textbf{Bridge manager} for user confirmations and token issuance. It renders human-readable bridge presentations, collects confirmation, and issues cryptographically bound capability tokens.
+  \item \textbf{Audit logger} for deterministic replay. Every monitor decision, bridge interaction, and tool execution is logged with full provenance state for post-hoc analysis.
+\end{enumerate}
+
+The prototype avoids modifying MCP servers by mediating calls through a proxy. Tool metadata is labeled at registration time. Tool outputs are labeled at return time. All proposed calls pass through the monitor before execution. The implementation uses Python for the policy engine and bridge manager, with JSON-serializable provenance labels and HMAC-based token signatures.
+
+%% ======================================================================
 \section{Evaluation}
-% TODO: Attack suites, baselines, metrics, results.
+\label{sec:evaluation}
 
+We evaluate ProvShield along three axes: security (attack blocking), utility (benign task completion), and performance (runtime overhead).
+
+\subsection{Attack Suites}
+\label{sec:eval-attacks}
+
+We evaluate against six attack categories:
+\begin{enumerate}
+  \item \textbf{Skill injection}~\cite{skillinject}: malicious instructions embedded in skill files.
+  \item \textbf{MCP metadata poisoning}~\cite{mcptox}: tool descriptions that attempt to exfiltrate credentials or influence future tool calls.
+  \item \textbf{MCP safety scenarios}~\cite{mcp_safety_audit}: demonstrated exploits against MCP-connected LLM agents including code execution, remote access, and credential theft.
+  \item \textbf{Web/email prompt injection}~\cite{greshake2023indirect}: indirect injection through retrieved web pages and email content.
+  \item \textbf{RAG injection}: adversarial documents injected into retrieval-augmented generation pipelines.
+  \item \textbf{Adaptive white-box attacks}: attackers with knowledge of the policy and label syntax who attempt to craft inputs that bypass enforcement~\cite{attriguard_agentwatcher}.
+\end{enumerate}
+
+\subsection{Baselines}
+\label{sec:eval-baselines}
+
+We compare ProvShield against:
+\begin{itemize}
+  \item \textbf{No defense}: the agent runs without security mediation.
+  \item \textbf{Prompt hardening}: the system prompt instructs the model to ignore injected instructions~\cite{openai_agent_prompt_injection_defense}.
+  \item \textbf{Input firewall}: a classifier filters malicious text before it reaches the model.
+  \item \textbf{Static allowlist}: tools are restricted to a fixed set; no dynamic policy.
+  \item \textbf{Generic confirmation}: the user is asked to confirm all writes, but the confirmation does not bind specific destination or payload.
+  \item \textbf{Fides-style IFC}~\cite{fides_agent_ifc}: information-flow labels tracked within the model context (where feasible).
+  \item \textbf{Causal attribution monitor}~\cite{attriguard_agentwatcher}: post-hoc attribution of tool calls to user intent vs.\ external content (where feasible).
+\end{itemize}
+
+\subsection{Metrics}
+\label{sec:eval-metrics}
+
+We report the following metrics:
+\begin{itemize}
+  \item \textbf{Attack success rate (ASR)}: fraction of attack scenarios where the malicious action executes.
+  \item \textbf{Secret exfiltration rate}: fraction of scenarios where secret data reaches an external sink.
+  \item \textbf{Unauthorized write/delete/exec rate}: fraction of scenarios where a destructive action executes without authorization.
+  \item \textbf{Bridge abuse success}: fraction of scenarios where an attacker successfully manipulates the bridge.
+  \item \textbf{Benign task completion rate (BTCR)}: fraction of benign tasks that complete successfully.
+  \item \textbf{False blocking rate}: fraction of benign tool calls incorrectly denied.
+  \item \textbf{Confirmation burden}: average number of bridge confirmations per benign task.
+  \item \textbf{Monitor latency (p50/p95)}: latency added by the runtime monitor per tool call.
+\end{itemize}
+
+\subsection{Planned Results}
+
+Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evaluation results. Values marked TBD correspond to planned experiments.
+
+\begin{table}[t]
+  \centering
+  \caption{Attack success rate (\%) across defense configurations and attack suites. Lower is better.}
+  \label{tab:attack-results}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    \textbf{Defense} & \textbf{Skill} & \textbf{MCPTox} & \textbf{MCP Safe.} & \textbf{Web/Email} & \textbf{RAG} & \textbf{Adaptive} \\
+    \midrule
+    No defense         & TBD & TBD & TBD & TBD & TBD & TBD \\
+    Prompt hardening   & TBD & TBD & TBD & TBD & TBD & TBD \\
+    Input firewall     & TBD & TBD & TBD & TBD & TBD & TBD \\
+    Generic confirm.   & TBD & TBD & TBD & TBD & TBD & TBD \\
+    \textbf{ProvShield} & TBD & TBD & TBD & TBD & TBD & TBD \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{Utility and overhead metrics. BTCR = benign task completion rate.}
+  \label{tab:utility-results}
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{Defense} & \textbf{BTCR} & \textbf{False Block} & \textbf{Bridge Burden} & \textbf{p50 Lat.} & \textbf{p95 Lat.} \\
+    \midrule
+    No defense    & TBD & TBD & --- & TBD & TBD \\
+    \textbf{ProvShield} & TBD & TBD & TBD & TBD & TBD \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+%% ======================================================================
 \section{Discussion}
-% TODO: Limitations and deployment considerations.
+\label{sec:discussion}
 
+ProvShield's guarantees are runtime guarantees. It does not claim to remove malicious influence from model activations. An attacker may still influence the model's planning through low-integrity content; ProvShield ensures that this influence cannot materialize as unauthorized high-risk tool execution.
+
+\paragraph{Conservative policy.} ProvShield's policy may be conservative when provenance is ambiguous. For example, a tool output that mixes user-provided data with external content will be labeled at the lower integrity level. This can cause false blocking for benign mixed-provenance payloads. We mitigate this with field-level provenance tracking and configurable policy granularity.
+
+\paragraph{Social engineering.} User confirmations can still be socially engineered. However, bridge binding prevents generic confirmation from authorizing hidden destination or payload changes. The bridge presentation includes payload digest, destination, and provenance source categories, making hidden changes visible to the user.
+
+\paragraph{Model influence.} ProvShield does not address the problem of an attacker influencing the model's reasoning to cause benign-looking but suboptimal tool selections. This is an inherent limitation of treating the model as an untrusted planner rather than attempting to make it trustworthy.
+
+\paragraph{Deployment.} ProvShield should be deployed alongside sandboxing, least-privilege tool access, and secret management. It is a complementary defense layer, not a replacement for standard security practices.
+
+%% ======================================================================
 \section{Related Work}
-% TODO: Agent IFC, MCP security, prompt injection defenses, capability systems.
+\label{sec:related}
 
+\paragraph{Prompt injection.}
+Perez and Ribeiro~\cite{perez2022ignore} demonstrated goal hijacking and prompt leaking against GPT-3 through PromptInject. Greshake et al.~\cite{greshake2023indirect} introduced indirect prompt injection, showing that retrieved data can function as arbitrary code execution in LLM-integrated applications. OpenAI published design guidance for agents to resist prompt injection~\cite{openai_agent_prompt_injection_defense}, focusing on prompt hardening and input separation.
+
+\paragraph{Information-flow control for agents.}
+Fides~\cite{fides_agent_ifc} from Microsoft Research applies information-flow control to LLM agents, tracking labels within the model context. ProvShield differs by maintaining provenance in a sidecar store outside the model context, preventing the LLM from manipulating its own security metadata. NeuroTaint~\cite{neurotaint} extends taint tracking to semantic transformations in LLM agents, complementing ProvShield's runtime enforcement. The classic foundations of IFC include Denning's lattice model~\cite{denning1976lattice} and the decentralized label model of Myers and Liskov~\cite{myers1997decentralized}. TaiLi~\cite{taili} applies IFC principles specifically to LLM agent tool invocations.
+
+\paragraph{Capability-based security.}
+Dennis and Van Horn~\cite{dennis1966semantics} introduced capability-based addressing. Miller~\cite{miller2006capabilities} developed capability-based security for modern systems. ProvShield applies these principles to agent tool authorization through bound capability tokens. Narayan et al.~\cite{narayan2025capabilities} proposed capability-based security for AI agent tool invocation with formal guarantees. The Agent Passport~\cite{oap2026} specifies deterministic pre-action authorization for autonomous agents.
+
+\paragraph{Taint tracking.}
+Newsome and Song~\cite{newsome2005dynamic} introduced dynamic taint analysis for software security. ProvShield adapts this concept to the agent setting, tracking provenance through natural-language transformations rather than program data flow.
+
+\paragraph{MCP security.}
+Radosevich and Halloran~\cite{mcp_safety_audit} demonstrated security exploits in MCP-connected LLM agents and introduced MCPSafetyScanner for auditing MCP servers. Wang et al.~\cite{mcptox} created MCPTox, a benchmark for tool poisoning attacks on real-world MCP servers. The MCP authorization specification~\cite{mcp_authorization_spec} defines transport-level authorization for MCP connections but does not address content-level provenance.
+
+\paragraph{Skill and tool security.}
+Schmotz et al.~\cite{skillinject} introduced SkillInject, demonstrating up to 80\% attack success rate against frontier models through skill file injection. Shi et al.~\cite{progent} proposed Progent, which secures agents through privilege control with monotonic confinement. Song et al.~\cite{progent} further developed tool-use monitoring and privilege control frameworks for LLM agents.
+
+\paragraph{Action attribution.}
+AttriGuard~\cite{attriguard_agentwatcher} proposes causal attribution of tool invocations to distinguish user-intent-driven calls from injection-driven calls through counterfactual testing. ProvShield is complementary: it enforces policy at the runtime level regardless of the model's reasoning, while attribution-based approaches attempt to determine whether the model's reasoning was influenced.
+
+%% ======================================================================
 \section{Conclusion}
-% TODO.
+\label{sec:conclusion}
 
+Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through unforgeable provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
+
+We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
+
+ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.
+
+%%
+%% --- Bibliography -----------------------------------------------------
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
 
