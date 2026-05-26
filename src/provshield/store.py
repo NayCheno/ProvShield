@@ -91,17 +91,27 @@ class SidecarProvenanceStore:
         return self._objects.get(object_id)
 
     def build_argument_graph(self, call: NormalizedToolCall) -> ProvenanceGraph:
-        """Build provenance graph for a tool call from stored labels."""
-        # In a real system, this would trace which context objects
-        # contributed to the call's arguments. For the prototype,
-        # we scan all stored labels to simulate provenance tracking.
+        """Build provenance graph for a tool call from stored labels.
+
+        Uses explicit source IDs (PR-3) when available, falls back to
+        heuristic string matching for backward compatibility.
+        """
         all_labels = [obj.label for obj in self._objects.values()]
 
-        # Source labels: those that could have influenced the call
+        # PR-3: Use explicit source IDs if available
         source_labels = []
-        for obj in self._objects.values():
-            if self._object_contributed_to_call(obj, call):
-                source_labels.append(obj.label)
+        if call.argument_sources is not None:
+            # Explicit provenance: collect labels from referenced object IDs
+            seen_ids = set()
+            for _, obj_id in call.argument_sources:
+                if obj_id not in seen_ids and obj_id in self._objects:
+                    source_labels.append(self._objects[obj_id].label)
+                    seen_ids.add(obj_id)
+        else:
+            # Fallback: heuristic string matching (legacy behavior)
+            for obj in self._objects.values():
+                if self._object_contributed_to_call(obj, call):
+                    source_labels.append(obj.label)
 
         # Payload labels: labels on the data being sent/written
         payload_labels = self._extract_payload_labels(call)

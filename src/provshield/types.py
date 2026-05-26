@@ -116,6 +116,8 @@ class NormalizedToolCall:
     destination: Optional[str] = None
     payload_digest: Optional[str] = None
     principal: str = "user"
+    # PR-3: explicit provenance tracking — maps argument keys to source object IDs
+    argument_sources: Optional[tuple[tuple[str, str], ...]] = None  # ((arg_key, obj_id), ...)
 
     def matches_token(self, token: CapabilityToken) -> bool:  # noqa: F821
         """Check if a capability token authorizes this exact call."""
@@ -128,6 +130,12 @@ class NormalizedToolCall:
             and not token.expired
             and not token.used
         )
+
+    def get_source_ids(self, arg_key: str) -> list[str]:
+        """Get source object IDs for a specific argument key."""
+        if self.argument_sources is None:
+            return []
+        return [oid for key, oid in self.argument_sources if key == arg_key]
 
 
 # ---------------------------------------------------------------------------
