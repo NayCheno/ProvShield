@@ -237,6 +237,24 @@ class RuntimeMonitor:
 
         principal = proposed_call.get("principal", "user")
 
+        # PR-1: Wire explicit argument sources from proposed_call
+        raw_sources = proposed_call.get("argument_sources")
+        argument_sources: Optional[tuple[tuple[str, str], ...]] = None
+        if isinstance(raw_sources, dict):
+            # Convert {arg_key: [obj_ids...]} to flat tuple of (arg_key, obj_id)
+            pairs: list[tuple[str, str]] = []
+            for arg_key, obj_ids in raw_sources.items():
+                if isinstance(obj_ids, (list, tuple)):
+                    for oid in obj_ids:
+                        pairs.append((str(arg_key), str(oid)))
+                else:
+                    pairs.append((str(arg_key), str(obj_ids)))
+            argument_sources = tuple(pairs) if pairs else None
+        elif isinstance(raw_sources, (list, tuple)):
+            argument_sources = tuple(
+                (str(k), str(v)) for k, v in raw_sources
+            ) or None
+
         return NormalizedToolCall(
             tool_name=tool_name,
             arguments=arguments,
@@ -245,6 +263,7 @@ class RuntimeMonitor:
             destination=destination,
             payload_digest=payload_digest,
             principal=principal,
+            argument_sources=argument_sources,
         )
 
     def apply_sanitizer(
