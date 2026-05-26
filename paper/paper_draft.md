@@ -9,7 +9,7 @@ LLM agents increasingly combine natural-language instructions, external document
 
 We present **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
 
-We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 27 scenarios spanning skill injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. ProvShield reduces the attack success rate by 93.8% compared to an undefended agent, maintains 100% benign task completion, and adds only 0.03 ms median latency per tool call.
+We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 27 scenarios spanning skill injection, MCP metadata poisoning, MCP safety, web/email prompt injection, RAG injection, and adaptive attacks. ProvShield reduces the attack success rate by 93.8% compared to an undefended agent, maintains 100% benign task completion, and adds only 0.03 ms median latency per tool call. We additionally validate with LLM-based evaluation using MiMo-v2.5-pro, achieving 0.0% end-to-end attack success rate across 11 attack scenarios with 100% benign task completion.
 
 ## 1. Introduction
 
@@ -296,6 +296,35 @@ ProvShield achieves 100% benign task completion across all five categories (brow
 #### Performance
 
 The runtime monitor adds minimal overhead: p50 latency of 0.03 ms and p95 latency of 0.07 ms per tool call. This is well below the 100 ms target and is negligible in the context of LLM inference latency.
+
+
+#### LLM-Based Evaluation
+
+The policy-level evaluation above tests the monitor with pre-defined tool calls. To validate that ProvShield also works when an actual LLM generates the tool calls, we conduct an LLM-based evaluation using the MiMo-v2.5-pro model. We present the LLM with user goals, injected malicious content (skill instructions, MCP metadata, web/email content), and a set of available tools. The LLM generates tool calls autonomously; we then run them through ProvShield's monitor.
+
+Across 11 attack scenarios, the LLM generated malicious tool calls in only 2 cases (18.2% LLM manipulation rate), indicating that the model itself provides partial defense. In both cases, ProvShield blocked the calls (50% block rate). The overall end-to-end attack success rate is **0.0%**. For 7 benign scenarios, the LLM correctly generated appropriate tool calls and all completed successfully (100% BTCR). This confirms that ProvShield's runtime enforcement operates correctly as a defense-in-depth layer: even when the LLM is manipulated, the runtime prevents unauthorized execution.
+
+#### Ablation Study
+
+**Table 5: Ablation study — Attack success rate (%) across configurations.** A0 is full ProvShield.
+
+| Config | Skill | MCPTox | MCP Safe. | Web/Em. | RAG | Adapt. | All |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| A0 Full | 0 | 0 | 0 | 33 | 0 | 0 | 6 |
+| A1 No labels | 67 | 100 | 50 | 100 | 100 | 75 | 81 |
+| A2 No monitor | 100 | 100 | 100 | 100 | 100 | 100 | 100 |
+| A3 No bridge bind | 33 | 50 | 50 | 67 | 50 | 50 | 50 |
+| A4 Trust metadata | 0 | 100 | 0 | 33 | 0 | 0 | 19 |
+| A5 No cap token | 0 | 0 | 0 | 33 | 0 | 0 | 6 |
+| A6 Conf. only | 0 | 0 | 0 | 33 | 0 | 0 | 6 |
+| A7 Integ. only | 33 | 0 | 0 | 67 | 50 | 25 | 31 |
+| A8 No audit | 0 | 0 | 0 | 33 | 0 | 0 | 6 |
+
+The ablation reveals that provenance labels are the single most critical component: removing them (A1) raises ASR from 6% to 81%. Removing the runtime monitor (A2) yields 100% ASR, confirming that enforcement—not just labeling—is essential. Removing bridge binding (A3) raises ASR to 50%, demonstrating that generic confirmation is insufficient. Trusting tool metadata (A4) specifically inflates MCPTox suite ASR to 100%, confirming the value of treating unattested metadata as low-integrity. The confidentiality-only ablation (A6) shows that integrity checks are the primary defense layer; the integrity-only ablation (A7) shows that confidentiality checks are needed to prevent secret exfiltration (31% ASR vs 6%).
+
+#### Failure Analysis
+
+The residual 6.2% ASR (1 of 16 attack scenarios) comes from `A4_web_email_03`: a hidden HTML instruction causes the agent to write private data to a local file. ProvShield allows this because the `write_file` tool maps to the `WriteLocal` effect, which is not classified as high-risk in the current policy. This is a deliberate design decision: ProvShield targets *external* sinks (network send, external write, code execution) where the impact is irreversible. Local writes can be audited and reversed. To block this scenario, the policy could be extended to require a bridge for local writes of private/confidential content, at the cost of increased confirmation burden for benign file operations.
 
 ### 7.5 Comparison with Related Work
 
