@@ -42,12 +42,11 @@ artifact/
 │   └── benign/
 └── results/                   # (generated) Evaluation outputs
 ```
-
 ## Prerequisites
 
 | Requirement | Version | Purpose |
 |---|---|---|
-| Python | >= 3.10 | Runtime |
+| Python | >= 3.13 | Runtime |
 | PyYAML | >= 6.0 | Policy and scenario parsing |
 | pytest | >= 8.0 | Test runner |
 
