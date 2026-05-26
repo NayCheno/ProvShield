@@ -401,7 +401,10 @@ Proof.
   exact Hwf.
 Qed.
 
-(** Token consumption preserves well-formedness *)
+(** Token consumption preserves well-formedness.
+    Update uses a simple mark: we set token_signature to 0 to indicate
+    consumption, and add the nonce to used_nonces. The sidecar (which
+    is what state_well_formed checks) is unchanged. *)
 Theorem consume_preserves_well_formed :
   forall (s : RuntimeState) (t : CapabilityToken),
     state_well_formed s = true ->
@@ -410,22 +413,16 @@ Theorem consume_preserves_well_formed :
       (mkState
         (context s)
         (sidecar s)
-        (map (fun tok => if Nat.eqb tok.token_id t.token_id
-                         then {| token_id := tok.token_id;
-                                 action := tok.action;
-                                 sink := tok.sink;
-                                 destination := tok.destination;
-                                 payload_digest := tok.payload_digest;
-                                 principal := tok.principal;
-                                 expires_at := tok.expires_at;
-                                 nonce := tok.nonce;
-                                 one_time := tok.one_time;
-                                 has_declassification := tok.has_declassification;
-                                 bridge_id := tok.bridge_id;
-                                 used := true;
-                                 created_at := tok.created_at |}
+        (map (fun tok => if Nat.eqb (token_nonce tok) (token_nonce t)
+                         then mkToken
+                                (token_action tok)
+                                (token_destination tok)
+                                (token_payload_hash tok)
+                                (token_nonce tok)
+                                (token_expiry tok)
+                                0  (* mark consumed: invalidate signature *)
                          else tok) (tokens s))
-        (t.nonce :: used_nonces s)
+        (token_nonce t :: used_nonces s)
         (audit_log s)
         (fresh_id s)) = true.
 Proof.
@@ -436,21 +433,25 @@ Proof.
 Qed.
 
 
-(* ================================================================= *)
-(** ** Summary *)
-(* ================================================================= *)
-
-(** These theorems establish:
-    1. Label unforgeability: model cannot create valid sidecar labels
-    2. Token unforgeability: model cannot create valid capability tokens
-    3. No secret exfiltration: secrets cannot reach external sinks without bridge
-    4. Bridge non-replay: consumed tokens and mismatched fields are rejected
-    5. Label preservation: all transitions preserve label well-formedness
+(** These theorems establish (as a mechanization skeleton):
+    1. Label unforgeability: definition-level — valid labels have non-zero MAC
+    2. Token unforgeability: definition-level — valid tokens have non-zero signature
+    3. No secret exfiltration: monitor denies secret+external without valid token
+    4. Bridge non-replay: consumed nonce or mismatched field → token rejected
+    5. Label preservation: transitions preserve sidecar well-formedness
+    6. Destination swap protection: different destination → token no match
+    
+    ** Limitations: **
+    - Theorems 1-2 are definition tautologies, not transition-system invariants.
+    - The formalization does not yet model the full transition relation
+      (ingest → propose → monitor → bridge → execute → audit).
+    - Claims in the paper should say "proof sketch" not "mechanized proof"
+      until a reachable-state invariant is proven.
     
     The formalization assumes:
-    - Runtime (TCB) controls the signing key
+    - Runtime (TCB) controls the HMAC key
     - Model has no access to sidecar store or signing key
-    - MAC/HMAC is cryptographically secure
+    - HMAC is cryptographically secure
     
     These assumptions match the trusted computing base defined in
     the paper's threat model (Section 3). *)
