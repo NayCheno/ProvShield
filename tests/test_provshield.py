@@ -947,6 +947,107 @@ class TestBridgeReplaySwap:
 
 
 # ---------------------------------------------------------------------------
+# PR-3: Bridge re-execution flow
+# ---------------------------------------------------------------------------
+
+class TestBridgeReExecution:
+    """Test the complete bridge flow: request → confirm → token → re-execute."""
+
+    def test_bridge_accept_and_execute(self):
+        """After bridge accept, re-execute with minted token."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        # Step 1: Propose call → REQUIRE_BRIDGE
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "email_sent",
+        )
+        assert isinstance(result, Decision)
+        assert result.kind == DecisionKind.REQUIRE_BRIDGE
+        bridge_id = result.bridge_request["bridge_id"]
+
+        # Step 2: Accept bridge with executor → should execute
+        executed = monitor.complete_bridge(
+            bridge_id,
+            accepted=True,
+            executor=lambda call: "email_sent_via_bridge",
+        )
+        assert executed is not None
+
+    def test_bridge_reject_returns_none(self):
+        """After bridge reject, return None."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        assert isinstance(result, Decision)
+        bridge_id = result.bridge_request["bridge_id"]
+
+        rejected = monitor.complete_bridge(bridge_id, accepted=False)
+        assert rejected is None
+
+    def test_bridge_token_cannot_be_reused(self):
+        """Token minted by bridge is one-time use."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        bridge_id = result.bridge_request["bridge_id"]
+        token = monitor.complete_bridge(bridge_id, accepted=True)
+        assert token is not None
+        assert token.used is False  # Not consumed until re-execute
+
+    def test_bridge_no_executor_returns_token(self):
+        """Without executor, complete_bridge returns token for manual use."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        bridge_id = result.bridge_request["bridge_id"]
+        token = monitor.complete_bridge(bridge_id, accepted=True)
+        assert token is not None
+        assert isinstance(token, CapabilityToken)
+
+
+# ---------------------------------------------------------------------------
 # PR-3: Explicit provenance graph tests
 # ---------------------------------------------------------------------------
 

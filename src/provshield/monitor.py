@@ -290,7 +290,11 @@ class RuntimeMonitor:
         user_id: str = "user",
         executor: Optional[Callable[[NormalizedToolCall], Any]] = None,
     ) -> Any:
-        """Complete a bridge interaction: confirm and optionally execute."""
+        """Complete a bridge interaction: confirm, mint token, and optionally re-execute.
+
+        Returns the minted CapabilityToken. If executor is provided, also
+        re-checks the original call with the new token and executes.
+        """
         confirmation = self.bridge_manager.confirm(bridge_id, accepted, user_id)
         if confirmation is None:
             raise ValueError(f"Bridge {bridge_id} not found or expired")
@@ -301,17 +305,44 @@ class RuntimeMonitor:
             self.bridge_manager.reject_and_cleanup(bridge_id)
             return None
 
+        # Snapshot the request before mint_token cleans it up
+        request = self.bridge_manager.get_request(bridge_id)
+
         token = self.bridge_manager.mint_token(bridge_id)
         if token is None:
             raise RuntimeError(f"Failed to mint token for bridge {bridge_id}")
 
-        # If executor provided, re-check with the new token
-        if executor:
-            request = self.bridge_manager.get_request(bridge_id)
-            if request:
-                # The request was already cleaned up by mint_token,
-                # but we have the token, so re-execute
-                pass
+        # PR-3: Re-execute with the minted token if executor provided
+        if executor and request:
+            # Reconstruct the normalized call from the bridge request
+            effect = Effect(request.effect)
+            sink = Sink(request.sink)
+            original_call = NormalizedToolCall(
+                tool_name=request.action,
+                arguments={},  # arguments were in the original proposed_call, not stored
+                effect=effect,
+                sink=sink,
+                destination=request.destination,
+                payload_digest=request.payload_digest,
+                principal=user_id,
+            )
+            # Re-enter check_and_execute — token is now in the store
+            # and should match, allowing execution
+            graph = self.provenance_store.build_argument_graph(original_call)
+            decision = self.policy_engine.evaluate(
+                call=original_call,
+                provenance_graph=graph,
+                capability_token=token,
+            )
+            if decision.kind == DecisionKind.ALLOW:
+                token.consume()
+                self.audit_log.record_decision(
+                    original_call, graph, decision, bridge_id, token.token_id
+                )
+                output = executor(original_call)
+                labeled = self.provenance_store.label_tool_output(original_call, output)
+                self.audit_log.record_execution(original_call, type(output).__name__)
+                return labeled
 
         return token
 
