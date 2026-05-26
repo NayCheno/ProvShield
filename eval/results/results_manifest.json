@@ -1,0 +1,29 @@
+{
+  "$schema": "results_manifest.schema.json",
+  "_comment": "Required manifest for any evaluation result set. Every result table in the paper must trace back to a manifest entry.",
+  "schema_version": "1.0.0",
+  "git_sha": "<fill: output of `git rev-parse HEAD`>",
+  "git_dirty": "<fill: true if working tree was not clean>",
+  "command": "<fill: exact command used to generate results>",
+  "python_version": "<fill: output of `python --version`>",
+  "platform": "<fill: OS and arch>",
+  "policy_hash": "<fill: sha256 of policy YAML>",
+  "scenario_file": "<fill: path to scenarios file>",
+  "scenario_file_hash": "<fill: sha256 of scenario file>",
+  "scenario_count": {
+    "total": 0,
+    "attack": 0,
+    "benign": 0
+  },
+  "timestamp_utc": "<fill: ISO 8601 UTC>",
+  "random_seed": "<fill: seed used>",
+  "model_id": "<fill: LLM model name or 'synthetic'>",
+  "model_endpoint_hash": "<fill: sha256 of API endpoint, or 'synthetic'>",
+  "provshield_version": "0.1.0",
+  "results": {
+    "evaluation": null,
+    "ablation": null,
+    "llm_evaluation": null
+  },
+  "notes": ""
+}
