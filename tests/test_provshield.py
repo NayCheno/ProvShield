@@ -1934,3 +1934,55 @@ class TestUnknownToolDeny:
         monitor = RuntimeMonitor()
         call = monitor.normalize_call({"tool_name": "send_email", "arguments": {}})
         assert call.tool_registered is True
+
+
+# ---------------------------------------------------------------------------
+# PR-4: HMAC label signature tests
+# ---------------------------------------------------------------------------
+
+class TestHMACLabelSignature:
+    """Test that label signatures use HMAC and cannot be forged."""
+
+    def test_label_has_valid_hmac(self):
+        """Labels created by runtime have valid HMAC signatures."""
+        label = make_label("ExternalContent", "Public", "web")
+        assert label.verify_signature() is True
+
+    def test_tampered_label_fails_verification(self):
+        """Tampering with label fields invalidates the HMAC."""
+        label = make_label("ExternalContent", "Public", "web")
+        # Tamper by creating a new label with different integrity but same signature
+        tampered = ProvenanceLabel(
+            integrity=Integrity.USER_INTENT,  # changed
+            confidentiality=label.confidentiality,
+            origin=label.origin,
+            runtime_signature=label.runtime_signature,  # old signature
+            nonce=label.nonce,
+            created_at=label.created_at,
+        )
+        assert tampered.verify_signature() is False
+
+    def test_forged_signature_rejected(self):
+        """A label with a fabricated signature fails verification."""
+        label = ProvenanceLabel(
+            integrity=Integrity.EXTERNAL,
+            confidentiality=Confidentiality.PUBLIC,
+            origin="web",
+            runtime_signature="00000000000000000000000000000000",  # forged
+        )
+        assert label.verify_signature() is False
+
+    def test_hmac_key_not_exposed(self):
+        """The HMAC key is never exposed in the label."""
+        label = make_label("ExternalContent", "Public", "web")
+        # Signature should be 32 hex chars (16 bytes truncated)
+        assert len(label.runtime_signature) == 32
+        # Should not be all zeros
+        assert label.runtime_signature != "0" * 32
+
+    def test_same_fields_different_hmac_per_instance(self):
+        """Two labels with same fields get different nonces and signatures."""
+        l1 = make_label("ExternalContent", "Public", "web")
+        l2 = make_label("ExternalContent", "Public", "web")
+        assert l1.nonce != l2.nonce
+        assert l1.runtime_signature != l2.runtime_signature

@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import secrets
 import time
 from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Optional
+
+# Module-level runtime signing key (PR-4: HMAC instead of plain SHA-256)
+# This key lives in the TCB — the model cannot access it.
+_RUNTIME_HMAC_KEY: bytes = secrets.token_bytes(32)
 
 
 # ---------------------------------------------------------------------------
@@ -124,7 +129,12 @@ class ProvenanceLabel:
             )
 
     def _compute_signature(self) -> str:
-        """Compute a deterministic signature over label fields."""
+        """Compute HMAC over label fields using the runtime key.
+
+        PR-4: Uses HMAC-SHA256 instead of plain SHA-256 so that the
+        signature is cryptographically keyed — the model cannot forge
+        labels because it lacks the runtime HMAC key.
+        """
         payload = (
             f"{self.integrity.value}|"
             f"{self.confidentiality.value}|"
@@ -133,10 +143,19 @@ class ProvenanceLabel:
             f"{','.join(self.transform_history)}|"
             f"{self.nonce}"
         )
-        return hashlib.sha256(payload.encode()).hexdigest()[:32]
+        return hmac.new(
+            _RUNTIME_HMAC_KEY,
+            payload.encode(),
+            hashlib.sha256,
+        ).hexdigest()[:32]
 
     def is_low_integrity(self) -> bool:
         return self.integrity in LOW_INTEGRITY_SOURCES
+
+    def verify_signature(self) -> bool:
+        """Verify that the label's HMAC signature is correct."""
+        expected = self._compute_signature()
+        return hmac.compare_digest(self.runtime_signature, expected)
 
     def dominates(self, other: ProvenanceLabel) -> bool:
         """True if this label has >= integrity and <= confidentiality."""
