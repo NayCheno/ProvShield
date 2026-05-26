@@ -1,12 +1,14 @@
 """Skill loader: provenance-aware skill ingestion and labeling.
 
-This is a skeleton implementation that demonstrates skill loading
-with provenance classification.
+Supports HMAC-based signature verification for trusted skills.
+Untrusted skills are labeled with low-integrity provenance.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import hashlib
+import hmac
+from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from .context import ContextBuilder
@@ -20,7 +22,8 @@ class SkillManifest:
     version: str
     instructions: str
     trusted: bool = False
-    signature: Optional[str] = None
+    signature: Optional[str] = None  # HMAC hex digest
+    signer: Optional[str] = None  # who signed this skill
     dependencies: tuple[str, ...] = ()
 
 
@@ -29,14 +32,24 @@ class SkillLoader:
 
     Responsibilities:
       - Classify skill as trusted or untrusted
-      - Verify signatures if available
+      - Verify HMAC signatures against trusted keys
       - Label skill instructions
       - Prevent skill from modifying policy
     """
 
-    def __init__(self, context_builder: ContextBuilder) -> None:
+    def __init__(
+        self,
+        context_builder: ContextBuilder,
+        trusted_keys: Optional[dict[str, str]] = None,
+    ) -> None:
         self.context = context_builder
         self._loaded_skills: dict[str, SkillManifest] = {}
+        # PR-6: trusted signer registry (signer_name -> hmac_key)
+        self._trusted_keys: dict[str, str] = trusted_keys or {}
+
+    def add_trusted_signer(self, name: str, key: str) -> None:
+        """Register a trusted signer with their HMAC key."""
+        self._trusted_keys[name] = key
 
     def load_skill(
         self,
@@ -62,11 +75,27 @@ class SkillLoader:
         return obj
 
     def _verify_signature(self, manifest: SkillManifest) -> bool:
-        """Verify skill package signature. Stub: returns False if no signature."""
-        if manifest.signature is None:
+        """Verify skill package HMAC signature against trusted keys.
+
+        Returns True only if:
+        1. The manifest has a signature and signer
+        2. The signer is in the trusted keys registry
+        3. The HMAC matches the computed value
+        """
+        if manifest.signature is None or manifest.signer is None:
             return False
-        # In production: verify cryptographic signature against trusted registry
-        return len(manifest.signature) > 0
+
+        key = self._trusted_keys.get(manifest.signer)
+        if key is None:
+            return False  # Unknown signer
+
+        # Compute expected HMAC over skill content
+        content = f"{manifest.name}:{manifest.version}:{manifest.instructions}"
+        expected = hmac.new(
+            key.encode(), content.encode(), hashlib.sha256
+        ).hexdigest()
+
+        return hmac.compare_digest(expected, manifest.signature)
 
     def is_loaded(self, skill_name: str) -> bool:
         return skill_name in self._loaded_skills
