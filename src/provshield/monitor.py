@@ -137,6 +137,29 @@ class RuntimeMonitor:
         start = time.perf_counter()
 
         call = self.normalize_call(proposed_call)
+
+        # PR-C3: If no explicit argument_sources, use taint propagation
+        if call.argument_sources is None:
+            from .taint import ArgumentBuilder
+            builder = ArgumentBuilder(self.provenance_store)
+            inferred = builder.build_sources(call.tool_name, call.arguments)
+            if inferred:
+                pairs = []
+                for arg_key, obj_ids in inferred.items():
+                    for oid in obj_ids:
+                        pairs.append((arg_key, oid))
+                call = NormalizedToolCall(
+                    tool_name=call.tool_name,
+                    arguments=call.arguments,
+                    effect=call.effect,
+                    sink=call.sink,
+                    destination=call.destination,
+                    payload_digest=call.payload_digest,
+                    principal=call.principal,
+                    argument_sources=tuple(pairs) if pairs else None,
+                    tool_registered=call.tool_registered,
+                )
+
         graph = self.provenance_store.build_argument_graph(call)
         token = self.token_store.lookup_matching_token(call)
 
