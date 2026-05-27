@@ -97,3 +97,10 @@ temp/
 # Docker and reproducibility local state
 .docker/
 docker-data/
+
+# Coq build artifacts
+*.vo
+*.vok
+*.vos
+*.glob
+.Makefile.coq.d
