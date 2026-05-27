@@ -17,6 +17,7 @@ from .types import Effect, NormalizedToolCall, Sink
 class BridgeRequest:
     """A request for user confirmation, sent to the UI."""
     bridge_id: str
+    normalized_call: NormalizedToolCall  # PR-C1: full original call snapshot
     action: str
     effect: str
     sink: str
@@ -81,6 +82,7 @@ class BridgeManager:
 
         request = BridgeRequest(
             bridge_id=bridge_id,
+            normalized_call=call,  # PR-C1: preserve full original call
             action=call.tool_name,
             effect=call.effect.value,
             sink=call.sink.value,

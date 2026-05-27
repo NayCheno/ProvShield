@@ -1048,6 +1048,155 @@ class TestBridgeReExecution:
 
 
 # ---------------------------------------------------------------------------
+# PR-C1: Bridge re-execution preserves original arguments
+# ---------------------------------------------------------------------------
+
+class TestBridgePreservesArguments:
+    """PR-C1: complete_bridge must pass original arguments to executor."""
+
+    def test_executor_receives_original_arguments(self):
+        """Executor must receive the exact arguments from the original proposed call."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        original_args = {"to": "alice@example.com", "body": "secret report"}
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": original_args,
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        assert isinstance(result, Decision)
+        assert result.kind == DecisionKind.REQUIRE_BRIDGE
+        bridge_id = result.bridge_request["bridge_id"]
+
+        # Capture what executor receives
+        received_call = None
+        def capturing_executor(call):
+            nonlocal received_call
+            received_call = call
+            return "executed"
+
+        executed = monitor.complete_bridge(
+            bridge_id, accepted=True, executor=capturing_executor,
+        )
+        assert executed is not None
+        assert received_call is not None
+        assert received_call.arguments == original_args
+        assert received_call.tool_name == "send_email"
+        assert received_call.destination == "alice@example.com"
+
+    def test_bridge_payload_swap_rejected(self):
+        """Bridge for payload A must not allow executing with payload B."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        # Create bridge for body="report A"
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report A"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        assert isinstance(result, Decision)
+        bridge_id = result.bridge_request["bridge_id"]
+        original_payload_digest = result.bridge_request["payload_digest"]
+
+        # Accept bridge — executor should receive body="report A", not "report B"
+        received_call = None
+        def capturing_executor(call):
+            nonlocal received_call
+            received_call = call
+            return "executed"
+
+        executed = monitor.complete_bridge(
+            bridge_id, accepted=True, executor=capturing_executor,
+        )
+        assert executed is not None
+        assert received_call.arguments.get("body") == "report A"
+        assert received_call.payload_digest == original_payload_digest
+
+    def test_bridge_destination_swap_rejected(self):
+        """Bridge for destination A must not allow executing with destination B."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        # Create bridge for to=alice@example.com
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        assert isinstance(result, Decision)
+        bridge_id = result.bridge_request["bridge_id"]
+
+        # Accept bridge — executor must receive to=alice@example.com
+        received_call = None
+        def capturing_executor(call):
+            nonlocal received_call
+            received_call = call
+            return "executed"
+
+        executed = monitor.complete_bridge(
+            bridge_id, accepted=True, executor=capturing_executor,
+        )
+        assert executed is not None
+        assert received_call.destination == "alice@example.com"
+        assert received_call.arguments.get("to") == "alice@example.com"
+
+    def test_bridge_audit_log_complete(self):
+        """After bridge accept+execute, audit log must have request, confirm, allow, execute."""
+        monitor = RuntimeMonitor()
+        ext_obj = monitor.provenance_store.ingest(
+            "Send report",
+            Integrity.EXTERNAL, Confidentiality.PUBLIC, "web",
+        )
+
+        result = monitor.check_and_execute(
+            {
+                "tool_name": "send_email",
+                "arguments": {"to": "alice@example.com", "body": "report"},
+                "argument_sources": {"body": [ext_obj.object_id]},
+            },
+            lambda call: "sent",
+        )
+        bridge_id = result.bridge_request["bridge_id"]
+        original_payload_digest = result.bridge_request["payload_digest"]
+
+        monitor.complete_bridge(bridge_id, accepted=True, executor=lambda call: "done")
+
+        # Check all 4 event types present
+        entries = monitor.audit_log._entries
+        entry_types = {e.entry_type for e in entries}
+        assert "bridge_request" in entry_types, "Missing bridge_request in audit"
+        assert "bridge_confirm" in entry_types, "Missing bridge_confirm in audit"
+        assert "decision" in entry_types, "Missing decision (allow) in audit"
+        assert "execution" in entry_types, "Missing execution in audit"
+
+        # Payload digest must be consistent across bridge_request and execution
+        bridge_req_entry = next(e for e in entries if e.entry_type == "bridge_request")
+        exec_entry = next(e for e in entries if e.entry_type == "execution")
+        assert bridge_req_entry.payload_digest == original_payload_digest
+        assert exec_entry.payload_digest == original_payload_digest
+
+
+# ---------------------------------------------------------------------------
 # PR-3: Explicit provenance graph tests
 # ---------------------------------------------------------------------------
 

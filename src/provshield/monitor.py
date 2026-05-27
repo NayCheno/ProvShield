@@ -312,20 +312,10 @@ class RuntimeMonitor:
         if token is None:
             raise RuntimeError(f"Failed to mint token for bridge {bridge_id}")
 
-        # PR-3: Re-execute with the minted token if executor provided
+        # PR-C1: Re-execute with the minted token if executor provided
         if executor and request:
-            # Reconstruct the normalized call from the bridge request
-            effect = Effect(request.effect)
-            sink = Sink(request.sink)
-            original_call = NormalizedToolCall(
-                tool_name=request.action,
-                arguments={},  # arguments were in the original proposed_call, not stored
-                effect=effect,
-                sink=sink,
-                destination=request.destination,
-                payload_digest=request.payload_digest,
-                principal=user_id,
-            )
+            # Use the original normalized call stored in the bridge request
+            original_call = request.normalized_call
             # Re-enter check_and_execute — token is now in the store
             # and should match, allowing execution
             graph = self.provenance_store.build_argument_graph(original_call)
