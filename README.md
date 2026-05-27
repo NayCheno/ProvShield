@@ -34,4 +34,6 @@ provshield_package/
 
 ## 当前状态
 
-这是 **initial research package v0.1**：足够用于立项、开题、项目分工、原型实现和第一版 paper drafting。参考文献元数据在正式投稿前需要重新核验最新版本。
+这是 **ProvShield research package v0.3**（research prototype）。代码主线已完成关键阻塞修复（C1–C5），包含 780 场景 LLM-in-the-loop 评测（530 attack + 250 benign，mimo-v2-pro），ProvShield ASR 0.2%（95% CI [0.0%, 0.8%]），BTCR 92.4%（95% CI [88.0%, 94.9%]）。Coq 形式化可编译（coqc 9.0），Docker 可复现。
+
+**投稿成熟度：** 当前为强 workshop / CCF-B 级别。主要待补强项：multi-model evaluation、stronger baselines、benchmark attack strength、proof claim discipline。详见审查报告与 roadmap。

@@ -290,7 +290,7 @@ We report the following metrics:
 
 #### Security Analysis
 
-Across 530 attack scenarios (including 45 workflow-embedded strong attacks) evaluated with LLM-in-the-loop, ProvShield achieves an attack success rate of **0.2%** (95% CI [0.0%, 0.8%]), a **100%** reduction from the no-defense baseline of 5.1% (95% CI [3.5%, 7.3%]). The LLM manipulation rate—the fraction of attack scenarios where the model generates any tool call—is 14.9%, indicating that the model itself provides partial resistance. Among the scenarios where the LLM generates the specific attack target tool, ProvShield's conditional block rate is **100%**: every malicious tool call that the LLM generates is blocked by the runtime monitor.
+Across 530 attack scenarios (including 88 workflow-embedded strong attacks) evaluated with LLM-in-the-loop, ProvShield achieves an attack success rate of **0.2%** (95% CI [0.0%, 0.8%]), a **96%** reduction from the no-defense baseline of 5.1% (95% CI [3.5%, 7.3%]). The LLM manipulation rate—the fraction of attack scenarios where the model generates any tool call—is 14.9%, indicating that the model itself provides partial resistance. Among the scenarios where the LLM generates the specific attack target tool, ProvShield's conditional block rate is **100%**: every malicious tool call that the LLM generates is blocked by the runtime monitor.
 
 The no-defense ASR of 5.1% reflects the robustness of modern LLMs against many injection patterns. The 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate) (where malicious actions are framed as legitimate IT procedures, compliance requirements, or policy updates) increase the manipulation rate compared to the standard scenarios. ProvShield's 100% block rate demonstrates that even when the LLM is manipulated, the runtime enforcement prevents all unauthorized execution.
 
@@ -298,7 +298,7 @@ Among baselines, prompt hardening reduces ASR to 1.1% but cannot defend against 
 
 #### Utility Analysis
 
-ProvShield achieves 92.4% benign task completion (95% CI [88.0%, 94.9%]), compared to 100% for the no-defense baseline. The 7.9% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. The false blocking rate is approximately 7.9%, and the confirmation burden is 7.9% of benign tasks.
+ProvShield achieves 92.4% benign task completion (95% CI [88.0%, 94.9%]), compared to 100% for the no-defense baseline. The 7.6% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. The false blocking rate is approximately 7.6%, and the confirmation burden is 7.6% of benign tasks.
 
 #### Conditional Metrics
 
@@ -369,15 +369,15 @@ ProvShield has several limitations that we state explicitly.
 
 **Social engineering.** User-intent bridges require human confirmation. A sufficiently convincing social engineering attack may still trick a user into confirming a harmful action. Bridge binding mitigates this by making the destination, payload digest, and provenance sources visible, but it cannot eliminate the risk entirely.
 
-Conservative policy.** When provenance is ambiguous—for example, when a tool output mixes user-provided data with external content—ProvShield labels at the lower integrity level. This conservative join can cause false blocking for benign mixed-provenance payloads. Our evaluation shows 7.9% false blocking on the benign suite, primarily from conservative taint propagation.
+**Conservative policy.** When provenance is ambiguous—for example, when a tool output mixes user-provided data with external content—ProvShield labels at the lower integrity level. This conservative join can cause false blocking for benign mixed-provenance payloads. Our evaluation shows 7.6% false blocking on the benign suite, primarily from conservative taint propagation.
 
 **Provenance granularity.** ProvShield tracks provenance at the object level, not at the token or field level within natural-language text. An attacker who embeds a malicious instruction within a legitimate-seeming text block may cause the entire block to inherit a higher integrity label if it is ingested through a trusted channel.
 
-**Residual attack surface.** The residual 0.24% ASR in the expanded evaluation indicates that some attacks pass through policy checks. This occurs when the LLM generates tool calls whose provenance does not trigger high-risk thresholds. Finer-grained argument-level provenance tracking would reduce this residual.
+**Residual attack surface.** The residual 0.2% ASR in the expanded evaluation (780 scenarios) indicates that one attack scenario passes through policy checks. This occurs when the LLM generates tool calls whose provenance does not trigger high-risk thresholds. Finer-grained argument-level provenance tracking would reduce this residual.
 
 **TCB assumptions.** The formal guarantees assume the runtime monitor, sidecar store, policy engine, and cryptographic primitives are not compromised. If the runtime itself is compromised, all guarantees are void. The HMAC key is managed at the module level; production deployment requires a proper key management system.
 
-**Evaluation scope.** Our evaluation uses 660 scenarios (420 attack, 240 benign) across 6 attack categories and 5 benign task categories with LLM-in-the-loop evaluation using mimo-v2-pro. A larger-scale evaluation with multiple LLMs, diverse MCP servers, and stronger adaptive attacks would strengthen the evidence.
+**Evaluation scope.** Our evaluation uses 780 scenarios (530 attack, 250 benign) across 6 attack categories and 5 benign task categories with LLM-in-the-loop evaluation using mimo-v2-pro, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate). A larger-scale evaluation with multiple LLMs, diverse MCP servers, and stronger adaptive attacks would strengthen the evidence.
 
 ## 11. Ethics
 
@@ -393,6 +393,6 @@ Conservative policy.** When provenance is ambiguous—for example, when a tool o
 
 Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through HMAC-keyed provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
 
-We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. The Coq formalization compiles cleanly with coqc 9.0. Evaluation on 780 scenarios (530 attack, 250 benign) spanning six attack categories with five comparative baselines, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate), shows ProvShield achieves **0.2%** end-to-end ASR (95% CI: [0.0%, 0.8%]) with 92.4% benign task completion, a **100% ASR reduction** compared to the no-defense baseline. Every malicious tool call generated by the LLM is blocked by the runtime monitor.
+We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. The Coq formalization compiles cleanly with coqc 9.0. Evaluation on 780 scenarios (530 attack, 250 benign) spanning six attack categories with five comparative baselines, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate), shows ProvShield achieves **0.2%** end-to-end ASR (95% CI: [0.0%, 0.8%]) with 92.4% benign task completion, a **96% ASR reduction** compared to the no-defense baseline. Every malicious tool call generated by the LLM targeting the attack-specific tool is blocked by the runtime monitor (100% conditional block rate).
 
 ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.

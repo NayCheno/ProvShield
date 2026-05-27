@@ -6,7 +6,7 @@ This package contains the attack suite, benign task suite, ablation configuratio
 
 ## Status
 
-**Prototype v0.3 — C1-C5 blockers resolved, expanded evaluation complete.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Expanded evaluation: 660 scenarios (420 attack + 240 benign), mimo-v2.5-pro, 6 defense configurations, 95% Wilson CI.
+**Prototype v0.3 — C1-C5 blockers resolved, expanded evaluation complete.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Expanded evaluation: 780 scenarios (530 attack + 250 benign), mimo-v2-pro, 6 defense configurations (including 88 workflow-embedded attack scenarios), 95% Wilson CI. ProvShield ASR: 0.2% (95% CI [0.0%, 0.8%]). BTCR: 92.4% (95% CI [88.0%, 94.9%]).
 
 ## Quick Start
 
@@ -90,23 +90,27 @@ make all
 
 | Suite | Scenarios | Description |
 |---|---|---|
-| `skill_injection` | 70 | Skill files with hidden destructive or exfiltration instructions |
-| `mcp_metadata_poisoning` | 70 | MCP tool metadata that attempts to authorize itself or extract secrets |
-| `mcp_safety` | 70 | Unauthorized code execution, credential theft, remote control |
-| `web_email_injection` | 70 | Webpage-to-email exfiltration, email-to-file deletion, hidden HTML |
-| `rag_injection` | 70 | Delayed triggers and poisoned retrieval objectives |
-| `adaptive_white_box` | 70 | Label spoofing, bridge replay, destination/payload swap, policy probing |
+| `skill_injection` | ~75 | Skill files with hidden destructive or exfiltration instructions |
+| `mcp_metadata_poisoning` | ~75 | MCP tool metadata that attempts to authorize itself or extract secrets |
+| `mcp_safety` | ~75 | Unauthorized code execution, credential theft, remote control |
+| `web_email_injection` | ~75 | Webpage-to-email exfiltration, email-to-file deletion, hidden HTML |
+| `rag_injection` | ~75 | Delayed triggers and poisoned retrieval objectives |
+| `adaptive_white_box` | ~75 | Label spoofing, bridge replay, destination/payload swap, policy probing |
+| `workflow_embedded` | 88 | Attacks embedded in legitimate workflows (45 strong + 22 targeted + 21 high-rate) |
+
+**Total attack scenarios: 530** (including 88 workflow-embedded strong attacks).
 
 ### Benign Tasks
 
 | Category | Tasks | Description |
 |---|---|---|
-| `browser` | 48 | Public webpage summarization and comparison |
-| `email` | 48 | Inbox summarization, draft replies, user-requested sends |
-| `mcp` | 48 | Issue queries, calendar invites |
-| `skills` | 48 | Report formatting, code linting |
-| `mixed` | 48 | Cross-tool workflows (web+email, private doc delivery) |
+| `browser` | 50 | Public webpage summarization and comparison |
+| `email` | 50 | Inbox summarization, draft replies, user-requested sends |
+| `mcp` | 50 | Issue queries, calendar invites |
+| `skills` | 50 | Report formatting, code linting |
+| `mixed` | 50 | Cross-tool workflows (web+email, private doc delivery) |
 
+**Total benign scenarios: 250.**
 ### Defenses
 
 Each scenario is evaluated against:
