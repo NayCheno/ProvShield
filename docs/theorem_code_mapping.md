@@ -10,12 +10,12 @@ corresponding Python implementation and test.
 | `label_unforgeability` | `ProvenanceLabel._compute_signature()` uses HMAC-SHA256 with runtime key | `TestHMACLabelSignature.test_forged_signature_rejected` |
 | `model_cannot_forge_label` | Model has no access to `_RUNTIME_HMAC_KEY` in `labels.py` | `TestHMACLabelSignature.test_tampered_label_fails_verification` |
 | `token_unforgeability` | `CapabilityToken` requires `CapabilityTokenStore.mint()` with HMAC key | `TestTokens.test_mint_and_lookup` |
-| `model_cannot_forge_token` | Model cannot call `mint()` without bridge confirmation | `TestBridgeReplaySwap` |
-| `no_secret_exfiltration` | `PolicyEngine.evaluate()` P2 rule: secret+external without declassification → DENY | `TestEndToEnd.test_secret_exfiltration_blocked` |
-| `bridge_non_replay` | `CapabilityToken.consume()` marks `used=True`; `verify_token()` checks nonce | `TestBridgeReplaySwap.test_bridge_replay_rejected` |
+| `model_cannot_forge_token` | Model cannot call `mint()` without bridge confirmation | `TestBridgeReplaySwap.test_bridge_consumed_token_rejected` |
+| `no_secret_exfiltration` | `PolicyEngine.evaluate()` P2 rule: secret+external without declassification → DENY | `TestEndToEnd.test_webpage_to_email_exfiltration_blocked` |
+| `bridge_non_replay` | `CapabilityToken.consume()` marks `used=True`; `verify_token()` checks nonce | `TestBridgeReplaySwap.test_bridge_consumed_token_rejected` |
 | `bridge_no_destination_swap` | `CapabilityToken.matches()` checks `destination` field | `TestBridgeReplaySwap.test_bridge_destination_swap_rejected` |
 | `reachable_well_formed` | All transitions preserve sidecar label validity | `TestLabels.test_integrity_lattice_ordering` |
-| `reachable_no_secret_exfil` | `monitor_decide_secret` → `PolicyEngine` P2 rule | `TestEndToEnd.test_secret_exfiltration_blocked` |
+| `reachable_no_secret_exfil` | `monitor_decide_secret` → `PolicyEngine` P2 rule | `TestEndToEnd.test_webpage_to_email_exfiltration_blocked` |
 
 ## Transition System
 
