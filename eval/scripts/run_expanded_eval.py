@@ -164,7 +164,6 @@ def evaluate_provshield(scenario, llm_tc):
             attack_succeeded = executed
     return {"decision": decision, "executed": executed, "attack_succeeded": attack_succeeded, "latency_ms": latency_ms}
 
-
 def evaluate_baseline(baseline, scenario, llm_tc):
     if not llm_tc or not llm_tc.get("tool_name"):
         return {"decision": "no_tool_call", "attack_succeeded": False}
@@ -307,6 +306,14 @@ def main():
             strong_scenarios = json.load(f)
         all_scenarios.extend(strong_scenarios)
         print(f"  + {len(strong_scenarios)} strong attack scenarios")
+
+    # Optionally load targeted attack scenarios
+    targeted_path = _root / "eval" / "data" / "targeted_scenarios.json"
+    if targeted_path.exists() and os.environ.get("INCLUDE_TARGETED", "1") == "1":
+        with open(targeted_path) as f:
+            targeted_scenarios = json.load(f)
+        all_scenarios.extend(targeted_scenarios)
+        print(f"  + {len(targeted_scenarios)} targeted attack scenarios")
 
     attack_scenarios = [s for s in all_scenarios if s["category"] == "attack"]
     benign_scenarios = [s for s in all_scenarios if s["category"] == "benign"]
