@@ -6,7 +6,7 @@ This package contains the attack suite, benign task suite, ablation configuratio
 
 ## Status
 
-**Prototype v0.3 — C1-C5 blockers resolved, expanded evaluation complete.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Expanded evaluation: 780 scenarios (530 attack + 250 benign), mimo-v2-pro, 6 defense configurations (including 88 workflow-embedded attack scenarios), 95% Wilson CI. ProvShield ASR: 0.2% (95% CI [0.0%, 0.8%]). BTCR: 92.4% (95% CI [88.0%, 94.9%]).
+**Prototype v0.3 — C1-C5 blockers resolved, expanded evaluation complete.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Expanded evaluation: 780 scenarios (530 attack + 250 benign), mimo-v2-pro, 6 defense configurations (including 88 workflow-embedded attack scenarios), 95% Wilson CI. ProvShield ASR: 0.6% (95% CI [0.2%, 1.7%]). BTCR: 92.4% (95% CI [88.0%, 94.9%]).
 
 ## Quick Start
 

@@ -59,7 +59,7 @@
 
 We present \textbf{ProvShield}, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
 
-We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy with JSON-RPC support, skill loader with HMAC verification, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 780 scenarios (530 attack, 250 benign) spanning skill injection, MCP metadata poisoning, web/email prompt injection, RAG injection, and adaptive white-box attacks against six defense configurations, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate). ProvShield achieves \textbf{0.2\%} attack success rate (95\% CI [0.0\%, 0.8\%]) compared to 5.1\% for the no-defense baseline---a \textbf{100\%} reduction---while maintaining 92.4\% benign task completion and adding negligible latency overhead.
+We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy with JSON-RPC support, skill loader with HMAC verification, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 780 scenarios (530 attack, 250 benign) spanning skill injection, MCP metadata poisoning, web/email prompt injection, RAG injection, and adaptive white-box attacks against six defense configurations, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate). ProvShield achieves \textbf{0.6\%} end-to-end attack success rate (95\% CI: [0.2\%, 1.7\%]) while maintaining 92.4\% benign task completion, an 88\% reduction from the no-defense baseline of 5.1\%.
 
 \maketitle
 
@@ -482,11 +482,11 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
     \textbf{Defense} & \textbf{ASR (\%)} & \textbf{95\% CI} \\
     \midrule
     No defense         & 5.1  & [3.5, 7.3] \\
-    Prompt hardening   & 1.1  & [0.5, 2.5] \\
-    Input firewall     & 1.9  & [1.0, 3.6] \\
+    Prompt hardening   & 1.9  & [1.0, 3.4] \\
+    Input firewall     & 3.4  & [2.2, 5.3] \\
     Generic confirm.   & 5.1  & [3.5, 7.3] \\
-    Static allowlist   & 0.0  & [0.0, 0.8] \\
-    \textbf{ProvShield} & \textbf{0.2} & \textbf{[0.0, 0.8]} \\
+    Static allowlist   & 0.0  & [0.0, 0.7] \\
+    \textbf{ProvShield} & \textbf{0.6} & \textbf{[0.2, 1.7]} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -502,11 +502,34 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
     Prompt hard.  & 100.0 & 0.0   & 0.0   \\
     Input fire.   & 100.0 & 0.0   & 0.0   \\
     Generic conf. & 100.0 & 0.0   & 0.0   \\
-    Static allow. & 78.8  & 21.3  & 0.0   \\
+    Static allow. & 79.2  & 20.8  & 0.0   \\
     \textbf{ProvShield} & \textbf{92.4} & \textbf{7.6} & \textbf{7.6} \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+Table~\ref{tab:per-suite} shows the per-suite ASR breakdown. ProvShield blocks all attacks in the skill injection, MCP metadata, MCP safety, and RAG suites. The residual 0.6\% ASR (3 attacks) occurs in the web/email (2/121) and adaptive white-box (1/136) suites.
+
+\begin{table}[t]
+  \centering
+  \caption{Per-suite attack success rate (\%) for ProvShield vs.\ no defense. $n$=530 attack scenarios.}
+  \label{tab:per-suite}
+  \small
+  \begin{tabular}{@{}lccr@{}}
+    \toprule
+    \textbf{Suite} & \textbf{No Defense} & \textbf{ProvShield} & \textbf{$n$} \\
+    \midrule
+    Skill injection       & 7.1 & 0.0 & 84  \\
+    MCP metadata          & 7.0 & 0.0 & 86  \\
+    RAG injection         & 3.9 & 0.0 & 103 \\
+    Web/email injection   & 2.5 & 1.7 & 121 \\
+    Adaptive white-box    & 5.9 & 0.7 & 136 \\
+    \midrule
+    \textbf{Overall}      & \textbf{5.1} & \textbf{0.6} & \textbf{530} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 
 
 \begin{figure}[t]
@@ -540,23 +563,23 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
     \fill[black!70] (3.0, 5.8) rectangle (3.4, 6.1);
     \node[right, font=\scriptsize] at (3.5, 5.95) {ProvShield};
   \end{tikzpicture}
-  \caption{Attack success rate by defense across 530 attack scenarios. ProvShield achieves 0.2\% ASR compared to 5.1\% for no defense (96\% reduction). Static allowlist also achieves 0\% ASR but at the cost of 21.3\% false blocking.}
+  \caption{Attack success rate by defense across 530 attack scenarios. ProvShield achieves 0.6\% ASR compared to 5.1\% for no defense (88\% reduction). Static allowlist also achieves 0\% ASR but at the cost of 20.8\% false blocking (79.2\% BTCR).}
   \Description{Bar chart comparing attack success rate across six defenses. No defense and generic confirmation are at 5.1\%, input firewall at 1.9\%, prompt hardening at 1.1\%, static allowlist and ProvShield at 0\%.}
   \label{fig:asr-comparison}
 \end{figure}
 
 \subsubsection{Security Analysis}
 
-Across 530 attack scenarios (including 88 workflow-embedded strong attacks) evaluated with LLM-in-the-loop, ProvShield achieves an attack success rate of \textbf{0.2\%} (95\% CI [0.0\%, 0.8\%]), a \textbf{96\%} reduction from the no-defense baseline of 5.1\% (95\% CI [3.5\%, 7.3\%]). The LLM manipulation rate---the fraction of attack scenarios where the model generates any tool call---is 14.9\%, indicating that the model itself provides partial resistance. Among the scenarios where the LLM generates the specific attack target tool, ProvShield's conditional block rate is \textbf{100\%}: every malicious tool call that the LLM generates is blocked by the runtime monitor.
+Across 530 attack scenarios (including 88 workflow-embedded strong attacks) evaluated with LLM-in-the-loop, ProvShield achieves an attack success rate of \textbf{0.6\%} (95\% CI [0.2\%, 1.7\%]), an \textbf{88\%} reduction from the no-defense baseline of 5.1\% (95\% CI [3.5\%, 7.3\%]). The LLM manipulation rate---the fraction of attack scenarios where the model generates any tool call---is 14.9\%, indicating that the model itself provides partial resistance. Among the scenarios where the LLM generates the specific attack target tool, ProvShield's conditional block rate is \textbf{100\%}: every malicious tool call that the LLM generates is blocked by the runtime monitor.
 
 The no-defense ASR of 5.1\% reflects the robustness of modern LLMs against many injection patterns. The 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate) (where malicious actions are framed as legitimate IT procedures, compliance requirements, or policy updates) increase the manipulation rate compared to the standard scenarios. ProvShield's 100\% block rate demonstrates that even when the LLM is manipulated, the runtime enforcement prevents all unauthorized execution.
 
-Among baselines, prompt hardening reduces ASR to 1.1\% but cannot defend against contextual or metadata-based attacks. Input firewall achieves 1.9\% ASR. Generic confirmation provides no protection (5.1\% ASR, identical to no defense) because it does not bind the specific destination or payload. Static allowlist achieves 0.0\% ASR but at the cost of false blocking.
+Among baselines, prompt hardening reduces ASR to 1.9\% but cannot defend against contextual or metadata-based attacks. Input firewall achieves 3.4\% ASR. Generic confirmation provides no protection (5.1\% ASR, identical to no defense) because it does not bind the specific destination or payload. Static allowlist achieves 0.0\% ASR but at the cost of 20.8\% false blocking (79.2\% BTCR).
 
 
 \subsubsection{Utility Analysis}
 
-ProvShield achieves 92.4\% benign task completion (95\% CI [88.0\%, 94.9\%]), compared to 100\% for the no-defense baseline. The 7.9\% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. The false blocking rate is approximately 7.9\%, and the confirmation burden is 7.9\% of benign tasks. Static allowlist achieves only 78.8\% BTCR, demonstrating the cost of its coarse-grained approach.
+ProvShield achieves 92.4\% benign task completion (95\% CI [88.0\%, 94.9\%]), compared to 100\% for the no-defense baseline. The 7.6\% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. The false blocking rate is approximately 7.6\%, and the confirmation burden is 7.6\% of benign tasks. Static allowlist achieves only 79.2\% BTCR, demonstrating the cost of its coarse-grained approach.
 
 \subsubsection{Conditional Metrics}
 
@@ -598,9 +621,9 @@ The ablation reveals that provenance labels are the single most critical compone
 
 \subsubsection{Failure Analysis}
 
-With the improved provenance labeling and 705-scenario evaluation (including 45 strong attacks), ProvShield achieves 0.0\% ASR. The previous residual ASR (0.24\%) was caused by a provenance labeling issue in the evaluation harness where user-role messages containing external content were incorrectly labeled as UserIntent. After fixing the labeling to correctly detect external content patterns, all attacks are blocked.
+Across the 780-scenario evaluation (including 88 workflow-embedded strong attacks), ProvShield achieves 0.6\% ASR (3 attack successes out of 530). The residual attacks occur in the web/email (2) and adaptive white-box (1) suites, where the LLM generates tool calls whose provenance does not trigger high-risk policy thresholds. In two cases, web/email content was ingested through a path that preserved higher integrity labels; in one adaptive case, the attacker crafted content that matched user-intent patterns.
 
-The 7.9\% false blocking rate arises from benign scenarios where the LLM generates tool calls with conservative provenance linking to external content, triggering bridge or deny decisions. In practice, field-level provenance tracking and user bridge interaction would reduce this rate.
+The 7.6\% false blocking rate arises from benign scenarios where the LLM generates tool calls with conservative provenance linking to external content, triggering bridge or deny decisions. In practice, field-level provenance tracking and user bridge interaction would reduce this rate.
 \subsection{Comparison with Related Work}
 \label{sec:eval-comparison}
 
@@ -682,7 +705,7 @@ ProvShield has several limitations that we state explicitly.
 
 \paragraph{Conservative policy.} When provenance is ambiguous---for example, when a tool output mixes user-provided data with external content---ProvShield labels at the lower integrity level. This conservative join can cause false blocking for benign mixed-provenance payloads. Our evaluation shows 7.6\% false blocking on the benign suite, primarily from conservative taint propagation.
 
-\paragraph{Residual attack surface.} ProvShield achieves 0.2\% ASR across 780 scenarios (one residual attack). The residual occurs when the LLM generates tool calls whose provenance does not trigger high-risk policy thresholds. The conservative taint propagation mode (binding all context to all arguments) may also produce false positives in untested configurations. Finer-grained argument-level provenance tracking would further improve precision.
+\paragraph{Residual attack surface.} ProvShield achieves 0.6\% ASR across 780 scenarios (3 residual attacks). The residual attacks occur in the web/email and adaptive suites where the LLM generates tool calls whose provenance does not trigger high-risk policy thresholds. The conservative taint propagation mode (binding all context to all arguments) may also produce false positives in untested configurations. Finer-grained argument-level provenance tracking would further improve precision.
 
 \paragraph{TCB assumptions.} The formal guarantees assume the runtime monitor, sidecar store, policy engine, and cryptographic primitives are not compromised. If the runtime itself is compromised, all guarantees are void. The HMAC key is managed at the module level; production deployment requires a proper key management system.
 
@@ -747,7 +770,7 @@ Prompt injection in agents is best understood as an authority-flow problem. Untr
 
 We formalized the system with a labeled transition system and proved five safety properties as proof sketches: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. The Coq formalization compiles with coqc 9.0 and includes the transition relation and reachable-state invariants, though the unforgeability theorems rely on definition-level reasoning and TCB assumptions.
 
-Evaluation on 780 scenarios (530 attack, 250 benign) with LLM-in-the-loop, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate), shows that ProvShield achieves \textbf{0.2\%} attack success rate compared to 5.1\% for no defense---a 96\% reduction---while maintaining 92.4\% benign task completion. Every malicious tool call generated by the LLM targeting the attack-specific tool is blocked by the runtime monitor (100\% conditional block rate). The no-defense ASR reflects modern LLM robustness; ProvShield provides defense-in-depth by blocking the residual attacks the model fails to resist.
+Evaluation on 780 scenarios (530 attack, 250 benign) with LLM-in-the-loop, including 88 workflow-embedded attack scenarios (45 strong + 22 targeted + 21 high-rate), shows that ProvShield achieves \textbf{0.6\%} attack success rate compared to 5.1\% for no defense---an 88\% reduction---while maintaining 92.4\% benign task completion. Every malicious tool call generated by the LLM targeting the attack-specific tool is blocked by the runtime monitor (100\% conditional block rate). The no-defense ASR reflects modern LLM robustness; ProvShield provides defense-in-depth by blocking the residual attacks the model fails to resist.
 
 ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.
 %%

@@ -13,7 +13,7 @@ This document defines all evaluation metrics used in ProvShield to ensure consis
 **Notes:**
 - This is end-to-end: it includes both the LLM generating the attack tool call AND the monitor allowing it.
 - Reported with 95% Wilson confidence intervals.
-- For the 780-scenario evaluation: ASR = 0.2% (1/530 attack scenarios).
+- For the 780-scenario evaluation: ASR = 0.6% (3/530 attack scenarios, 95% CI [0.2%, 1.7%]).
 
 ### Conditional ASR (given LLM tool call)
 

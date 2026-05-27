@@ -16,7 +16,7 @@
 
 ## Security
 
-- [x] ASR reduced by at least 80% vs no-defense. → Expanded eval: ProvShield 0.2% vs no_defense 5.1% (~96% reduction). 95% CI [0.0%, 0.8%]. 780 scenarios (530 attack + 250 benign).
+- [x] ASR reduced by at least 80% vs no-defense. → Expanded eval: ProvShield 0.6% vs no_defense 5.1% (88% reduction). 95% CI [0.2%, 1.7%]. 780 scenarios (530 attack + 250 benign).
 - [x] Secret exfiltration without declassification is zero. → Policy P2 denies secret+external without valid token. C3 taint propagation active.
 - [x] Label spoofing attacks fail. → HMAC-SHA256 labels (PR-4). Tampered labels fail verification.
 - [~] Capability token forgery attacks fail. → Token bound to all fields; small adaptive sample.
