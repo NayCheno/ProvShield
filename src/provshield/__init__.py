@@ -17,6 +17,7 @@ from .monitor import RuntimeMonitor, register_tool
 from .policy import PolicyEngine
 from .skill_loader import SkillLoader, SkillManifest
 from .store import LabeledObject, ProvenanceGraph, SidecarProvenanceStore
+from .taint import ArgumentBuilder
 from .tokens import CapabilityToken, CapabilityTokenStore
 from .types import (
     Decision,
@@ -67,4 +68,6 @@ __all__ = [
     # Skills
     "SkillLoader",
     "SkillManifest",
+    # Taint propagation
+    "ArgumentBuilder",
 ]
