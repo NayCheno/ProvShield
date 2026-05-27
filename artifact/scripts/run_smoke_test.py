@@ -18,24 +18,49 @@ _root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(_root / "src"))
 
 from provshield import Decision, DecisionKind, RuntimeMonitor
+from provshield.monitor import register_tool, TOOL_PROFILES
+from provshield.types import Effect, Sink
+
+
+def _ensure_tools_registered():
+    """Register all tools used in smoke test scenarios."""
+    profiles = {
+        "send_email": {"effects": [Effect.SEND_NETWORK], "sink": Sink.NETWORK_SEND, "destination_arg": "to", "payload_args": ["body"]},
+        "read_webpage": {"effects": [Effect.READ_PUBLIC], "sink": Sink.LOCAL_READ},
+        "read_email": {"effects": [Effect.READ_PRIVATE], "sink": Sink.PRIVATE_READ},
+        "delete_file": {"effects": [Effect.DELETE_LOCAL], "sink": Sink.LOCAL_WRITE, "payload_args": ["path"]},
+        "execute_shell": {"effects": [Effect.EXECUTE_CODE], "sink": Sink.CODE_EXECUTION, "payload_args": ["command"]},
+        "create_oauth_token": {"effects": [Effect.CREATE_CREDENTIAL], "sink": Sink.CREDENTIAL, "payload_args": ["scope", "token_debug"]},
+        "write_file": {"effects": [Effect.WRITE_LOCAL], "sink": Sink.LOCAL_WRITE, "payload_args": ["content"]},
+        "list_github_issues": {"effects": [Effect.READ_PUBLIC], "sink": Sink.LOCAL_READ},
+        "format_document": {"effects": [Effect.READ_PUBLIC], "sink": Sink.LOCAL_READ},
+    }
+    for name, profile in profiles.items():
+        if name not in TOOL_PROFILES:
+            register_tool(name, profile)
 
 
 def run_scenario(scenario_id: str, steps: list[dict], expected: str) -> bool:
     """Run a single scenario and check the decision."""
     monitor = RuntimeMonitor()
+    obj_ids = []
 
     for step in steps:
         if step["action"] == "ingest":
-            monitor.provenance_store.ingest(
+            obj = monitor.provenance_store.ingest(
                 step["content"],
                 step.get("integrity", "ExternalContent"),
                 step.get("confidentiality", "Public"),
                 step.get("origin", "unknown"),
             )
+            obj_ids.append(obj.object_id)
         elif step["action"] == "call":
+            # Conservative taint: bind all ingested objects to all arguments
+            arg_sources = {k: list(obj_ids) for k in step.get("arguments", {})}
             proposed = {
                 "tool_name": step["tool_name"],
                 "arguments": step.get("arguments", {}),
+                "argument_sources": arg_sources if arg_sources else None,
             }
             try:
                 result = monitor.check_and_execute(
@@ -67,6 +92,8 @@ def main() -> int:
     print(" ProvShield Smoke Test")
     print("=" * 50)
     print()
+
+    _ensure_tools_registered()
 
     # --- Attack Scenarios (1 per suite) ---
     print("--- Attack Scenarios (5) ---")
