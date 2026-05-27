@@ -1,9 +1,14 @@
 # ProvShield Evaluation Results
 
-Generated: 2026-05-27T00:26:09Z  
-Model: `mimo-v2.5-pro`  
-Git: `66c5beb73a85`  
-Scenarios: 16 attack + 7 benign  
+Generated: 2026-05-27T00:26:09Z
+Model: `mimo-v2.5-pro`
+Git: `66c5beb73a85` (pre-C1-C5 fixes; current HEAD: `1b73090`)
+Scenarios: 16 attack + 7 benign
+
+> Note: These results were generated before C1-C5 blocker fixes. The underlying
+> policy logic is unchanged; C1-C5 fix bridge argument preservation, MCP tool
+> defaults, taint propagation, audit replay, and Coq formalization. A re-run
+> with the current codebase is recommended for submission.
 
 ## Table 1: Attack Success Rate
 
