@@ -1,73 +1,124 @@
 # Rebuttal Preparation
 
-## Likely reviewer concern: novelty
+Anticipated reviewer questions and prepared responses for the ProvShield paper.
 
-Prepared response:
+## Q1: No-defense ASR is only 5.1% — is the benchmark strong enough?
 
-- Clarify that basic IFC is not claimed as new.
-- Emphasize MCP metadata + skill loader + tool output + external content boundary.
-- Emphasize bridge-bound declassification and capability issuance.
-- Point to adaptive attacks and artifact.
-- **Evidence:** Table 4 shows 10 design features across 6 approaches. ProvShield is the only one combining sidecar provenance, bound bridges, capability tokens, and MCP/skill-specific defense.
+**Reviewer concern:** The no-defense ASR of 5.1% means the LLM itself resists most attacks. Is ProvShield solving a problem that doesn't exist?
 
-## Likely concern: causality
+**Response:**
+- The 5.1% no-defense ASR reflects modern LLM robustness against naive injection, which is itself a positive finding.
+- The 88 workflow-embedded strong attack scenarios (45 strong + 22 targeted + 21 high-rate) specifically target this concern by embedding attacks in legitimate workflows, increasing manipulation rate.
+- ProvShield's value is defense-in-depth: even a 5.1% ASR is unacceptable for high-risk operations (credential theft, data exfiltration). ProvShield reduces this to 0.6%.
+- The 14.9% LLM manipulation rate means the model IS manipulated in ~79/530 attack scenarios. Among those where the specific attack tool is generated, ProvShield blocks 100%.
+- We report per-suite breakdowns showing that MCP metadata (7.0% no-defense ASR) and skill injection (7.1%) have meaningful attack surfaces.
 
-Prepared response:
+**Evidence:** Table 1 (overall ASR), Table 3 (per-suite ASR), Section 7.4 security analysis.
 
-- We do not claim full semantic causality.
-- The LLM is modeled as an adversarial proposal oracle.
-- Security property is about runtime execution under provenance policy.
-- **Evidence:** Formal model §5 treats LLM output as untrusted. Theorem 1 proves label unforgeability regardless of model behavior. Limitations §7 explicitly states we don't prove model internals are unaffected.
+## Q2: How is ProvShield better than prompt hardening?
 
-## Likely concern: utility
+**Reviewer concern:** Prompt hardening achieves 1.9% ASR with 100% BTCR. ProvShield achieves 0.6% ASR but only 92.4% BTCR. Is the trade-off worth it?
 
-Prepared response:
+**Response:**
+- Prompt hardening fails against contextual, metadata-based, and skill injection attacks that do not contain recognizable malicious strings.
+- The 1.9% ASR for prompt hardening assumes the system prompt can enumerate all attack patterns; this is fundamentally brittle.
+- ProvShield provides a principled guarantee: even if the model is fully manipulated, the runtime prevents unauthorized execution. This is a categorically different security property.
+- The 92.4% BTCR with 7.6% bridge burden means most false blocks can be resolved through user bridge interaction in a real deployment.
+- ProvShield's ablation study (Table 4) demonstrates that removing provenance labels raises ASR to 81%, confirming the value of runtime enforcement beyond prompt-level defenses.
 
-- Present BTCR and confirmation burden.
-- Explain read-only fast path.
-- Show benign high-risk tasks succeed with bridge.
-- **Evidence:** 100% BTCR across all 5 benign categories (policy-level and LLM-level). 0% false blocking. 0% bridge burden for benign tasks. User-requested email send (benign_B2_email_03) completes without unnecessary bridge.
+**Evidence:** Table 1, Table 4 (ablation), Section 7.4 comparison.
 
-## Likely concern: confirmation fatigue
+## Q3: The baselines are rule-based implementations, not real systems
 
-Prepared response:
+**Reviewer concern:** The baselines (prompt hardening, input firewall, generic confirmation, static allowlist) are implemented as simple functions, not faithful reproductions of real systems.
 
-- Bridge is only for high-risk effects.
-- It is scoped and one-time.
-- Generic confirmation baseline shows why binding matters.
-- **Evidence:** Ablation A3 (no bridge binding) shows ASR rises from 6% to 50%, proving that bound bridges are essential. The benign suite shows 0 bridge requests for read-only tasks.
+**Response:**
+- We implement baselines that capture the core mechanism of each defense category: prompt-level instruction, input classification, blanket confirmation, and tool restriction.
+- These are fair comparisons because we evaluate each defense at its intended level of abstraction. A "real" input firewall would still be a classifier; our pattern-based filter represents the lower bound of classifier performance.
+- Static allowlist represents a realistic conservative defense (0.0% ASR, 79.2% BTCR) and demonstrates that ProvShield achieves better security-utility trade-off.
+- We acknowledge this limitation explicitly and discuss Fides-style IFC and causal attribution as stronger baselines that would strengthen the comparison.
 
-## Likely concern: benchmark realism
+**Evidence:** Section 7.2, Section 10 (Limitations), Table 1.
 
-Prepared response:
+## Q4: Single-model evaluation (mimo-v2-pro only)
 
-- Include real MCP server metadata where possible.
-- Include skill, web, email, and RAG channels.
-- Include adaptive white-box attacks.
-- **Evidence:** 27 scenarios across 6 attack suites + 5 benign categories. 4 adaptive white-box scenarios. LLM-based evaluation with mimo-v2.5-pro (18 scenarios). Scenarios based on published attack patterns (SkillInject, MCPTox, MCP Safety Audit, indirect prompt injection).
+**Reviewer concern:** All results are from one model. How generalizable are the findings?
 
-## Likely concern: overclaiming formal proof
+**Response:**
+- We acknowledge this as a key limitation (Section 10).
+- The core contribution (runtime enforcement) is model-agnostic: it operates on tool calls, not model internals. The monitor's behavior is deterministic and does not depend on the LLM.
+- The LLM manipulation rate (14.9%) varies by model; a weaker model would have higher manipulation, making ProvShield's runtime enforcement more critical.
+- We are actively evaluating with additional models and plan to include multi-model results in the camera-ready version.
 
-Prepared response:
+**Evidence:** Section 10 (Limitations), Section 7.4.
 
-- The formal model intentionally abstracts model internals.
-- The theorem covers enforced runtime transition to tool execution.
-- The non-goals section states this limitation.
-- **Evidence:** Theorem 1 proof sketch uses induction on transition steps. The model is explicitly treated as an adversarial proposal oracle (§5). Non-goals in §3 and Limitations in §7 state that we don't prove model activations are unaffected.
+## Q5: The formal proofs are proof sketches, not fully mechanized
 
-## Likely concern: evaluation scale
+**Reviewer concern:** The Coq formalization compiles, but Theorems 1-2 are definition-level. The paper claims formal guarantees but relies on TCB assumptions.
 
-Prepared response:
+**Response:**
+- We are explicit about proof status: Theorems 1-5 are presented as proof sketches with the Coq mechanization covering the transition relation and reachable-state invariants.
+- The unforgeability theorems rely on the TCB assumption (LLM has no access to HMAC key), which is stated as an axiom, not proven in Coq.
+- The proof hierarchy (mechanized core → proof sketch → TCB assumption) is documented in docs/theorem_code_mapping.md.
+- This is standard practice for systems security papers: the formal model provides rigor for the core invariants, while implementation-level assumptions (HMAC security, TCB integrity) are stated explicitly.
 
-- 27 policy-level scenarios + 18 LLM-level scenarios = 45 total.
-- Ablation study (A0-A8) provides component-level evidence.
-- Failure analysis identifies the exact boundary case.
-- **Evidence:** LLM-based evaluation with mimo-v2.5-pro shows 0.0% end-to-end ASR. Ablation Table 5 shows each component's contribution. Failure analysis in §7.4.5 explains the residual 6.2% ASR (WriteLocal boundary).
+**Evidence:** Section 5, Section 10 (Limitations), docs/theorem_code_mapping.md.
 
-## Likely concern: baseline strength
+## Q6: Conservative provenance may inflate false blocking
 
-Prepared response:
+**Reviewer concern:** The evaluation uses conservative taint (all context → all arguments), which may not reflect real-world provenance precision.
 
-- 5 baselines cover the main defense categories: no defense, prompt hardening (text-level), input firewall (classification), static allowlist (coarse), generic confirmation (interaction).
-- Prompt hardening is the most relevant baseline per OpenAI's own guidance.
-- **Evidence:** Prompt hardening reduces ASR to 66.7% for skill injection but fails against MCP metadata and adaptive attacks (100% ASR). Input firewall and generic confirmation provide no protection (100% ASR across all suites).
+**Response:**
+- We acknowledge this (Section 10): 7.6% false blocking partly reflects conservative taint propagation.
+- The ablation study (Table 4, A1) demonstrates that removing provenance labels entirely raises ASR to 81%, showing that even conservative provenance provides significant security benefit.
+- Field-level provenance tracking is a natural extension that would reduce false blocking while maintaining security guarantees.
+- The 7.6% false blocking is within the 15% acceptance threshold and represents worst-case behavior; real deployments with user bridge interaction would have lower effective blocking.
+
+**Evidence:** Section 10, Table 4 (ablation), Section 7.4 utility analysis.
+
+## Q7: Bridge/capability mechanism relies on user attention
+
+**Reviewer concern:** Users may blindly confirm bridge prompts, defeating the purpose.
+
+**Response:**
+- Bridge binding is designed to resist this: the presentation includes payload digest, destination, provenance source categories, and confidentiality boundary crossings. This is not a generic "are you sure?" prompt.
+- A bridge authorized for one (action, destination, payload) cannot authorize a different tuple. This prevents confirmation laundering.
+- We acknowledge social engineering as a residual risk (Section 10).
+- The 7.6% bridge burden means the average user sees ~1 bridge prompt per 13 benign tasks, reducing habituation risk.
+
+**Evidence:** Section 4.4 (Bridge), Section 10 (Limitations), Theorem 5.
+
+## Q8: How does this compare to Fides (Microsoft Research)?
+
+**Reviewer concern:** Fides also applies IFC to LLM agents. What is the novelty?
+
+**Response:**
+- Fides tracks information-flow labels within the model context (prompt-visible). ProvShield maintains provenance in a sidecar store outside the model context, preventing the LLM from manipulating its own security metadata.
+- ProvShield adds bound user-intent bridges with cryptographic capability tokens, which Fides does not have.
+- ProvShield explicitly handles MCP tool metadata and skill files as distinct provenance categories with specific policy rules.
+- The comparison table (Table 5) provides a detailed feature-by-feature comparison.
+
+**Evidence:** Section 9 (Related Work), Table 5 (comparison), Section 4.1.
+
+## Q9: MCP proxy is not integrated with a real agent runtime
+
+**Reviewer concern:** The prototype uses a local JSON-RPC proxy, not a real MCP client/server integration.
+
+**Response:**
+- The MCP proxy intercepts tools/list and tools/call messages, which are the standard MCP protocol messages. The proxy architecture is designed to be transparent to both client and server.
+- The evaluation harness exercises the full monitor path: normalization, provenance reconstruction, policy evaluation, bridge management, and audit logging.
+- We acknowledge that integration with a production MCP client/server would strengthen the systems contribution (Section 10).
+
+**Evidence:** Section 6 (Implementation), Section 10 (Limitations).
+
+## Q10: 780 scenarios is relatively small for a benchmark
+
+**Reviewer concern:** The benchmark has only 780 scenarios. Is this sufficient for statistical significance?
+
+**Response:**
+- We report 95% Wilson confidence intervals for all metrics, demonstrating statistical rigor.
+- The 530 attack scenarios span 6 attack categories with 88 workflow-embedded strong attacks.
+- Each scenario is evaluated with LLM-in-the-loop, making each evaluation expensive but realistic.
+- The benchmark is designed for coverage (attack categories, defense configurations, benign task types) rather than raw volume.
+
+**Evidence:** Section 7, Tables 1-3, artifact/scenarios.
