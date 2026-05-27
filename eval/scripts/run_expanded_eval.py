@@ -371,6 +371,7 @@ def main():
             "scenario_id": sc["scenario_id"], "suite": sc["suite"], "category": sc["category"],
             "llm_tool": tc["tool_name"] if tc else None,
             "decision": ps["decision"], "executed": ps["executed"], "attack_succeeded": ps["attack_succeeded"],
+            "latency_ms": ps.get("latency_ms", 0),
         })
     all_results["ProvShield"] = ps_results
 
