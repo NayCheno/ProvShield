@@ -119,11 +119,24 @@ def evaluate_provshield(scenario, llm_tc):
     for msg in scenario.get("context_messages", []):
         content = msg.get("content", "")
         role = msg.get("role", "user")
+        # Detect content type based on markers, role, and content patterns
         if role == "system" and "[Skill:" in content:
             obj = monitor.provenance_store.ingest(content, "UntrustedSkill", "Public", "skill:unknown")
         elif role == "system" and "[Tool:" in content:
             obj = monitor.provenance_store.ingest(content, "ToolMetadata", "Public", "mcp:unknown")
+        elif role == "system" and "[Retrieved" in content:
+            obj = monitor.provenance_store.ingest(content, "ExternalContent", "Public", "rag:doc")
         elif "[ExternalContent" in content:
+            obj = monitor.provenance_store.ingest(content, "ExternalContent", "Public", "web")
+        elif role == "user" and any(p in content for p in [
+            "Retrieved document", "Webpage:", "Webpage content", "INTERNAL:",
+            "SYSTEM UPDATE", "URGENT:", "Company IT", "Compliance Reminder",
+            "Data Retention Policy", "IT Helpdesk", "From: IT Security",
+            "Project Update:", "Vendor Notice:", "Infrastructure Alert",
+            "Quarterly Audit", "<!--", "<div", "POLICY:", "ACTION REQUIRED",
+            "SECURITY:", "AUDIT", "BACKUP", "MONITOR", "DIAGNOSTIC",
+        ]):
+            # User-role message with external/web content patterns
             obj = monitor.provenance_store.ingest(content, "ExternalContent", "Public", "web")
         else:
             obj = monitor.provenance_store.ingest(content, "UserIntent", "Public", "user")
