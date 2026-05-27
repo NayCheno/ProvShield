@@ -8,10 +8,11 @@
     - No secret exfiltration
     - Bridge non-replay *)
 
-Require Import List.
-Require Import Bool.
-Require Import Arith.
-Require Import PeanoNat.
+From Stdlib Require Import List.
+From Stdlib Require Import Bool.
+From Stdlib Require Import Arith.
+From Stdlib Require Import PeanoNat.
+From Stdlib Require Import Lia.
 Import ListNotations.
 
 (* ================================================================= *)
@@ -113,11 +114,11 @@ Definition is_high_risk (e : Effect) : bool :=
 (** ** Provenance Labels *)
 (* ================================================================= *)
 
-Record ProvenanceLabel := mkLabel {
+Record ProvenanceLabel : Type := {
   lbl_integrity : Integrity;
   lbl_confidentiality : Confidentiality;
-  lbl_origin : nat;  (* source identifier *)
-  lbl_signature : nat  (* runtime MAC *)
+  lbl_origin : nat;
+  lbl_signature : nat
 }.
 
 (** A label is valid only if it has a non-zero signature (runtime-signed) *)
@@ -126,24 +127,24 @@ Definition label_valid (l : ProvenanceLabel) : bool :=
 
 (** Label join: conservatively take lower integrity, higher confidentiality *)
 Definition label_join (l1 l2 : ProvenanceLabel) : ProvenanceLabel :=
-  mkLabel
+  Build_ProvenanceLabel
     (integrity_meet (lbl_integrity l1) (lbl_integrity l2))
     (conf_join (lbl_confidentiality l1) (lbl_confidentiality l2))
-    (lbl_origin l1)  (* keep first origin *)
-    (lbl_signature l1)  (* keep first signature *)
+    (lbl_origin l1)
+    (lbl_signature l1).
 
 
 (* ================================================================= *)
 (** ** Capability Tokens *)
 (* ================================================================= *)
 
-Record CapabilityToken := mkToken {
-  token_action : nat;  (* tool action ID *)
+Record CapabilityToken : Set := {
+  token_action : nat;
   token_destination : nat;
   token_payload_hash : nat;
   token_nonce : nat;
   token_expiry : nat;
-  token_signature : nat  (* HMAC binding all fields *)
+  token_signature : nat
 }.
 
 Definition token_valid (t : CapabilityToken) : bool :=
@@ -161,18 +162,18 @@ Definition token_matches (t : CapabilityToken) (action dest payload_hash nonce :
 (** ** Runtime State *)
 (* ================================================================= *)
 
-Record RuntimeState := mkState {
-  context : list (nat * ProvenanceLabel);  (* (obj_id, label) pairs *)
-  sidecar : list (nat * ProvenanceLabel);  (* sidecar store *)
+Record RuntimeState : Type := {
+  context : list (nat * ProvenanceLabel);
+  sidecar : list (nat * ProvenanceLabel);
   tokens : list CapabilityToken;
   used_nonces : list nat;
   audit_log : list nat;
-  fresh_id : nat  (* monotonically increasing counter for new objects *)
+  fresh_id : nat
 }.
 
 (** Initial state: empty *)
 Definition init_state : RuntimeState :=
-  mkState [] [] [] [] [] 0.
+  Build_RuntimeState [] [] [] [] [] 0.
 
 
 (* ================================================================= *)
@@ -205,7 +206,7 @@ Corollary model_cannot_forge_label :
     (* Model can only produce labels with signature = 0 *)
     (* Runtime produces labels with signature > 0 *)
     (* Therefore model labels are always invalid *)
-    forall sig, sig = 0 -> label_valid (mkLabel integrity conf content sig) = false.
+    forall sig, sig = 0 -> label_valid (Build_ProvenanceLabel integrity conf content sig) = false.
 Proof.
   intros content integrity conf sig Hsig.
   unfold label_valid. simpl.
@@ -235,7 +236,7 @@ Qed.
 (** Model-generated tokens always have signature = 0, hence invalid. *)
 Corollary model_cannot_forge_token :
   forall (action dest hash nonce expiry : nat),
-    token_valid (mkToken action dest hash nonce expiry 0) = false.
+    token_valid (Build_CapabilityToken action dest hash nonce expiry 0) = false.
 Proof.
   intros. unfold token_valid. simpl. reflexivity.
 Qed.
@@ -335,21 +336,19 @@ Theorem bridge_no_destination_swap :
 Proof.
   intros t action dest1 dest2 hash nonce used Hneq Hmatch.
   unfold token_matches in *.
-  apply andb_true_iff in Hmatch as [H1 H2].
-  apply andb_true_iff in H1 as [H1a H1b].
-  apply andb_true_iff in H2 as [H2a H2b].
-  (* From H1b: Nat.eqb dest1 (token_destination t) = true *)
-  (* Therefore token_destination t = dest1 *)
-  apply Nat.eqb_eq in H1b.
-  (* Since dest1 <> dest2 and token_destination t = dest1 *)
-  (* We have dest2 <> token_destination t *)
-  assert (Hneq2: dest2 <> token_destination t).
-  { intro Heq. apply Hneq. rewrite H1b. symmetry. exact Heq. }
+  (* Decompose all conjunctions — left-associative: ((a&&b)&&c)&&d *)
+  apply Bool.andb_true_iff in Hmatch as [Habc Hd].
+  apply Bool.andb_true_iff in Habc as [Hab Hc].
+  apply Bool.andb_true_iff in Hab as [Ha Hb].
+  (* Hb: Nat.eqb dest1 (token_destination t) = true *)
+  apply Nat.eqb_eq in Hb.
   unfold token_matches.
-  (* Now Nat.eqb dest2 (token_destination t) = false *)
-  assert (Hfalse: Nat.eqb dest2 (token_destination t) = false).
-  { apply Nat.eqb_neq. exact Hneq2. }
-  rewrite Hfalse. simpl. reflexivity.
+  destruct (token_destination t =? dest2) eqn:Hdest.
+  - exfalso. apply Nat.eqb_eq in Hdest. apply Hneq. congruence.
+  - destruct (token_action t =? action);
+    destruct (token_payload_hash t =? hash);
+    destruct (token_nonce t =? nonce);
+    reflexivity.
 Qed.
 
 
@@ -381,24 +380,19 @@ Theorem ingest_preserves_well_formed :
          (conf : Confidentiality) (origin : nat),
     state_well_formed s = true ->
     state_well_formed
-      (mkState
+      (Build_RuntimeState
         (context s)
-        ((fresh_id s, mkLabel integrity conf origin (fresh_id s + 1)) :: sidecar s)
+        ((fresh_id s, Build_ProvenanceLabel integrity conf origin (fresh_id s + 1)) :: sidecar s)
         (tokens s)
         (used_nonces s)
         (audit_log s)
         (fresh_id s + 1)) = true.
 Proof.
   intros s value integrity conf origin Hwf.
-  unfold state_well_formed in *. simpl.
-  (* New label has signature = fresh_id s + 1, which is > 0 *)
-  (* label_valid checks Nat.ltb 0 (fresh_id s + 1) *)
-  (* Since fresh_id s + 1 > 0, this is true *)
-  assert (Hsig: Nat.ltb 0 (fresh_id s + 1) = true).
-  { apply Nat.ltb_lt. apply Nat.lt_succ_diag_r. }
-  rewrite Hsig. simpl.
-  (* All existing labels remain well-formed by Hwf *)
-  exact Hwf.
+  unfold state_well_formed, label_well_formed, label_valid in *. simpl.
+  apply Bool.andb_true_iff. split.
+  - apply Nat.ltb_lt. lia.
+  - exact Hwf.
 Qed.
 
 (** Token consumption preserves well-formedness.
@@ -410,11 +404,11 @@ Theorem consume_preserves_well_formed :
     state_well_formed s = true ->
     In t (tokens s) ->
     state_well_formed
-      (mkState
+      (Build_RuntimeState
         (context s)
         (sidecar s)
         (map (fun tok => if Nat.eqb (token_nonce tok) (token_nonce t)
-                         then mkToken
+                         then Build_CapabilityToken
                                 (token_action tok)
                                 (token_destination tok)
                                 (token_payload_hash tok)
@@ -474,14 +468,14 @@ Inductive Transition : Type :=
 Definition apply_transition (s : RuntimeState) (t : Transition) : RuntimeState :=
   match t with
   | TIngestUser oid intg conf =>
-      mkState
-        ((oid, mkLabel intg conf oid (fresh_id s + 1)) :: context s)
-        ((oid, mkLabel intg conf oid (fresh_id s + 1)) :: sidecar s)
+      Build_RuntimeState
+        ((oid, Build_ProvenanceLabel intg conf oid (fresh_id s + 1)) :: context s)
+        ((oid, Build_ProvenanceLabel intg conf oid (fresh_id s + 1)) :: sidecar s)
         (tokens s) (used_nonces s) (oid :: audit_log s) (fresh_id s + 1)
   | TIngestExternal oid intg conf =>
-      mkState
-        ((oid, mkLabel intg conf oid (fresh_id s + 1)) :: context s)
-        ((oid, mkLabel intg conf oid (fresh_id s + 1)) :: sidecar s)
+      Build_RuntimeState
+        ((oid, Build_ProvenanceLabel intg conf oid (fresh_id s + 1)) :: context s)
+        ((oid, Build_ProvenanceLabel intg conf oid (fresh_id s + 1)) :: sidecar s)
         (tokens s) (used_nonces s) (oid :: audit_log s) (fresh_id s + 1)
   | TRegisterTool tid eff =>
       s  (* tool registration doesn't change state in this model *)
@@ -492,8 +486,8 @@ Definition apply_transition (s : RuntimeState) (t : Transition) : RuntimeState :
   | TMonitorDeny tid =>
       s  (* deny doesn't change state *)
   | TBridgeConfirm bid action dest hash nonce =>
-      let new_token := mkToken action dest hash nonce (fresh_id s + 1) (fresh_id s + 2) in
-      mkState
+      let new_token := Build_CapabilityToken action dest hash nonce (fresh_id s + 1) (fresh_id s + 2) in
+      Build_RuntimeState
         (context s)
         (sidecar s)
         (new_token :: tokens s)
@@ -522,18 +516,17 @@ Proof.
   - (* Inductive step: apply_transition preserves well-formedness *)
     destruct t; simpl; try exact IH.
     + (* TIngestUser: new label has signature = fresh_id s + 1 > 0 *)
-      unfold state_well_formed in *. simpl.
-      assert (Hsig: Nat.ltb 0 (fresh_id s + 1) = true).
-      { apply Nat.ltb_lt. apply Nat.lt_succ_diag_r. }
-      rewrite Hsig. simpl. exact IH.
+      unfold state_well_formed, label_well_formed, label_valid in *. simpl.
+      apply Bool.andb_true_iff. split.
+      * apply Nat.ltb_lt. lia.
+      * exact IH.
     + (* TIngestExternal: same as TIngestUser *)
-      unfold state_well_formed in *. simpl.
-      assert (Hsig: Nat.ltb 0 (fresh_id s + 1) = true).
-      { apply Nat.ltb_lt. apply Nat.lt_succ_diag_r. }
-      rewrite Hsig. simpl. exact IH.
-    + (* TBridgeConfirm: sidecar unchanged *)
-      exact IH.
+      unfold state_well_formed, label_well_formed, label_valid in *. simpl.
+      apply Bool.andb_true_iff. split.
+      * apply Nat.ltb_lt. lia.
+      * exact IH.
 Qed.
+
 
 (** Key invariant: no secret in external sink without valid token *)
 Theorem reachable_no_secret_exfil :

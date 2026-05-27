@@ -1,0 +1,1007 @@
+DIGEST cc93275368ebba15267ed726680183d0
+FProvShield
+R390:393 Stdlib.Lists.List <> <> lib
+R423:426 Stdlib.Bool.Bool <> <> lib
+R456:460 Stdlib.Arith.Arith <> <> lib
+R490:497 Stdlib.Arith.PeanoNat <> <> lib
+R527:529 Stdlib.micromega.Lia <> <> lib
+R539:551 Stdlib.Lists.List ListNotations <> mod
+ind 738:746 <> Integrity
+constr 762:775 <> UntrustedSkill
+constr 781:795 <> ExternalContent
+constr 801:810 <> ToolOutput
+constr 816:827 <> ToolMetadata
+constr 833:852 <> AttestedToolMetadata
+constr 858:869 <> TrustedSkill
+constr 875:884 <> UserIntent
+constr 890:901 <> SystemPolicy
+scheme 738:746 <> Integrity_rect
+scheme 738:746 <> Integrity_ind
+scheme 738:746 <> Integrity_rec
+scheme 738:746 <> Integrity_sind
+def 971:982 <> integrity_le
+R991:999 ProvShield <> Integrity ind
+binder 985:985 <> a:3
+binder 987:987 <> b:4
+R1004:1007 Corelib.Init.Datatypes <> bool ind
+R1023:1023 ProvShield <> b:4 var
+R1020:1020 ProvShield <> a:3 var
+R1034:1047 ProvShield <> UntrustedSkill constr
+R1055:1058 Corelib.Init.Datatypes <> true constr
+R1064:1078 ProvShield <> ExternalContent constr
+R1081:1094 ProvShield <> UntrustedSkill constr
+R1099:1103 Corelib.Init.Datatypes <> false constr
+R1109:1123 ProvShield <> ExternalContent constr
+R1131:1134 Corelib.Init.Datatypes <> true constr
+R1140:1149 ProvShield <> ToolOutput constr
+R1152:1165 ProvShield <> UntrustedSkill constr
+R1170:1174 Corelib.Init.Datatypes <> false constr
+R1180:1189 ProvShield <> ToolOutput constr
+R1192:1206 ProvShield <> ExternalContent constr
+R1211:1215 Corelib.Init.Datatypes <> false constr
+R1221:1230 ProvShield <> ToolOutput constr
+R1238:1241 Corelib.Init.Datatypes <> true constr
+R1247:1258 ProvShield <> ToolMetadata constr
+R1261:1274 ProvShield <> UntrustedSkill constr
+R1279:1283 Corelib.Init.Datatypes <> false constr
+R1289:1300 ProvShield <> ToolMetadata constr
+R1303:1317 ProvShield <> ExternalContent constr
+R1322:1326 Corelib.Init.Datatypes <> false constr
+R1332:1343 ProvShield <> ToolMetadata constr
+R1346:1355 ProvShield <> ToolOutput constr
+R1360:1364 Corelib.Init.Datatypes <> false constr
+R1370:1381 ProvShield <> ToolMetadata constr
+R1389:1392 Corelib.Init.Datatypes <> true constr
+R1398:1417 ProvShield <> AttestedToolMetadata constr
+R1420:1431 ProvShield <> SystemPolicy constr
+R1436:1440 Corelib.Init.Datatypes <> false constr
+R1446:1465 ProvShield <> AttestedToolMetadata constr
+R1468:1477 ProvShield <> UserIntent constr
+R1482:1486 Corelib.Init.Datatypes <> false constr
+R1492:1511 ProvShield <> AttestedToolMetadata constr
+R1514:1525 ProvShield <> TrustedSkill constr
+R1530:1534 Corelib.Init.Datatypes <> false constr
+R1540:1559 ProvShield <> AttestedToolMetadata constr
+R1567:1570 Corelib.Init.Datatypes <> true constr
+R1576:1587 ProvShield <> TrustedSkill constr
+R1590:1601 ProvShield <> SystemPolicy constr
+R1606:1610 Corelib.Init.Datatypes <> false constr
+R1616:1627 ProvShield <> TrustedSkill constr
+R1630:1639 ProvShield <> UserIntent constr
+R1644:1648 Corelib.Init.Datatypes <> false constr
+R1654:1665 ProvShield <> TrustedSkill constr
+R1673:1676 Corelib.Init.Datatypes <> true constr
+R1682:1691 ProvShield <> UserIntent constr
+R1694:1705 ProvShield <> SystemPolicy constr
+R1710:1714 Corelib.Init.Datatypes <> false constr
+R1720:1729 ProvShield <> UserIntent constr
+R1737:1740 Corelib.Init.Datatypes <> true constr
+R1746:1757 ProvShield <> SystemPolicy constr
+R1765:1768 Corelib.Init.Datatypes <> true constr
+def 1839:1852 <> integrity_meet
+R1861:1869 ProvShield <> Integrity ind
+binder 1855:1855 <> a:7
+binder 1857:1857 <> b:8
+R1874:1882 ProvShield <> Integrity ind
+R1892:1903 ProvShield <> integrity_le def
+R1905:1905 ProvShield <> a:7 var
+R1907:1907 ProvShield <> b:8 var
+R1921:1921 ProvShield <> b:8 var
+R1914:1914 ProvShield <> a:7 var
+def 1975:1990 <> is_low_integrity
+R1997:2005 ProvShield <> Integrity ind
+binder 1993:1993 <> i:9
+R2010:2013 Corelib.Init.Datatypes <> bool ind
+R2026:2026 ProvShield <> i:9 var
+R2037:2051 ProvShield <> ExternalContent constr
+R2055:2064 ProvShield <> ToolOutput constr
+R2068:2079 ProvShield <> ToolMetadata constr
+R2083:2096 ProvShield <> UntrustedSkill constr
+R2101:2104 Corelib.Init.Datatypes <> true constr
+R2101:2104 Corelib.Init.Datatypes <> true constr
+R2101:2104 Corelib.Init.Datatypes <> true constr
+R2101:2104 Corelib.Init.Datatypes <> true constr
+R2115:2119 Corelib.Init.Datatypes <> false constr
+ind 2318:2332 <> Confidentiality
+constr 2348:2353 <> Public
+constr 2359:2369 <> UserPrivate
+constr 2375:2380 <> Secret
+constr 2386:2405 <> CapabilityTokenClass
+scheme 2318:2332 <> Confidentiality_rect
+scheme 2318:2332 <> Confidentiality_ind
+scheme 2318:2332 <> Confidentiality_rec
+scheme 2318:2332 <> Confidentiality_sind
+def 2420:2426 <> conf_le
+R2435:2449 ProvShield <> Confidentiality ind
+binder 2429:2429 <> a:13
+binder 2431:2431 <> b:14
+R2454:2457 Corelib.Init.Datatypes <> bool ind
+R2473:2473 ProvShield <> b:14 var
+R2470:2470 ProvShield <> a:13 var
+R2484:2489 ProvShield <> Public constr
+R2497:2500 Corelib.Init.Datatypes <> true constr
+R2506:2516 ProvShield <> UserPrivate constr
+R2519:2524 ProvShield <> Public constr
+R2529:2533 Corelib.Init.Datatypes <> false constr
+R2539:2549 ProvShield <> UserPrivate constr
+R2557:2560 Corelib.Init.Datatypes <> true constr
+R2566:2571 ProvShield <> Secret constr
+R2574:2579 ProvShield <> Public constr
+R2584:2588 Corelib.Init.Datatypes <> false constr
+R2594:2599 ProvShield <> Secret constr
+R2602:2612 ProvShield <> UserPrivate constr
+R2617:2621 Corelib.Init.Datatypes <> false constr
+R2627:2632 ProvShield <> Secret constr
+R2640:2643 Corelib.Init.Datatypes <> true constr
+R2649:2668 ProvShield <> CapabilityTokenClass constr
+R2671:2690 ProvShield <> CapabilityTokenClass constr
+R2695:2698 Corelib.Init.Datatypes <> true constr
+R2704:2723 ProvShield <> CapabilityTokenClass constr
+R2731:2735 Corelib.Init.Datatypes <> false constr
+def 2756:2764 <> conf_join
+R2773:2787 ProvShield <> Confidentiality ind
+binder 2767:2767 <> a:17
+binder 2769:2769 <> b:18
+R2792:2806 ProvShield <> Confidentiality ind
+R2816:2822 ProvShield <> conf_le def
+R2824:2824 ProvShield <> a:17 var
+R2826:2826 ProvShield <> b:18 var
+R2840:2840 ProvShield <> a:17 var
+R2833:2833 ProvShield <> b:18 var
+ind 3022:3027 <> Effect
+constr 3043:3052 <> ReadPublic
+constr 3056:3066 <> ReadPrivate
+constr 3070:3079 <> ReadSecret
+constr 3085:3094 <> WriteLocal
+constr 3098:3110 <> WriteExternal
+constr 3116:3126 <> DeleteLocal
+constr 3130:3143 <> DeleteExternal
+constr 3149:3159 <> SendNetwork
+constr 3163:3173 <> ExecuteCode
+constr 3177:3190 <> InstallPackage
+constr 3196:3205 <> ModifyAuth
+constr 3209:3224 <> CreateCredential
+constr 3230:3244 <> FinancialAction
+constr 3248:3261 <> CalendarInvite
+scheme 3022:3027 <> Effect_rect
+scheme 3022:3027 <> Effect_ind
+scheme 3022:3027 <> Effect_rec
+scheme 3022:3027 <> Effect_sind
+def 3276:3287 <> is_high_risk
+R3294:3299 ProvShield <> Effect ind
+binder 3290:3290 <> e:21
+R3304:3307 Corelib.Init.Datatypes <> bool ind
+R3320:3320 ProvShield <> e:21 var
+R3331:3343 ProvShield <> WriteExternal constr
+R3347:3360 ProvShield <> DeleteExternal constr
+R3364:3374 ProvShield <> SendNetwork constr
+R3380:3390 ProvShield <> ExecuteCode constr
+R3394:3407 ProvShield <> InstallPackage constr
+R3411:3420 ProvShield <> ModifyAuth constr
+R3426:3441 ProvShield <> CreateCredential constr
+R3445:3459 ProvShield <> FinancialAction constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3464:3467 Corelib.Init.Datatypes <> true constr
+R3478:3482 Corelib.Init.Datatypes <> false constr
+rec 3672:3686 <> ProvenanceLabel
+proj 3702:3714 <> lbl_integrity
+proj 3731:3749 <> lbl_confidentiality
+proj 3772:3781 <> lbl_origin
+proj 3792:3804 <> lbl_signature
+R3718:3726 ProvShield <> Integrity ind
+R3753:3767 ProvShield <> Confidentiality ind
+R3785:3787 Corelib.Init.Datatypes <> nat ind
+R3808:3810 Corelib.Init.Datatypes <> nat ind
+def 3904:3914 <> label_valid
+R3921:3935 ProvShield <> ProvenanceLabel rec
+binder 3917:3917 <> l:28
+R3940:3943 Corelib.Init.Datatypes <> bool ind
+R3950:3956 Stdlib.Arith.PeanoNat Nat ltb def
+R3961:3973 ProvShield <> lbl_signature proj
+R3975:3975 ProvShield <> l:28 var
+def 4070:4079 <> label_join
+R4090:4104 ProvShield <> ProvenanceLabel rec
+binder 4082:4083 <> l1:29
+binder 4085:4086 <> l2:30
+R4109:4123 ProvShield <> ProvenanceLabel rec
+R4130:4150 ProvShield <> Build_ProvenanceLabel constr
+R4157:4170 ProvShield <> integrity_meet def
+R4173:4185 ProvShield <> lbl_integrity proj
+R4187:4188 ProvShield <> l1:29 var
+R4192:4204 ProvShield <> lbl_integrity proj
+R4206:4207 ProvShield <> l2:30 var
+R4216:4224 ProvShield <> conf_join def
+R4227:4245 ProvShield <> lbl_confidentiality proj
+R4247:4248 ProvShield <> l1:29 var
+R4252:4270 ProvShield <> lbl_confidentiality proj
+R4272:4273 ProvShield <> l2:30 var
+R4282:4291 ProvShield <> lbl_origin proj
+R4293:4294 ProvShield <> l1:29 var
+R4302:4314 ProvShield <> lbl_signature proj
+R4316:4317 ProvShield <> l1:29 var
+rec 4503:4517 <> CapabilityToken
+proj 4532:4543 <> token_action
+proj 4554:4570 <> token_destination
+proj 4581:4598 <> token_payload_hash
+proj 4609:4619 <> token_nonce
+proj 4630:4641 <> token_expiry
+proj 4652:4666 <> token_signature
+R4547:4549 Corelib.Init.Datatypes <> nat ind
+R4574:4576 Corelib.Init.Datatypes <> nat ind
+R4602:4604 Corelib.Init.Datatypes <> nat ind
+R4623:4625 Corelib.Init.Datatypes <> nat ind
+R4645:4647 Corelib.Init.Datatypes <> nat ind
+R4670:4672 Corelib.Init.Datatypes <> nat ind
+def 4689:4699 <> token_valid
+R4706:4720 ProvShield <> CapabilityToken rec
+binder 4702:4702 <> t:38
+R4725:4728 Corelib.Init.Datatypes <> bool ind
+R4735:4741 Stdlib.Arith.PeanoNat Nat ltb def
+R4746:4760 ProvShield <> token_signature proj
+R4762:4762 ProvShield <> t:38 var
+def 4815:4827 <> token_matches
+R4834:4848 ProvShield <> CapabilityToken rec
+binder 4830:4830 <> t:39
+R4885:4887 Corelib.Init.Datatypes <> nat ind
+binder 4852:4857 <> action:40
+binder 4859:4862 <> dest:41
+binder 4864:4875 <> payload_hash:42
+binder 4877:4881 <> nonce:43
+R4892:4895 Corelib.Init.Datatypes <> bool ind
+R5022:5027 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R4973:4978 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R4933:4938 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R4902:4908 Stdlib.Arith.PeanoNat Nat eqb def
+R4911:4922 ProvShield <> token_action proj
+R4924:4924 ProvShield <> t:39 var
+R4927:4932 ProvShield <> action:40 var
+R4939:4945 Stdlib.Arith.PeanoNat Nat eqb def
+R4948:4964 ProvShield <> token_destination proj
+R4966:4966 ProvShield <> t:39 var
+R4969:4972 ProvShield <> dest:41 var
+R4979:4985 Stdlib.Arith.PeanoNat Nat eqb def
+R4988:5005 ProvShield <> token_payload_hash proj
+R5007:5007 ProvShield <> t:39 var
+R5010:5021 ProvShield <> payload_hash:42 var
+R5028:5034 Stdlib.Arith.PeanoNat Nat eqb def
+R5037:5047 ProvShield <> token_nonce proj
+R5049:5049 ProvShield <> t:39 var
+R5052:5056 ProvShield <> nonce:43 var
+rec 5237:5248 <> RuntimeState
+proj 5264:5270 <> context
+proj 5306:5312 <> sidecar
+proj 5348:5353 <> tokens
+proj 5381:5391 <> used_nonces
+proj 5407:5415 <> audit_log
+proj 5431:5438 <> fresh_id
+R5274:5277 Corelib.Init.Datatypes <> list ind
+R5283:5285 Corelib.Init.Datatypes <> ::type_scope:x_'*'_x not
+R5280:5282 Corelib.Init.Datatypes <> nat ind
+R5286:5300 ProvShield <> ProvenanceLabel rec
+R5316:5319 Corelib.Init.Datatypes <> list ind
+R5325:5327 Corelib.Init.Datatypes <> ::type_scope:x_'*'_x not
+R5322:5324 Corelib.Init.Datatypes <> nat ind
+R5328:5342 ProvShield <> ProvenanceLabel rec
+R5357:5360 Corelib.Init.Datatypes <> list ind
+R5362:5376 ProvShield <> CapabilityToken rec
+R5395:5398 Corelib.Init.Datatypes <> list ind
+R5400:5402 Corelib.Init.Datatypes <> nat ind
+R5419:5422 Corelib.Init.Datatypes <> list ind
+R5424:5426 Corelib.Init.Datatypes <> nat ind
+R5442:5444 Corelib.Init.Datatypes <> nat ind
+def 5489:5498 <> init_state
+R5502:5513 ProvShield <> RuntimeState rec
+R5520:5537 ProvShield <> Build_RuntimeState constr
+R5539:5540 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R5542:5543 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R5545:5546 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R5548:5549 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+R5551:5552 Stdlib.Lists.List ListNotations ::list_scope:'['_']' not
+prf 6081:6100 <> label_unforgeability
+R6118:6129 ProvShield <> RuntimeState rec
+binder 6114:6114 <> s:51
+R6142:6144 Corelib.Init.Datatypes <> nat ind
+binder 6133:6138 <> obj_id:52
+R6152:6166 ProvShield <> ProvenanceLabel rec
+binder 6148:6148 <> l:53
+R6200:6207 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R6174:6175 Stdlib.Lists.List <> In def
+R6190:6196 ProvShield <> sidecar proj
+R6198:6198 ProvShield <> s:51 var
+R6177:6177 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R6184:6185 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R6187:6187 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R6178:6183 ProvShield <> obj_id:52 var
+R6186:6186 ProvShield <> l:53 var
+R6228:6235 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R6221:6223 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6208:6218 ProvShield <> label_valid def
+R6220:6220 ProvShield <> l:53 var
+R6224:6227 Corelib.Init.Datatypes <> true constr
+R6251:6253 Corelib.Init.Peano <> ::nat_scope:x_'>'_x not
+R6236:6248 ProvShield <> lbl_signature proj
+R6250:6250 ProvShield <> l:53 var
+R6305:6315 ProvShield <> label_valid def
+R6336:6345 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R6336:6345 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+prf 6520:6543 <> model_cannot_forge_label
+R6567:6569 Corelib.Init.Datatypes <> nat ind
+binder 6557:6563 <> content:54
+R6585:6593 ProvShield <> Integrity ind
+binder 6573:6581 <> integrity:55
+R6604:6618 ProvShield <> Confidentiality ind
+binder 6597:6600 <> conf:56
+binder 6797:6799 <> sig:57
+R6809:6812 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R6805:6807 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6802:6804 ProvShield <> sig:57 var
+R6875:6877 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R6813:6823 ProvShield <> label_valid def
+R6826:6846 ProvShield <> Build_ProvenanceLabel constr
+R6848:6856 ProvShield <> integrity:55 var
+R6858:6861 ProvShield <> conf:56 var
+R6863:6869 ProvShield <> content:54 var
+R6871:6873 ProvShield <> sig:57 var
+R6878:6882 Corelib.Init.Datatypes <> false constr
+R6943:6953 ProvShield <> label_valid def
+prf 7339:7358 <> token_unforgeability
+R7376:7387 ProvShield <> RuntimeState rec
+binder 7372:7372 <> s:58
+R7395:7409 ProvShield <> CapabilityToken rec
+binder 7391:7391 <> t:59
+R7432:7439 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R7417:7418 Stdlib.Lists.List <> In def
+R7423:7428 ProvShield <> tokens proj
+R7430:7430 ProvShield <> s:58 var
+R7420:7420 ProvShield <> t:59 var
+R7460:7467 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R7453:7455 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R7440:7450 ProvShield <> token_valid def
+R7452:7452 ProvShield <> t:59 var
+R7456:7459 Corelib.Init.Datatypes <> true constr
+R7485:7487 Corelib.Init.Peano <> ::nat_scope:x_'>'_x not
+R7468:7482 ProvShield <> token_signature proj
+R7484:7484 ProvShield <> t:59 var
+R7532:7542 ProvShield <> token_valid def
+R7563:7572 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R7563:7572 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+prf 7689:7712 <> model_cannot_forge_token
+R7758:7760 Corelib.Init.Datatypes <> nat ind
+binder 7726:7731 <> action:60
+binder 7733:7736 <> dest:61
+binder 7738:7741 <> hash:62
+binder 7743:7747 <> nonce:63
+binder 7749:7754 <> expiry:64
+R7835:7837 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R7768:7778 ProvShield <> token_valid def
+R7781:7801 ProvShield <> Build_CapabilityToken constr
+R7803:7808 ProvShield <> action:60 var
+R7810:7813 ProvShield <> dest:61 var
+R7815:7818 ProvShield <> hash:62 var
+R7820:7824 ProvShield <> nonce:63 var
+R7826:7831 ProvShield <> expiry:64 var
+R7838:7842 Corelib.Init.Datatypes <> false constr
+R7869:7879 ProvShield <> token_valid def
+def 8453:8468 <> is_external_sink
+R8480:8485 ProvShield <> Effect ind
+binder 8471:8476 <> effect:65
+R8490:8493 Corelib.Init.Datatypes <> bool ind
+R8506:8511 ProvShield <> effect:65 var
+R8522:8534 ProvShield <> WriteExternal constr
+R8538:8548 ProvShield <> SendNetwork constr
+R8553:8556 Corelib.Init.Datatypes <> true constr
+R8553:8556 Corelib.Init.Datatypes <> true constr
+R8567:8571 Corelib.Init.Datatypes <> false constr
+def 8592:8616 <> requires_declassification
+R8626:8640 ProvShield <> Confidentiality ind
+binder 8619:8622 <> conf:67
+R8653:8658 ProvShield <> Effect ind
+binder 8644:8649 <> effect:68
+R8663:8666 Corelib.Init.Datatypes <> bool ind
+R8692:8695 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R8673:8679 ProvShield <> conf_le def
+R8681:8686 ProvShield <> Secret constr
+R8688:8691 ProvShield <> conf:67 var
+R8696:8711 ProvShield <> is_external_sink def
+R8713:8718 ProvShield <> effect:68 var
+def 8799:8819 <> monitor_decide_secret
+R8841:8855 ProvShield <> Confidentiality ind
+binder 8826:8837 <> payload_conf:69
+R8868:8873 ProvShield <> Effect ind
+binder 8859:8864 <> effect:70
+R8890:8893 Corelib.Init.Datatypes <> list ind
+R8895:8909 ProvShield <> CapabilityToken rec
+binder 8881:8886 <> tokens:71
+R8942:8944 Corelib.Init.Datatypes <> nat ind
+binder 8917:8922 <> action:72
+binder 8924:8927 <> dest:73
+binder 8929:8932 <> hash:74
+binder 8934:8938 <> nonce:75
+R8949:8952 Corelib.Init.Datatypes <> bool ind
+R8962:8986 ProvShield <> requires_declassification def
+R8988:8999 ProvShield <> payload_conf:69 var
+R9001:9006 ProvShield <> effect:70 var
+R9161:9164 Corelib.Init.Datatypes <> true constr
+R9068:9074 Stdlib.Lists.List <> existsb def
+R9143:9148 ProvShield <> tokens:71 var
+binder 9081:9081 <> t:76
+R9124:9127 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R9086:9098 ProvShield <> token_matches def
+R9100:9100 ProvShield <> t:76 var
+R9102:9107 ProvShield <> action:72 var
+R9109:9112 ProvShield <> dest:73 var
+R9114:9117 ProvShield <> hash:74 var
+R9119:9123 ProvShield <> nonce:75 var
+R9128:9138 ProvShield <> token_valid def
+R9140:9140 ProvShield <> t:76 var
+prf 9219:9240 <> no_secret_exfiltration
+R9269:9283 ProvShield <> Confidentiality ind
+binder 9254:9265 <> payload_conf:77
+R9296:9301 ProvShield <> Effect ind
+binder 9287:9292 <> effect:78
+R9319:9322 Corelib.Init.Datatypes <> list ind
+R9324:9338 ProvShield <> CapabilityToken rec
+binder 9314:9315 <> ts:79
+R9367:9369 Corelib.Init.Datatypes <> nat ind
+binder 9342:9347 <> action:80
+binder 9349:9352 <> dest:81
+binder 9354:9357 <> hash:82
+binder 9359:9363 <> nonce:83
+R9411:9418 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9404:9406 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9377:9383 ProvShield <> conf_le def
+R9385:9390 ProvShield <> Secret constr
+R9392:9403 ProvShield <> payload_conf:77 var
+R9407:9410 Corelib.Init.Datatypes <> true constr
+R9449:9497 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9442:9444 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9419:9434 ProvShield <> is_external_sink def
+R9436:9441 ProvShield <> effect:78 var
+R9445:9448 Corelib.Init.Datatypes <> true constr
+R9583:9590 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R9575:9577 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9498:9504 Stdlib.Lists.List <> existsb def
+R9573:9574 ProvShield <> ts:79 var
+binder 9511:9511 <> t:84
+R9554:9557 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R9516:9528 ProvShield <> token_matches def
+R9530:9530 ProvShield <> t:84 var
+R9532:9537 ProvShield <> action:80 var
+R9539:9542 ProvShield <> dest:81 var
+R9544:9547 ProvShield <> hash:82 var
+R9549:9553 ProvShield <> nonce:83 var
+R9558:9568 ProvShield <> token_valid def
+R9570:9570 ProvShield <> t:84 var
+R9578:9582 Corelib.Init.Datatypes <> false constr
+R9658:9660 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R9591:9611 ProvShield <> monitor_decide_secret def
+R9613:9624 ProvShield <> payload_conf:77 var
+R9626:9631 ProvShield <> effect:78 var
+R9633:9634 ProvShield <> ts:79 var
+R9636:9641 ProvShield <> action:80 var
+R9643:9646 ProvShield <> dest:81 var
+R9648:9651 ProvShield <> hash:82 var
+R9653:9657 ProvShield <> nonce:83 var
+R9661:9665 Corelib.Init.Datatypes <> false constr
+R9770:9790 ProvShield <> monitor_decide_secret def
+R9802:9826 ProvShield <> requires_declassification def
+def 10279:10292 <> nonce_consumed
+R10303:10305 Corelib.Init.Datatypes <> nat ind
+binder 10295:10299 <> nonce:85
+R10316:10319 Corelib.Init.Datatypes <> list ind
+R10321:10323 Corelib.Init.Datatypes <> nat ind
+binder 10309:10312 <> used:86
+R10328:10331 Corelib.Init.Datatypes <> bool ind
+R10338:10344 Stdlib.Lists.List <> existsb def
+R10362:10365 ProvShield <> used:86 var
+R10347:10353 Stdlib.Arith.PeanoNat Nat eqb def
+R10355:10359 ProvShield <> nonce:85 var
+def 10449:10460 <> verify_token
+R10471:10485 ProvShield <> CapabilityToken rec
+binder 10467:10467 <> t:87
+R10514:10516 Corelib.Init.Datatypes <> nat ind
+binder 10489:10494 <> action:88
+binder 10496:10499 <> dest:89
+binder 10501:10504 <> hash:90
+binder 10506:10510 <> nonce:91
+R10538:10541 Corelib.Init.Datatypes <> list ind
+R10543:10545 Corelib.Init.Datatypes <> nat ind
+binder 10524:10534 <> used_nonces:92
+R10550:10553 Corelib.Init.Datatypes <> bool ind
+R10617:10622 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R10598:10603 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R10560:10572 ProvShield <> token_matches def
+R10574:10574 ProvShield <> t:87 var
+R10576:10581 ProvShield <> action:88 var
+R10583:10586 ProvShield <> dest:89 var
+R10588:10591 ProvShield <> hash:90 var
+R10593:10597 ProvShield <> nonce:91 var
+R10604:10614 ProvShield <> token_valid def
+R10616:10616 ProvShield <> t:87 var
+R10623:10626 Corelib.Init.Datatypes <> negb def
+R10629:10642 ProvShield <> nonce_consumed def
+R10644:10648 ProvShield <> nonce:91 var
+R10650:10660 ProvShield <> used_nonces:92 var
+prf 10673:10689 <> bridge_non_replay
+R10707:10721 ProvShield <> CapabilityToken rec
+binder 10703:10703 <> t:93
+R10759:10761 Corelib.Init.Datatypes <> nat ind
+binder 10734:10739 <> action:94
+binder 10741:10744 <> dest:95
+binder 10746:10749 <> hash:96
+binder 10751:10755 <> nonce:97
+R10781:10784 Corelib.Init.Datatypes <> list ind
+R10786:10788 Corelib.Init.Datatypes <> nat ind
+binder 10774:10777 <> used:98
+R10828:10835 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R10821:10823 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10796:10809 ProvShield <> nonce_consumed def
+R10811:10815 ProvShield <> nonce:97 var
+R10817:10820 ProvShield <> used:98 var
+R10824:10827 Corelib.Init.Datatypes <> true constr
+R10878:10880 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R10836:10847 ProvShield <> verify_token def
+R10849:10849 ProvShield <> t:93 var
+R10851:10856 ProvShield <> action:94 var
+R10858:10861 ProvShield <> dest:95 var
+R10863:10866 ProvShield <> hash:96 var
+R10868:10872 ProvShield <> nonce:97 var
+R10874:10877 ProvShield <> used:98 var
+R10881:10885 Corelib.Init.Datatypes <> false constr
+R10954:10965 ProvShield <> verify_token def
+R11004:11015 Stdlib.Bool.Bool <> andb_false_r thm
+R11004:11015 Stdlib.Bool.Bool <> andb_false_r thm
+prf 11083:11108 <> bridge_no_destination_swap
+R11126:11140 ProvShield <> CapabilityToken rec
+binder 11122:11122 <> t:99
+R11185:11187 Corelib.Init.Datatypes <> nat ind
+binder 11153:11158 <> action:100
+binder 11160:11164 <> dest1:101
+binder 11166:11170 <> dest2:102
+binder 11172:11175 <> hash:103
+binder 11177:11181 <> nonce:104
+R11207:11210 Corelib.Init.Datatypes <> list ind
+R11212:11214 Corelib.Init.Datatypes <> nat ind
+binder 11200:11203 <> used:105
+R11236:11243 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R11227:11230 Corelib.Init.Logic <> ::type_scope:x_'<>'_x not
+R11222:11226 ProvShield <> dest1:101 var
+R11231:11235 ProvShield <> dest2:102 var
+R11290:11297 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R11283:11285 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R11244:11256 ProvShield <> token_matches def
+R11258:11258 ProvShield <> t:99 var
+R11260:11265 ProvShield <> action:100 var
+R11267:11271 ProvShield <> dest1:101 var
+R11273:11276 ProvShield <> hash:103 var
+R11278:11282 ProvShield <> nonce:104 var
+R11286:11289 Corelib.Init.Datatypes <> true constr
+R11337:11339 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R11298:11310 ProvShield <> token_matches def
+R11312:11312 ProvShield <> t:99 var
+R11314:11319 ProvShield <> action:100 var
+R11321:11325 ProvShield <> dest2:102 var
+R11327:11330 ProvShield <> hash:103 var
+R11332:11336 ProvShield <> nonce:104 var
+R11340:11344 Corelib.Init.Datatypes <> false constr
+R11422:11434 ProvShield <> token_matches def
+R11522:11539 Stdlib.Bool.Bool <> andb_true_iff thm
+R11522:11539 Stdlib.Bool.Bool <> andb_true_iff thm
+R11573:11590 Stdlib.Bool.Bool <> andb_true_iff thm
+R11573:11590 Stdlib.Bool.Bool <> andb_true_iff thm
+R11621:11638 Stdlib.Bool.Bool <> andb_true_iff thm
+R11621:11638 Stdlib.Bool.Bool <> andb_true_iff thm
+R11722:11731 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11722:11731 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11749:11761 ProvShield <> token_matches def
+R11795:11798 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11776:11792 ProvShield <> token_destination proj
+R11795:11798 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11776:11792 ProvShield <> token_destination proj
+R11836:11845 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11836:11845 Stdlib.Arith.PeanoNat Nat eqb_eq thm
+R11909:11912 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11895:11906 ProvShield <> token_action proj
+R11956:11959 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11936:11953 ProvShield <> token_payload_hash proj
+R11994:11997 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11981:11991 ProvShield <> token_nonce proj
+R11909:11912 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11895:11906 ProvShield <> token_action proj
+R11956:11959 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11936:11953 ProvShield <> token_payload_hash proj
+R11956:11959 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11936:11953 ProvShield <> token_payload_hash proj
+R11994:11997 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11981:11991 ProvShield <> token_nonce proj
+R11994:11997 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11981:11991 ProvShield <> token_nonce proj
+R11994:11997 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11981:11991 ProvShield <> token_nonce proj
+R11994:11997 Stdlib.Arith.PeanoNat <> ::nat_scope:x_'=?'_x not
+R11981:11991 ProvShield <> token_nonce proj
+def 12431:12447 <> label_well_formed
+R12454:12468 ProvShield <> ProvenanceLabel rec
+binder 12450:12450 <> l:106
+R12473:12476 Corelib.Init.Datatypes <> bool ind
+R12483:12493 ProvShield <> label_valid def
+R12495:12495 ProvShield <> l:106 var
+def 12510:12526 <> state_well_formed
+R12533:12544 ProvShield <> RuntimeState rec
+binder 12529:12529 <> s:107
+R12549:12552 Corelib.Init.Datatypes <> bool ind
+R12602:12608 Stdlib.Lists.List <> forallb def
+R12654:12660 ProvShield <> sidecar proj
+R12662:12662 ProvShield <> s:107 var
+binder 12615:12618 <> pair:108
+R12623:12639 ProvShield <> label_well_formed def
+R12642:12644 Corelib.Init.Datatypes <> snd def
+R12646:12649 ProvShield <> pair:108 var
+prf 12727:12751 <> initial_state_well_formed
+R12785:12787 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R12757:12773 ProvShield <> state_well_formed def
+R12775:12784 ProvShield <> init_state def
+R12788:12791 Corelib.Init.Datatypes <> true constr
+R12810:12826 ProvShield <> state_well_formed def
+R12829:12838 ProvShield <> init_state def
+prf 12931:12958 <> ingest_preserves_well_formed
+R12976:12987 ProvShield <> RuntimeState rec
+binder 12972:12972 <> s:109
+R12999:13001 Corelib.Init.Datatypes <> nat ind
+binder 12991:12995 <> value:110
+R13017:13025 ProvShield <> Integrity ind
+binder 13005:13013 <> integrity:111
+R13045:13059 ProvShield <> Confidentiality ind
+binder 13038:13041 <> conf:112
+R13072:13074 Corelib.Init.Datatypes <> nat ind
+binder 13063:13068 <> origin:113
+R13108:13115 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R13101:13103 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R13082:13098 ProvShield <> state_well_formed def
+R13100:13100 ProvShield <> s:109 var
+R13104:13107 Corelib.Init.Datatypes <> true constr
+R13368:13370 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R13116:13132 ProvShield <> state_well_formed def
+R13141:13158 ProvShield <> Build_RuntimeState constr
+R13169:13175 ProvShield <> context proj
+R13177:13177 ProvShield <> s:109 var
+R13263:13266 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R13189:13189 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R13200:13201 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R13262:13262 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R13190:13197 ProvShield <> fresh_id proj
+R13199:13199 ProvShield <> s:109 var
+R13202:13222 ProvShield <> Build_ProvenanceLabel constr
+R13224:13232 ProvShield <> integrity:111 var
+R13234:13237 ProvShield <> conf:112 var
+R13239:13244 ProvShield <> origin:113 var
+R13257:13259 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R13247:13254 ProvShield <> fresh_id proj
+R13256:13256 ProvShield <> s:109 var
+R13267:13273 ProvShield <> sidecar proj
+R13275:13275 ProvShield <> s:109 var
+R13287:13292 ProvShield <> tokens proj
+R13294:13294 ProvShield <> s:109 var
+R13306:13316 ProvShield <> used_nonces proj
+R13318:13318 ProvShield <> s:109 var
+R13330:13338 ProvShield <> audit_log proj
+R13340:13340 ProvShield <> s:109 var
+R13362:13364 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R13352:13359 ProvShield <> fresh_id proj
+R13361:13361 ProvShield <> s:109 var
+R13371:13374 Corelib.Init.Datatypes <> true constr
+R13437:13453 ProvShield <> state_well_formed def
+R13456:13472 ProvShield <> label_well_formed def
+R13475:13485 ProvShield <> label_valid def
+R13508:13525 Stdlib.Bool.Bool <> andb_true_iff thm
+R13508:13525 Stdlib.Bool.Bool <> andb_true_iff thm
+R13545:13554 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R13545:13554 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+prf 13836:13864 <> consume_preserves_well_formed
+R13882:13893 ProvShield <> RuntimeState rec
+binder 13878:13878 <> s:114
+R13901:13915 ProvShield <> CapabilityToken rec
+binder 13897:13897 <> t:115
+R13949:13956 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R13942:13944 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R13923:13939 ProvShield <> state_well_formed def
+R13941:13941 ProvShield <> s:114 var
+R13945:13948 Corelib.Init.Datatypes <> true constr
+R13972:13979 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R13957:13958 Stdlib.Lists.List <> In def
+R13963:13968 ProvShield <> tokens proj
+R13970:13970 ProvShield <> s:114 var
+R13960:13960 ProvShield <> t:115 var
+R14659:14661 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R13980:13996 ProvShield <> state_well_formed def
+R14005:14022 ProvShield <> Build_RuntimeState constr
+R14033:14039 ProvShield <> context proj
+R14041:14041 ProvShield <> s:114 var
+R14053:14059 ProvShield <> sidecar proj
+R14061:14061 ProvShield <> s:114 var
+R14073:14075 Corelib.Lists.ListDef <> map def
+R14564:14569 ProvShield <> tokens proj
+R14571:14571 ProvShield <> s:114 var
+binder 14082:14084 <> tok:116
+R14092:14098 Stdlib.Arith.PeanoNat Nat eqb def
+R14101:14111 ProvShield <> token_nonce proj
+R14113:14115 ProvShield <> tok:116 var
+R14119:14129 ProvShield <> token_nonce proj
+R14131:14131 ProvShield <> t:115 var
+R14558:14560 ProvShield <> tok:116 var
+R14164:14184 ProvShield <> Build_CapabilityToken constr
+R14219:14230 ProvShield <> token_action proj
+R14232:14234 ProvShield <> tok:116 var
+R14270:14286 ProvShield <> token_destination proj
+R14288:14290 ProvShield <> tok:116 var
+R14326:14343 ProvShield <> token_payload_hash proj
+R14345:14347 ProvShield <> tok:116 var
+R14383:14393 ProvShield <> token_nonce proj
+R14395:14397 ProvShield <> tok:116 var
+R14433:14444 ProvShield <> token_expiry proj
+R14446:14448 ProvShield <> tok:116 var
+R14597:14600 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R14584:14594 ProvShield <> token_nonce proj
+R14596:14596 ProvShield <> t:115 var
+R14601:14611 ProvShield <> used_nonces proj
+R14613:14613 ProvShield <> s:114 var
+R14625:14633 ProvShield <> audit_log proj
+R14635:14635 ProvShield <> s:114 var
+R14647:14654 ProvShield <> fresh_id proj
+R14656:14656 ProvShield <> s:114 var
+R14662:14665 Corelib.Init.Datatypes <> true constr
+R14706:14722 ProvShield <> state_well_formed def
+ind 16179:16188 <> Transition
+constr 16204:16214 <> TIngestUser
+constr 16284:16298 <> TIngestExternal
+constr 16368:16380 <> TRegisterTool
+constr 16420:16432 <> TModelPropose
+constr 16485:16497 <> TMonitorAllow
+constr 16519:16530 <> TMonitorDeny
+constr 16552:16565 <> TBridgeConfirm
+constr 16620:16631 <> TExecuteTool
+constr 16653:16658 <> TAudit
+R16226:16228 Corelib.Init.Datatypes <> nat ind
+binder 16217:16222 <> obj_id:119
+R16244:16252 ProvShield <> Integrity ind
+binder 16232:16240 <> integrity:120
+R16263:16277 ProvShield <> Confidentiality ind
+binder 16256:16259 <> conf:121
+R16310:16312 Corelib.Init.Datatypes <> nat ind
+binder 16301:16306 <> obj_id:122
+R16328:16336 ProvShield <> Integrity ind
+binder 16316:16324 <> integrity:123
+R16347:16361 ProvShield <> Confidentiality ind
+binder 16340:16343 <> conf:124
+R16393:16395 Corelib.Init.Datatypes <> nat ind
+binder 16383:16389 <> tool_id:125
+R16408:16413 ProvShield <> Effect ind
+binder 16399:16404 <> effect:126
+R16445:16447 Corelib.Init.Datatypes <> nat ind
+binder 16435:16441 <> tool_id:127
+R16476:16478 Corelib.Init.Datatypes <> nat ind
+binder 16451:16456 <> action:128
+binder 16458:16461 <> dest:129
+binder 16463:16466 <> hash:130
+binder 16468:16472 <> nonce:131
+R16510:16512 Corelib.Init.Datatypes <> nat ind
+binder 16500:16506 <> tool_id:132
+R16543:16545 Corelib.Init.Datatypes <> nat ind
+binder 16533:16539 <> tool_id:133
+R16580:16582 Corelib.Init.Datatypes <> nat ind
+binder 16568:16576 <> bridge_id:134
+R16611:16613 Corelib.Init.Datatypes <> nat ind
+binder 16586:16591 <> action:135
+binder 16593:16596 <> dest:136
+binder 16598:16601 <> hash:137
+binder 16603:16607 <> nonce:138
+R16644:16646 Corelib.Init.Datatypes <> nat ind
+binder 16634:16640 <> tool_id:139
+R16672:16674 Corelib.Init.Datatypes <> nat ind
+binder 16661:16668 <> entry_id:140
+scheme 16179:16188 <> Transition_rect
+scheme 16179:16188 <> Transition_ind
+scheme 16179:16188 <> Transition_rec
+scheme 16179:16188 <> Transition_sind
+def 16727:16742 <> apply_transition
+R16749:16760 ProvShield <> RuntimeState rec
+binder 16745:16745 <> s:141
+R16768:16777 ProvShield <> Transition ind
+binder 16764:16764 <> t:142
+R16782:16793 ProvShield <> RuntimeState rec
+R16806:16806 ProvShield <> t:142 var
+R16817:16827 ProvShield <> TIngestUser constr
+R16852:16869 ProvShield <> Build_RuntimeState constr
+R16939:16942 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R16880:16880 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R16884:16885 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R16938:16938 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R16886:16906 ProvShield <> Build_ProvenanceLabel constr
+R16933:16935 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R16923:16930 ProvShield <> fresh_id proj
+R16932:16932 ProvShield <> s:141 var
+R16943:16949 ProvShield <> context proj
+R16951:16951 ProvShield <> s:141 var
+R17022:17025 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R16963:16963 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R16967:16968 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17021:17021 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R16969:16989 ProvShield <> Build_ProvenanceLabel constr
+R17016:17018 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17006:17013 ProvShield <> fresh_id proj
+R17015:17015 ProvShield <> s:141 var
+R17026:17032 ProvShield <> sidecar proj
+R17034:17034 ProvShield <> s:141 var
+R17046:17051 ProvShield <> tokens proj
+R17053:17053 ProvShield <> s:141 var
+R17057:17067 ProvShield <> used_nonces proj
+R17069:17069 ProvShield <> s:141 var
+R17076:17079 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R17080:17088 ProvShield <> audit_log proj
+R17090:17090 ProvShield <> s:141 var
+R17104:17106 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17094:17101 ProvShield <> fresh_id proj
+R17103:17103 ProvShield <> s:141 var
+R17114:17128 ProvShield <> TIngestExternal constr
+R17153:17170 ProvShield <> Build_RuntimeState constr
+R17240:17243 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R17181:17181 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17185:17186 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17239:17239 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17187:17207 ProvShield <> Build_ProvenanceLabel constr
+R17234:17236 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17224:17231 ProvShield <> fresh_id proj
+R17233:17233 ProvShield <> s:141 var
+R17244:17250 ProvShield <> context proj
+R17252:17252 ProvShield <> s:141 var
+R17323:17326 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R17264:17264 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17268:17269 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17322:17322 Corelib.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R17270:17290 ProvShield <> Build_ProvenanceLabel constr
+R17317:17319 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17307:17314 ProvShield <> fresh_id proj
+R17316:17316 ProvShield <> s:141 var
+R17327:17333 ProvShield <> sidecar proj
+R17335:17335 ProvShield <> s:141 var
+R17347:17352 ProvShield <> tokens proj
+R17354:17354 ProvShield <> s:141 var
+R17358:17368 ProvShield <> used_nonces proj
+R17370:17370 ProvShield <> s:141 var
+R17377:17380 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R17381:17389 ProvShield <> audit_log proj
+R17391:17391 ProvShield <> s:141 var
+R17405:17407 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17395:17402 ProvShield <> fresh_id proj
+R17404:17404 ProvShield <> s:141 var
+R17415:17427 ProvShield <> TRegisterTool constr
+R17446:17446 ProvShield <> s:141 var
+R17512:17524 ProvShield <> TModelPropose constr
+R17562:17562 ProvShield <> s:141 var
+R17631:17643 ProvShield <> TMonitorAllow constr
+R17658:17658 ProvShield <> s:141 var
+R17720:17731 ProvShield <> TMonitorDeny constr
+R17746:17746 ProvShield <> s:141 var
+R17785:17798 ProvShield <> TBridgeConfirm constr
+R17853:17873 ProvShield <> Build_CapabilityToken constr
+R17909:17911 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17899:17906 ProvShield <> fresh_id proj
+R17908:17908 ProvShield <> s:141 var
+R17926:17928 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R17916:17923 ProvShield <> fresh_id proj
+R17925:17925 ProvShield <> s:141 var
+binder 17840:17848 <> new_token:144
+R17941:17958 ProvShield <> Build_RuntimeState constr
+R17969:17975 ProvShield <> context proj
+R17977:17977 ProvShield <> s:141 var
+R17989:17995 ProvShield <> sidecar proj
+R17997:17997 ProvShield <> s:141 var
+R18018:18021 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R18009:18017 ProvShield <> new_token:144 var
+R18022:18027 ProvShield <> tokens proj
+R18029:18029 ProvShield <> s:141 var
+R18046:18049 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R18050:18060 ProvShield <> used_nonces proj
+R18062:18062 ProvShield <> s:141 var
+R18077:18080 Corelib.Init.Datatypes <> ::list_scope:x_'::'_x not
+R18081:18089 ProvShield <> audit_log proj
+R18091:18091 ProvShield <> s:141 var
+R18113:18115 Corelib.Init.Peano <> ::nat_scope:x_'+'_x not
+R18103:18110 ProvShield <> fresh_id proj
+R18112:18112 ProvShield <> s:141 var
+R18123:18134 ProvShield <> TExecuteTool constr
+R18149:18149 ProvShield <> s:141 var
+R18216:18221 ProvShield <> TAudit constr
+R18236:18236 ProvShield <> s:141 var
+ind 18358:18366 <> Reachable
+constr 18398:18406 <> ReachInit
+constr 18435:18443 <> ReachStep
+R18382:18385 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R18370:18381 ProvShield <> RuntimeState rec
+R18410:18418 ProvShield <> Reachable:145 ind
+R18420:18429 ProvShield <> init_state def
+binder 18454:18454 <> s:147
+binder 18456:18456 <> t:148
+R18470:18473 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R18459:18467 ProvShield <> Reachable:145 ind
+R18469:18469 ProvShield <> s:147 var
+R18474:18482 ProvShield <> Reachable:145 ind
+R18485:18500 ProvShield <> apply_transition def
+R18502:18502 ProvShield <> s:147 var
+R18504:18504 ProvShield <> t:148 var
+scheme 18358:18366 <> Reachable_ind
+scheme 18358:18366 <> Reachable_sind
+prf 18577:18597 <> reachable_well_formed
+binder 18610:18610 <> s:149
+R18624:18627 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R18613:18621 ProvShield <> Reachable ind
+R18623:18623 ProvShield <> s:149 var
+R18647:18649 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R18628:18644 ProvShield <> state_well_formed def
+R18646:18646 ProvShield <> s:149 var
+R18650:18653 Corelib.Init.Datatypes <> true constr
+R18757:18781 ProvShield <> initial_state_well_formed thm
+R18757:18781 ProvShield <> initial_state_well_formed thm
+R18973:18989 ProvShield <> state_well_formed def
+R18992:19008 ProvShield <> label_well_formed def
+R19011:19021 ProvShield <> label_valid def
+R19048:19065 Stdlib.Bool.Bool <> andb_true_iff thm
+R19048:19065 Stdlib.Bool.Bool <> andb_true_iff thm
+R19089:19098 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R19089:19098 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R19186:19202 ProvShield <> state_well_formed def
+R19205:19221 ProvShield <> label_well_formed def
+R19224:19234 ProvShield <> label_valid def
+R19261:19278 Stdlib.Bool.Bool <> andb_true_iff thm
+R19261:19278 Stdlib.Bool.Bool <> andb_true_iff thm
+R19302:19311 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+R19302:19311 Stdlib.Arith.PeanoNat Nat ltb_lt thm
+prf 19421:19445 <> reachable_no_secret_exfil
+binder 19458:19458 <> s:150
+binder 19460:19465 <> action:151
+binder 19467:19470 <> dest:152
+binder 19472:19475 <> hash:153
+binder 19477:19481 <> nonce:154
+R19499:19506 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R19488:19496 ProvShield <> Reachable ind
+R19498:19498 ProvShield <> s:150 var
+R19544:19618 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R19537:19539 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R19507:19522 ProvShield <> is_external_sink def
+R19525:19535 ProvShield <> SendNetwork constr
+R19540:19543 Corelib.Init.Datatypes <> true constr
+R19712:19794 Corelib.Init.Logic <> ::type_scope:x_'->'_x not
+R19704:19706 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R19619:19625 Stdlib.Lists.List <> existsb def
+R19695:19700 ProvShield <> tokens proj
+R19702:19702 ProvShield <> s:150 var
+binder 19632:19632 <> t:155
+R19675:19678 Corelib.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R19637:19649 ProvShield <> token_matches def
+R19651:19651 ProvShield <> t:155 var
+R19653:19658 ProvShield <> action:151 var
+R19660:19663 ProvShield <> dest:152 var
+R19665:19668 ProvShield <> hash:153 var
+R19670:19674 ProvShield <> nonce:154 var
+R19679:19689 ProvShield <> token_valid def
+R19691:19691 ProvShield <> t:155 var
+R19707:19711 Corelib.Init.Datatypes <> false constr
+R19869:19871 Corelib.Init.Logic <> ::type_scope:x_'='_x not
+R19795:19815 ProvShield <> monitor_decide_secret def
+R19817:19822 ProvShield <> Secret constr
+R19824:19834 ProvShield <> SendNetwork constr
+R19837:19842 ProvShield <> tokens proj
+R19844:19844 ProvShield <> s:150 var
+R19847:19852 ProvShield <> action:151 var
+R19854:19857 ProvShield <> dest:152 var
+R19859:19862 ProvShield <> hash:153 var
+R19864:19868 ProvShield <> nonce:154 var
+R19872:19876 Corelib.Init.Datatypes <> false constr
+R19951:19972 ProvShield <> no_secret_exfiltration thm
+R19951:19972 ProvShield <> no_secret_exfiltration thm
