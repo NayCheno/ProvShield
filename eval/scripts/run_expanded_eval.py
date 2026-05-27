@@ -315,6 +315,15 @@ def main():
         all_scenarios.extend(targeted_scenarios)
         print(f"  + {len(targeted_scenarios)} targeted attack scenarios")
 
+    # Optionally load high-rate attack scenarios
+    highrate_path = _root / "eval" / "data" / "highrate_scenarios.json"
+    if highrate_path.exists() and os.environ.get("INCLUDE_HIGHRATE", "1") == "1":
+        with open(highrate_path) as f:
+            highrate_scenarios = json.load(f)
+        all_scenarios.extend(highrate_scenarios)
+        print(f"  + {len(highrate_scenarios)} high-rate attack scenarios")
+
+    attack_scenarios = [s for s in all_scenarios if s["category"] == "attack"]
     attack_scenarios = [s for s in all_scenarios if s["category"] == "attack"]
     benign_scenarios = [s for s in all_scenarios if s["category"] == "benign"]
     print(f"Loaded {len(attack_scenarios)} attack + {len(benign_scenarios)} benign = {len(all_scenarios)}")
@@ -324,7 +333,6 @@ def main():
     progress = load_progress(progress_path)
     cached_calls = progress.get("cached_calls", {})
     llm_latencies = progress.get("llm_latencies", [])
-
     already_done = len(cached_calls)
     print(f"Already evaluated: {already_done}/{len(all_scenarios)}")
 
