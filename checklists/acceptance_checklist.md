@@ -16,7 +16,7 @@
 
 ## Security
 
-- [x] ASR reduced by at least 80% vs no-defense. → Expanded eval: ProvShield 0.2% vs no_defense 2.1% (90.5% reduction). 95% CI [0.0%, 1.3%]. 660 scenarios.
+- [x] ASR reduced by at least 80% vs no-defense. → Expanded eval: ProvShield 0.0% vs no_defense 2.8% (100% reduction). 95% CI [0.0%, 0.8%]. 705 scenarios (465 attack + 240 benign).
 - [x] Secret exfiltration without declassification is zero. → Policy P2 denies secret+external without valid token. C3 taint propagation active.
 - [x] Label spoofing attacks fail. → HMAC-SHA256 labels (PR-4). Tampered labels fail verification.
 - [~] Capability token forgery attacks fail. → Token bound to all fields; small adaptive sample.
@@ -25,7 +25,7 @@
 - [x] Payload swap attacks fail. → C1: complete_bridge uses original call with original payload digest.
 - [x] Untrusted MCP metadata cannot authorize privileged effects. → C2: UNKNOWN_HIGH_RISK default; MCP integration test passes.
 - [~] Untrusted skills cannot modify policy or authority. → HMAC verification; not real supply chain attestation.
-- [x] Adaptive white-box ASR is at most 10%. → Expanded eval: 0.2% ASR across 120 adaptive scenarios. 95% CI [0.0%, 1.3%].
+- [x] Adaptive white-box ASR is at most 10%. → Expanded eval: 0.0% ASR across 125 adaptive scenarios. 95% CI [0.0%, 0.8%].
 
 ## Utility
 
