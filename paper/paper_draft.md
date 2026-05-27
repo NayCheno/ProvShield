@@ -1,7 +1,7 @@
 # ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents
 
 > Draft version: v0.5
-> Status: Expanded evaluation (780 scenarios, 95% CI), Coq compilation verified (coqc 9.0), Docker reproducibility verified. ProvShield achieves 0.0% ASR (88.2% reduction).
+> Status: Expanded evaluation (780 scenarios, 95% CI), Coq compilation verified (coqc 9.0), Docker reproducibility verified. ProvShield achieves 0.6% ASR (88% reduction from no-defense 5.1%).
 
 ## Abstract
 

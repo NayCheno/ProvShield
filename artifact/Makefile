@@ -51,8 +51,11 @@ paper:
 # Deterministic audit replay
 # ---------------------------------------------------------------------------
 replay:
-	$(PYTHON) tools/replay_audit.py --trace $(RESULTS_DIR)/traces.jsonl --policy artifact/configs/default_policy.yaml
-
+	@if [ -f "$(RESULTS_DIR)/traces.jsonl" ]; then \
+		$(PYTHON) tools/replay_audit.py --trace $(RESULTS_DIR)/traces.jsonl --policy artifact/configs/default_policy.yaml; \
+	else \
+		echo "No traces.jsonl found — skipping replay (run eval-expanded first)."; \
+	fi
 # ---------------------------------------------------------------------------
 # Full pipeline
 # ---------------------------------------------------------------------------
