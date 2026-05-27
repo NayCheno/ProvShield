@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import dataclass, field, asdict
+from pathlib import Path
 from typing import Any, Optional
 
 from .store import ProvenanceGraph
@@ -55,6 +56,14 @@ class AuditLogger:
         """Record a policy decision."""
         from .labels import INTEGRITY_NAMES, CONFIDENTIALITY_NAMES
 
+        # PR-C4: Store call details for deterministic replay
+        extra = {
+            "arguments": call.arguments,
+            "argument_sources": dict(call.argument_sources) if call.argument_sources else None,
+            "principal": call.principal,
+            "tool_registered": call.tool_registered,
+        }
+
         entry = AuditEntry(
             timestamp=time.time(),
             entry_type="decision",
@@ -74,6 +83,7 @@ class AuditLogger:
             ),
             bridge_id=bridge_id,
             token_id=token_id,
+            extra=extra,
         )
         self._append(entry)
         return entry
@@ -163,6 +173,18 @@ class AuditLogger:
         return [
             e.to_dict() for e in self._entries if e.entry_type == "decision"
         ]
+
+    def export_trace_jsonl(self, path: str | Path) -> None:
+        """Export all entries as JSONL for deterministic replay."""
+        p = Path(path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "w") as f:
+            for entry in self._entries:
+                f.write(entry.to_json() + "\n")
+
+    def export_trace_dict(self) -> list[dict[str, Any]]:
+        """Export all entries as list of dicts."""
+        return [e.to_dict() for e in self._entries]
 
     @property
     def total_entries(self) -> int:
