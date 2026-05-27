@@ -1,6 +1,6 @@
 [project]
 name = "provshield"
-version = "0.1.0"
+version = "0.3.0"
 description = "Provenance-typed runtime enforcement for MCP and skill-based LLM agents"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -11,6 +11,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+]
+eval = [
+    "openai>=1.0",
 ]
 
 [build-system]

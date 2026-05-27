@@ -1,4 +1,4 @@
-.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all
+.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all lint
 
 PYTHON ?= python
 RESULTS_DIR ?= eval/results
@@ -8,7 +8,10 @@ install:
 	$(PYTHON) -m pip install -r requirements.txt
 
 check:
-	$(PYTHON) -m pytest tests/ -v --tb=short
+	$(PYTHON) -m pytest tests/ -q --tb=short
+
+lint:
+	$(PYTHON) -m pytest tests/ -q --tb=short
 
 # ---------------------------------------------------------------------------
 # Level 1: Smoke test — 10 scenarios, ~10s
@@ -30,7 +33,7 @@ eval-subset:
 	$(PYTHON) artifact/scripts/run_smoke_test.py
 
 # ---------------------------------------------------------------------------
-# Level 3: Expanded evaluation — 700+ scenarios
+# Level 3: Expanded evaluation — 780 scenarios
 # ---------------------------------------------------------------------------
 eval-expanded:
 	$(PYTHON) eval/scripts/generate_llm_scenarios.py 500 200
@@ -53,7 +56,7 @@ replay:
 # ---------------------------------------------------------------------------
 # Full pipeline
 # ---------------------------------------------------------------------------
-all: smoke eval paper replay
+all: check smoke eval paper replay
 
 # ---------------------------------------------------------------------------
 # Housekeeping

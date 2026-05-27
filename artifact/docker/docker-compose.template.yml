@@ -2,9 +2,10 @@ services:
   provshield:
     build:
       context: ../..
-      dockerfile: artifact/docker/Dockerfile.template
+      dockerfile: artifact/docker/Dockerfile
     volumes:
       - ../../:/provshield
     environment:
-      - PROVSHIELD_POLICY=prototype/policy/core_rules.yaml
+      - PROVSHIELD_POLICY=artifact/configs/default_policy.yaml
+      - PROVSHIELD_SEED=42
     command: bash
