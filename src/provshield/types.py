@@ -26,6 +26,7 @@ class Effect(str, Enum):
     CREATE_CREDENTIAL = "CreateCredential"
     FINANCIAL_ACTION = "FinancialAction"
     CALENDAR_INVITE = "CalendarInvite"
+    UNKNOWN_HIGH_RISK = "UnknownHighRisk"  # PR-C2: unregistered MCP tools
 
 
 # Risk levels
@@ -44,6 +45,7 @@ EFFECT_RISK: dict[Effect, str] = {
     Effect.CREATE_CREDENTIAL: "critical",
     Effect.FINANCIAL_ACTION: "critical",
     Effect.CALENDAR_INVITE: "high",
+    Effect.UNKNOWN_HIGH_RISK: "critical",  # PR-C2: unregistered tools are critical risk
 }
 
 HIGH_RISK_EFFECTS = frozenset(
@@ -99,6 +101,7 @@ EFFECT_SINK_MAP: dict[Effect, Sink] = {
     Effect.CREATE_CREDENTIAL: Sink.CREDENTIAL,
     Effect.FINANCIAL_ACTION: Sink.FINANCIAL,
     Effect.CALENDAR_INVITE: Sink.CALENDAR,
+    Effect.UNKNOWN_HIGH_RISK: Sink.CODE_EXECUTION,  # PR-C2: worst-case sink assumption
 }
 
 

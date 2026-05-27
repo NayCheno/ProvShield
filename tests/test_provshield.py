@@ -2135,3 +2135,111 @@ class TestHMACLabelSignature:
         l2 = make_label("ExternalContent", "Public", "web")
         assert l1.nonce != l2.nonce
         assert l1.runtime_signature != l2.runtime_signature
+
+
+# ---------------------------------------------------------------------------
+# PR-C2: MCP proxy unknown tool default deny
+# ---------------------------------------------------------------------------
+
+class TestMCPUnknownToolDefaultDeny:
+    """PR-C2: MCP tools registered via tools/list must not default to READ_PUBLIC."""
+
+    def test_mcp_tool_defaults_to_unknown_high_risk(self):
+        """Tool registered via tools/list gets UNKNOWN_HIGH_RISK effect."""
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.monitor import TOOL_PROFILES
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        proxy.handle_jsonrpc_message({
+            "jsonrpc": "2.0", "id": 1, "method": "tools/list",
+            "params": {"tools": [{"name": "mystery_tool", "description": "Does something", "inputSchema": {}}]},
+        })
+
+        profile = TOOL_PROFILES.get("mystery_tool")
+        assert profile is not None
+        assert Effect.UNKNOWN_HIGH_RISK in profile.get("effects", [])
+
+    def test_mcp_tool_call_with_unknown_effect_is_deny_or_bridge(self):
+        """Calling a tool with UNKNOWN_HIGH_RISK effect must require bridge or be denied."""
+        from provshield.mcp_proxy import MCPProxy
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        # Register via tools/list (no explicit effect)
+        proxy.handle_jsonrpc_message({
+            "jsonrpc": "2.0", "id": 1, "method": "tools/list",
+            "params": {"tools": [{"name": "untrusted_tool", "description": "Unknown tool", "inputSchema": {}}]},
+        })
+
+        # User intent present
+        monitor.provenance_store.ingest(
+            "Use the tool",
+            Integrity.USER_INTENT, Confidentiality.PUBLIC, "user",
+        )
+
+        # Calling it should not be a simple ALLOW
+        result = proxy.call_tool("untrusted_tool", {"arg": "val"})
+        # UNKNOWN_HIGH_RISK is critical risk → either DENY or REQUIRE_BRIDGE
+        if isinstance(result, Decision):
+            assert result.kind in {DecisionKind.DENY, DecisionKind.REQUIRE_BRIDGE}
+
+    def test_explicitly_registered_tool_keeps_declared_effect(self):
+        """Tool registered with explicit effect keeps that effect."""
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.monitor import TOOL_PROFILES
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        proxy.register_tool(
+            name="safe_reader",
+            description="Read a webpage",
+            schema={},
+            executor=lambda url: "content",
+            effects=[Effect.READ_PUBLIC],
+            sink=Sink.LOCAL_READ,
+            source_of_authority="local_config",
+        )
+
+        profile = TOOL_PROFILES.get("safe_reader")
+        assert profile is not None
+        assert Effect.READ_PUBLIC in profile.get("effects", [])
+        assert profile.get("source_of_authority") == "local_config"
+
+    def test_source_of_authority_tracked(self):
+        """Each tool profile must have source_of_authority."""
+        from provshield.mcp_proxy import MCPProxy
+        from provshield.monitor import TOOL_PROFILES
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        proxy.register_tool(
+            name="local_tool",
+            description="Local tool",
+            schema={},
+            executor=lambda: "ok",
+            source_of_authority="signed_manifest",
+        )
+
+        profile = TOOL_PROFILES.get("local_tool")
+        assert profile.get("source_of_authority") == "signed_manifest"
+
+    def test_tools_list_only_registers_metadata(self):
+        """tools/list should not auto-authorize execution effects."""
+        from provshield.mcp_proxy import MCPProxy
+        ctx = ContextBuilder()
+        monitor = RuntimeMonitor()
+        proxy = MCPProxy(monitor, ctx)
+
+        response = proxy.handle_jsonrpc_message({
+            "jsonrpc": "2.0", "id": 1, "method": "tools/list",
+            "params": {"tools": [{"name": "new_tool", "description": "desc", "inputSchema": {}}]},
+        })
+
+        tools = response.get("result", {}).get("tools", [])
+        assert len(tools) == 1
+        assert tools[0].get("requires_attestation") is True

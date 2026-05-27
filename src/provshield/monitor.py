@@ -216,11 +216,11 @@ class RuntimeMonitor:
         profile = TOOL_PROFILES.get(tool_name)
         is_registered = profile is not None
         if profile is None:
-            # PR-2: Unknown tools default to high-risk — must be explicitly registered
-            profile = {}
-        effects = profile.get("effects", [Effect.READ_PUBLIC])
-        effect = effects[0] if effects else Effect.READ_PUBLIC
-        sink = profile.get("sink", EFFECT_SINK_MAP.get(effect, Sink.LOCAL_READ))
+            # PR-C2: Unknown tools default to UNKNOWN_HIGH_RISK — must be explicitly registered
+            profile = {"effects": [Effect.UNKNOWN_HIGH_RISK], "sink": Sink.CODE_EXECUTION}
+        effects = profile.get("effects", [Effect.UNKNOWN_HIGH_RISK])
+        effect = effects[0] if effects else Effect.UNKNOWN_HIGH_RISK
+        sink = profile.get("sink", EFFECT_SINK_MAP.get(effect, Sink.CODE_EXECUTION))
 
         # Extract destination
         destination = None

@@ -48,25 +48,28 @@ class MCPProxy:
         attested: bool = False,
         effects: list[Effect] | None = None,
         sink: Sink | None = None,
+        source_of_authority: str = "default_deny",
     ) -> None:
         """Register a tool through the proxy.
 
         Unattested metadata is labeled as low-integrity ToolMetadata.
-        Also registers the tool in TOOL_PROFILES so the monitor recognizes it.
+        PR-C2: Unknown tools default to UNKNOWN_HIGH_RISK, not READ_PUBLIC.
         """
         self._registered_tools[name] = {
             "name": name,
             "description": description,
             "schema": schema,
             "attested": attested,
+            "source_of_authority": source_of_authority,
         }
         self._tool_executors[name] = executor
 
-        # PR-2: Register in TOOL_PROFILES so the monitor doesn't deny as unknown
+        # PR-C2: Register in TOOL_PROFILES — default to UNKNOWN_HIGH_RISK
         from .monitor import register_tool as _register_tool_profile
         _register_tool_profile(name, {
-            "effects": effects or [Effect.READ_PUBLIC],
-            "sink": sink or Sink.LOCAL_READ,
+            "effects": effects or [Effect.UNKNOWN_HIGH_RISK],
+            "sink": sink or Sink.CODE_EXECUTION,  # worst-case assumption
+            "source_of_authority": source_of_authority,
         })
 
         # Label metadata in context
@@ -125,14 +128,19 @@ class MCPProxy:
     def _handle_tools_list(
         self, params: dict[str, Any], msg_id: Any
     ) -> dict[str, Any]:
-        """Handle tools/list: register and label all tool metadata."""
+        """Handle tools/list: register metadata only, no effect authorization.
+
+        PR-C2: tools/list only records metadata. Tool effect/sink must be
+        explicitly declared via signed manifest or local config. Tools
+        registered via tools/list alone get UNKNOWN_HIGH_RISK effect.
+        """
         tools = params.get("tools", [])
         registered = []
         for tool_def in tools:
             name = tool_def.get("name", "unknown")
             desc = tool_def.get("description", "")
             schema = tool_def.get("inputSchema", {})
-            # Register with proxy (labels metadata as ToolMetadata)
+            # Register with proxy — defaults to UNKNOWN_HIGH_RISK (PR-C2)
             if name not in self._registered_tools:
                 self.register_tool(
                     name=name,
@@ -140,6 +148,7 @@ class MCPProxy:
                     schema=schema,
                     executor=lambda **kwargs: None,  # placeholder
                     attested=False,
+                    source_of_authority="mcp_tools_list",  # PR-C2: track origin
                 )
             registered.append(name)
 
@@ -148,7 +157,8 @@ class MCPProxy:
             "id": msg_id,
             "result": {
                 "tools": [
-                    {"name": n, "registered": True} for n in registered
+                    {"name": n, "registered": True, "requires_attestation": True}
+                    for n in registered
                 ]
             },
         }
