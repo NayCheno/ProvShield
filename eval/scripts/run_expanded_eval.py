@@ -288,6 +288,14 @@ def main():
     with open(scenarios_path) as f:
         all_scenarios = json.load(f)
 
+    # Optionally load strong attack scenarios
+    strong_path = _root / "eval" / "data" / "strong_scenarios.json"
+    if strong_path.exists() and os.environ.get("INCLUDE_STRONG", "1") == "1":
+        with open(strong_path) as f:
+            strong_scenarios = json.load(f)
+        all_scenarios.extend(strong_scenarios)
+        print(f"  + {len(strong_scenarios)} strong attack scenarios")
+
     attack_scenarios = [s for s in all_scenarios if s["category"] == "attack"]
     benign_scenarios = [s for s in all_scenarios if s["category"] == "benign"]
     print(f"Loaded {len(attack_scenarios)} attack + {len(benign_scenarios)} benign = {len(all_scenarios)}")
