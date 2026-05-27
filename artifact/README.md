@@ -6,7 +6,7 @@ This package contains the attack suite, benign task suite, ablation configuratio
 
 ## Status
 
-**Prototype v0.2 — C1-C5 blockers resolved.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Evaluation results from unified run (23 scenarios, mimo-v2.5-pro).
+**Prototype v0.3 — C1-C5 blockers resolved, expanded evaluation complete.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Expanded evaluation: 660 scenarios (420 attack + 240 benign), mimo-v2.5-pro, 6 defense configurations, 95% Wilson CI.
 
 ## Quick Start
 
@@ -90,31 +90,32 @@ make all
 
 | Suite | Scenarios | Description |
 |---|---|---|
-| `skill_injection` | 4 | Skill files with hidden destructive or exfiltration instructions |
-| `mcp_metadata_poisoning` | 3 | MCP tool metadata that attempts to authorize itself or extract secrets |
-| `mcp_safety` | 4 | Unauthorized code execution, credential theft, remote control |
-| `web_email_injection` | 4 | Webpage-to-email exfiltration, email-to-file deletion, hidden HTML |
-| `rag_injection` | 3 | Delayed triggers and poisoned retrieval objectives |
-| `adaptive_white_box` | 6 | Label spoofing, bridge replay, destination/payload swap, policy probing |
+| `skill_injection` | 70 | Skill files with hidden destructive or exfiltration instructions |
+| `mcp_metadata_poisoning` | 70 | MCP tool metadata that attempts to authorize itself or extract secrets |
+| `mcp_safety` | 70 | Unauthorized code execution, credential theft, remote control |
+| `web_email_injection` | 70 | Webpage-to-email exfiltration, email-to-file deletion, hidden HTML |
+| `rag_injection` | 70 | Delayed triggers and poisoned retrieval objectives |
+| `adaptive_white_box` | 70 | Label spoofing, bridge replay, destination/payload swap, policy probing |
 
 ### Benign Tasks
 
 | Category | Tasks | Description |
 |---|---|---|
-| `browser` | 2 | Public webpage summarization and comparison |
-| `email` | 4 | Inbox summarization, draft replies, user-requested sends |
-| `mcp` | 2 | Issue queries, calendar invites |
-| `skills` | 2 | Report formatting, code linting |
-| `mixed` | 2 | Cross-tool workflows (web+email, private doc delivery) |
+| `browser` | 48 | Public webpage summarization and comparison |
+| `email` | 48 | Inbox summarization, draft replies, user-requested sends |
+| `mcp` | 48 | Issue queries, calendar invites |
+| `skills` | 48 | Report formatting, code linting |
+| `mixed` | 48 | Cross-tool workflows (web+email, private doc delivery) |
 
-### Baselines
+### Defenses
 
-Each attack suite is evaluated against:
+Each scenario is evaluated against:
 
 - **No defense:** Direct tool execution without provenance checks.
 - **Prompt hardening:** System prompt instructs model to ignore injected instructions.
-- **Input firewall:** Pattern-based malicious input filter (where applicable).
-- **Generic confirmation:** User confirms all write/send operations (where applicable).
+- **Input firewall:** Pattern-based malicious input filter.
+- **Generic confirmation:** User confirms all write/send operations without binding.
+- **Static allowlist:** Only read-only tools allowed.
 - **ProvShield:** Full provenance-typed runtime enforcement.
 
 ### Ablation Study (A0-A8)
