@@ -1,4 +1,4 @@
-.PHONY: smoke eval eval-subset eval-expanded paper clean install check all
+.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all
 
 PYTHON ?= python
 RESULTS_DIR ?= eval/results
@@ -45,9 +45,15 @@ paper:
 		--output-dir $(RESULTS_DIR)/tables
 
 # ---------------------------------------------------------------------------
+# Deterministic audit replay
+# ---------------------------------------------------------------------------
+replay:
+	$(PYTHON) tools/replay_audit.py --trace $(RESULTS_DIR)/traces.jsonl --policy artifact/configs/default_policy.yaml
+
+# ---------------------------------------------------------------------------
 # Full pipeline
 # ---------------------------------------------------------------------------
-all: smoke eval paper
+all: smoke eval paper replay
 
 # ---------------------------------------------------------------------------
 # Housekeeping

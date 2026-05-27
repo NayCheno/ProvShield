@@ -6,7 +6,7 @@ This package contains the attack suite, benign task suite, ablation configuratio
 
 ## Status
 
-**Prototype v0.1 — not yet CCF-A submission ready.** Evaluation results were quarantined on 2026-05-26 due to internal inconsistencies (see `eval/results/.stale/README.md`). Core runtime enforcement needs per-argument provenance source slicing, bridge re-execution, and HMAC label signatures before results can be trusted.
+**Prototype v0.2 — C1-C5 blockers resolved.** Bridge re-execution preserves original arguments (C1), MCP tools default to UNKNOWN_HIGH_RISK (C2), taint propagation for argument sources (C3), deterministic audit replay verifier (C4), Coq transition relation with reachable-state invariants (C5). Evaluation results from unified run (23 scenarios, mimo-v2.5-pro).
 
 ## Quick Start
 
@@ -58,38 +58,31 @@ pip install -r requirements.txt
 
 ## Reproducibility Levels
 
-The artifact supports three reproducibility levels as described in the reproducibility plan.
+The artifact supports three reproducibility levels:
 
-### Level 1: Smoke Test
+### Level 1: Smoke Test (~10 seconds)
 
-Runs 5 representative attack scenarios and 5 benign tasks to verify basic monitor behavior.
+Verify basic monitor behavior with representative scenarios.
 ```bash
 make smoke
-# or directly:
-python artifact/scripts/run_smoke_test.py
 ```
-
-**Expected time:** ~10 seconds.
 **Output:** `artifact/results/smoke/` with per-scenario decision logs.
 
-### Level 2+3: Full Evaluation
+### Level 2: Standard Evaluation (~10 seconds)
 
-Runs all attack suites, benign tasks, and baseline comparisons in a single pass.
-
+Run all attack suites, benign tasks, and baseline comparisons.
 ```bash
 make eval
-# or directly:
-python eval/scripts/run_evaluation.py
 ```
+**Output:** `eval/results/` with per-scenario JSONL traces, manifest, summary, and per-defense results.
 
-Then generate paper-ready tables:
+### Level 3: Full Reproducibility (~2 minutes)
 
+Run evaluation + generate tables + verify audit replay.
 ```bash
-make paper
+make all
 ```
-
-**Expected time:** ~10 seconds (scenario and baseline counts pending clean rerun).
-**Output:** `eval/results/evaluation_results.json` with all suite/baseline results.
+**Output:** All Level 2 outputs + `eval/results/tables/*.tex` + replay verification.
 
 ## Evaluation Suites
 

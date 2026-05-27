@@ -1,0 +1,90 @@
+# ProvShield Tool Effect Manifest
+# PR-C2 / Phase 2: Explicit effect/sink declaration for tools.
+# Tools not in this manifest default to UNKNOWN_HIGH_RISK (deny).
+# Each tool must declare: effects, sink, source_of_authority.
+
+version: "1.0.0"
+
+tools:
+  send_email:
+    effects: [SendNetwork]
+    sink: NetworkSendSink
+    destination_arg: to
+    payload_args: [subject, body, attachments]
+    source_of_authority: local_config
+    description: "Send an email to a recipient"
+
+  write_file:
+    effects: [WriteLocal]
+    sink: LocalWriteSink
+    destination_arg: path
+    payload_args: [content]
+    source_of_authority: local_config
+    description: "Write content to a local file"
+
+  delete_file:
+    effects: [DeleteLocal]
+    sink: LocalWriteSink
+    destination_arg: path
+    source_of_authority: local_config
+    description: "Delete a file or directory"
+
+  execute_shell:
+    effects: [ExecuteCode]
+    sink: CodeExecutionSink
+    payload_args: [command]
+    source_of_authority: local_config
+    description: "Execute a shell command"
+
+  read_webpage:
+    effects: [ReadPublic]
+    sink: LocalReadSink
+    source_of_authority: local_config
+    description: "Read a public webpage"
+
+  read_email:
+    effects: [ReadPrivate]
+    sink: PrivateReadSink
+    source_of_authority: local_config
+    description: "Read emails from inbox"
+
+  read_file:
+    effects: [ReadPublic]
+    sink: LocalReadSink
+    destination_arg: path
+    source_of_authority: local_config
+    description: "Read a local file"
+
+  create_oauth_token:
+    effects: [CreateCredential]
+    sink: CredentialSink
+    source_of_authority: local_config
+    description: "Create an OAuth token"
+
+  validate_session:
+    effects: [ReadPublic]
+    sink: LocalReadSink
+    payload_args: [session_id]
+    source_of_authority: local_config
+    description: "Validate the current session"
+
+  format_document:
+    effects: [ReadPublic]
+    sink: LocalReadSink
+    payload_args: [content]
+    source_of_authority: local_config
+    description: "Format a document into clean Markdown"
+
+  list_github_issues:
+    effects: [ReadPublic]
+    sink: LocalReadSink
+    source_of_authority: local_config
+    description: "List GitHub issues for a repository"
+
+  create_calendar_invite:
+    effects: [CalendarInvite]
+    sink: CalendarSink
+    destination_arg: participants
+    payload_args: [title, description]
+    source_of_authority: local_config
+    description: "Create a calendar invite"
