@@ -1,6 +1,6 @@
 {
   "schema_version": "3.0.0",
-  "git_sha": "5d69aad751a24fc4a0cd1a07164f9a2736ba1993",
+  "git_sha": "b581e4fdc33671e5f285a92ffec7e6c1b93a6ba5",
   "git_dirty": false,
   "command": "python eval/scripts/run_expanded_eval.py",
   "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
