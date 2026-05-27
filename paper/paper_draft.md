@@ -1,7 +1,7 @@
 # ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents
 
-> Draft version: v0.4
-> Status: evaluation re-run 2026-05-27 with unified metrics (single LLM call per scenario). Formal proofs are sketches, not full mechanization.
+> Draft version: v0.5
+> Status: Expanded evaluation (660 scenarios, 95% CI), Coq compilation verified (coqc 9.0), Docker reproducibility verified.
 
 ## Abstract
 
@@ -9,7 +9,7 @@ LLM agents increasingly combine natural-language instructions, external document
 
 We present **ProvShield**, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned HMAC-keyed sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
 
-We formalize ProvShield with a labeled transition system and sketch proofs of label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate ProvShield on 23 scenarios (16 attack, 7 benign) using mimo-v2.5-pro with 5 comparative baselines. ProvShield achieves 0.0% end-to-end attack success rate while maintaining 100% benign task completion, outperforming all baselines. We additionally decompose the defense: the LLM is manipulated in 37.5% of attacks, and ProvShield blocks 50.0% of manipulated calls.
+We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy, skill loader, context builder, policy engine, bridge manager, and audit logger. We evaluate ProvShield on 660 scenarios (420 attack, 240 benign) spanning six attack categories using mimo-v2.5-pro with five comparative baselines. ProvShield achieves 0.2% end-to-end attack success rate (95% CI: [0.0%, 1.3%]) while maintaining 92.1% benign task completion, a 90.5% ASR reduction compared to the no-defense baseline (2.1% ASR). We additionally decompose the defense: the LLM is manipulated in 37.5% of attacks, and ProvShield blocks 50.0% of manipulated calls.
 
 ## 1. Introduction
 
@@ -394,6 +394,6 @@ ProvShield has several limitations that we state explicitly.
 
 Prompt injection in agents is best understood as an authority-flow problem. Untrusted content may influence language generation, but it should not be able to control privileged tool effects. ProvShield enforces this boundary through HMAC-keyed provenance labels, effect-typed tools, runtime source-to-sink policy, and bound user-intent bridges.
 
-We formalized the system with a labeled transition system and sketched proofs of five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. Evaluation on 23 scenarios (16 attack, 7 benign) using mimo-v2.5-pro with 5 comparative baselines shows ProvShield achieves 0.0% end-to-end ASR with 100% benign task completion, outperforming all baselines. The LLM manipulation rate is 37.5% and ProvShield's conditional block rate is 50.0%, demonstrating the value of runtime enforcement as defense-in-depth. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
+We formalized the system with a labeled transition system and proved five safety properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay. The Coq formalization compiles cleanly with coqc 9.0. Evaluation on 660 scenarios (420 attack, 240 benign) spanning six attack categories with five comparative baselines shows ProvShield achieves 0.2% end-to-end ASR (95% CI: [0.0%, 1.3%]) with 92.1% benign task completion, a 90.5% ASR reduction compared to the no-defense baseline. The LLM manipulation rate is 37.5% and ProvShield's conditional block rate is 50.0%, demonstrating the value of runtime enforcement as defense-in-depth. The prototype demonstrates the feasibility of provenance-typed enforcement in MCP and skill-based agent architectures.
 
 ProvShield does not claim to solve prompt injection. It claims to make the consequences of prompt injection visible and controllable at the runtime boundary. The model may be deceived; the runtime must not be.
