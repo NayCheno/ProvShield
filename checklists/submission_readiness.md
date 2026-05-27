@@ -37,30 +37,46 @@ All numbers verified against `eval/results/result_tables.md`:
 
 ## Artifact
 
-- [x] Smoke test runs (122 tests pass)
+- [x] Smoke test runs (123 tests pass — 118 unit + 5 MCP integration)
 - [x] Docker support (Dockerfile present)
 - [x] CI workflow (.github/workflows/ci.yml)
 - [x] Audit log schema (JSON Schema)
 - [x] Policy configuration (YAML)
 - [x] Coq formalization (prototype/formal/ProvShield.v)
-- [x] Table generation scripts (eval/scripts/analyze_results.py)
+- [x] Table generation scripts (eval/scripts/analyze_results.py with per-suite table)
+- [x] make all passes end-to-end (check → smoke → eval → paper → replay)
+- [x] No-bypass MCP integration test (test_no_bypass_direct_executor)
+- [x] Test isolation (conftest.py resets TOOL_PROFILES between tests)
+- [x] Manifest metadata in LaTeX table captions (git sha 80a732b, policy hash 8c1b517c)
 
-## Documentation
+## Strong Baselines (Phase 2)
 
-- [x] README.md — updated to v0.3 with current numbers
-- [x] PROJECT_INDEX.md — file index
-- [x] artifact/README.md — reproducibility levels, current numbers
-- [x] docs/metrics_definitions.md — canonical metric definitions
-- [x] docs/theorem_code_mapping.md — proof hierarchy and limitations
-- [x] docs/failure_analysis.md — residual risks and recommendations
-- [x] checklists/acceptance_checklist.md — verified items
-- [x] checklists/rebuttal_preparation.md — 10 anticipated questions
+- [x] Fides-style IFC baseline (prompt-rendered labels + policy prompt)
+- [x] Causal attribution baseline (injection-pattern-based causal ablation)
+- [x] MCP security baseline (metadata scanner for suspicious patterns)
+- [x] Total baselines: 8 (no_defense, prompt_hardening, input_firewall, generic_confirmation, static_allowlist, fides_ifc, causal_attribution, mcp_security)
+
+## Adversarial Evaluation (Phase 1)
+
+- [x] Adversarial LLM mode script (eval/scripts/run_adversarial_eval.py)
+- [x] Direct tool-call adversary (bypasses LLM, tests monitor enforcement)
+- [x] 4 separate ASR metrics reported (end-to-end, no-defense, LLM manipulation, conditional block)
+- [ ] Multi-model evaluation (requires API access to ≥3 models)
+- [ ] No-defense ASR ≥30% in adversarial setting (requires running adversarial eval)
+
+## Theorem-Code Mapping (Phase 4)
+
+- [x] All 9 theorem → code → test mappings verified against actual test names
+- [x] Proof hierarchy documented (Level 1: mechanized, Level 2: sketch, Level 3: assumption)
+- [x] HMAC security stated as axiom
+- [x] Paper wording uses "proof sketches" not "fully proven"
 
 ## Remaining Gaps (documented, not blocking submission)
 
-1. **Single-model evaluation**: All results from mimo-v2-pro. Multi-model evaluation planned for camera-ready.
-2. **Baseline quality**: Baselines are rule-based implementations. Discussion of stronger baselines in paper limitations.
-3. **No-defense ASR**: 5.1% is relatively low. Workflow-embedded attacks increase manipulation rate.
-4. **Real MCP integration**: MCP proxy is functional but not integrated with production MCP client/server.
+1. **Single-model evaluation**: All results from mimo-v2-pro. Adversarial eval script ready but needs API access to run.
+2. **Baseline quality**: 3 strong baselines (IFC, attribution, MCP security) implemented but not yet run against scenarios.
+3. **No-defense ASR**: 5.1% is relatively low. Adversarial LLM mode exists to increase this but needs API access to run.
+4. **Real MCP integration**: MCP proxy is functional; no-bypass test verifies architectural invariant. Not integrated with production MCP client/server.
 5. **User study**: Simulated only. Real user study would strengthen bridge evaluation.
 6. **Ablation study**: Policy-level (21 predefined scenarios). Expanded LLM-in-the-loop ablation planned.
+7. **Coq Docker compilation**: Coq not installed locally; needs Docker to verify.
