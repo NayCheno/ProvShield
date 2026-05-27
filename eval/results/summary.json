@@ -1,90 +1,110 @@
 {
   "model": "mimo-v2.5-pro",
-  "base_url": "https://token-plan-cn.xiaomimimo.com/v1",
-  "total_scenarios": 23,
-  "attack_scenarios": 16,
-  "benign_scenarios": 7,
-  "scenarios": [
-    "LLM_SKILL_01",
-    "LLM_SKILL_02",
-    "LLM_SKILL_03",
-    "LLM_SKILL_04",
-    "LLM_MCP_01",
-    "LLM_MCP_02",
-    "LLM_MCP_03",
-    "LLM_WEB_01",
-    "LLM_WEB_02",
-    "LLM_WEB_03",
-    "LLM_WEB_04",
-    "LLM_RAG_01",
-    "LLM_RAG_02",
-    "LLM_ADAPT_01",
-    "LLM_ADAPT_02",
-    "LLM_ADAPT_03",
-    "LLM_BEN_01",
-    "LLM_BEN_02",
-    "LLM_BEN_03",
-    "LLM_BEN_04",
-    "LLM_BEN_05",
-    "LLM_BEN_06",
-    "LLM_BEN_07"
-  ],
+  "total_scenarios": 660,
   "defenses": [
     {
       "defense": "ProvShield",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
-      "ps_block_rate_conditional": 0.5,
-      "overall_asr": 0.0,
-      "benign_completion_rate": 1.0
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
+      "ps_block_rate_conditional": 0.2,
+      "overall_asr": 0.0024,
+      "overall_asr_95ci": [
+        0.0004,
+        0.0134
+      ],
+      "benign_completion_rate": 0.9208,
+      "benign_completion_95ci": [
+        0.8797,
+        0.9487
+      ]
     },
     {
       "defense": "no_defense",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
       "ps_block_rate_conditional": 0.0,
-      "overall_asr": 0.125,
-      "benign_completion_rate": 1.0
+      "overall_asr": 0.0214,
+      "overall_asr_95ci": [
+        0.0113,
+        0.0402
+      ],
+      "benign_completion_rate": 1.0,
+      "benign_completion_95ci": [
+        0.9842,
+        1.0
+      ]
     },
     {
       "defense": "prompt_hardening",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
-      "ps_block_rate_conditional": 0.3333,
-      "overall_asr": 0.0625,
-      "benign_completion_rate": 1.0
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
+      "ps_block_rate_conditional": 0.5333,
+      "overall_asr": 0.0048,
+      "overall_asr_95ci": [
+        0.0013,
+        0.0172
+      ],
+      "benign_completion_rate": 1.0,
+      "benign_completion_95ci": [
+        0.9842,
+        1.0
+      ]
     },
     {
       "defense": "input_firewall",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
-      "ps_block_rate_conditional": 0.3333,
-      "overall_asr": 0.0,
-      "benign_completion_rate": 1.0
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
+      "ps_block_rate_conditional": 0.4222,
+      "overall_asr": 0.0143,
+      "overall_asr_95ci": [
+        0.0066,
+        0.0308
+      ],
+      "benign_completion_rate": 1.0,
+      "benign_completion_95ci": [
+        0.9842,
+        1.0
+      ]
     },
     {
       "defense": "generic_confirmation",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
       "ps_block_rate_conditional": 0.0,
-      "overall_asr": 0.125,
-      "benign_completion_rate": 1.0
+      "overall_asr": 0.0214,
+      "overall_asr_95ci": [
+        0.0113,
+        0.0402
+      ],
+      "benign_completion_rate": 1.0,
+      "benign_completion_95ci": [
+        0.9842,
+        1.0
+      ]
     },
     {
       "defense": "static_allowlist",
-      "attack_scenarios": 16,
-      "benign_scenarios": 7,
-      "llm_manipulation_rate": 0.375,
-      "ps_block_rate_conditional": 0.6667,
+      "attack_scenarios": 420,
+      "benign_scenarios": 240,
+      "llm_manipulation_rate": 0.1071,
+      "ps_block_rate_conditional": 0.5778,
       "overall_asr": 0.0,
-      "benign_completion_rate": 0.7143
+      "overall_asr_95ci": [
+        0.0,
+        0.0091
+      ],
+      "benign_completion_rate": 0.7875,
+      "benign_completion_95ci": [
+        0.7314,
+        0.8345
+      ]
     }
   ],
-  "llm_latency_p50_ms": 7353.7,
-  "llm_latency_p95_ms": 12996.1
+  "llm_latency_p50_ms": 13094.1,
+  "llm_latency_p95_ms": 36975.5
 }
