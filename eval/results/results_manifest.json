@@ -1,17 +1,17 @@
 {
   "schema_version": "3.0.0",
-  "git_sha": "8055bc7f752ebbb9354d50e62d693907ac8fc8f8",
-  "git_dirty": false,
+  "git_sha": "02c1034fb8aed5cd39c04322517fc66a4d0a8475",
+  "git_dirty": true,
   "command": "python eval/scripts/run_expanded_eval.py",
   "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
   "platform": "Windows-11-10.0.26200-SP0",
   "policy_hash": "sha256:8c1b517c22faea0b35fccf45dca198cc067b3ca4d71f256d2ea57b14ed80cfc1",
   "scenario_count": {
-    "total": 732,
-    "attack": 487,
-    "benign": 245
+    "total": 780,
+    "attack": 530,
+    "benign": 250
   },
-  "timestamp_utc": "2026-05-27T14:06:36Z",
+  "timestamp_utc": "2026-05-27T17:28:36Z",
   "model_id": "mimo-v2.5-pro",
   "provshield_version": "0.1.0",
   "defenses_evaluated": [
@@ -23,17 +23,17 @@
     "static_allowlist"
   ],
   "key_results": {
-    "provshield_asr": 0.0021,
+    "provshield_asr": 0.0019,
     "provshield_asr_95ci": [
-      0.0004,
-      0.0115
+      0.0003,
+      0.0106
     ],
-    "provshield_btc": 0.9224,
+    "provshield_btc": 0.924,
     "provshield_btc_95ci": [
-      0.8821,
-      0.9498
+      0.8844,
+      0.9508
     ],
-    "llm_manipulation_rate": 0.1211,
-    "ps_block_rate_conditional": 0.3898
+    "llm_manipulation_rate": 0.1302,
+    "ps_block_rate_conditional": 0.4493
   }
 }
