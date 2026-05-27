@@ -445,6 +445,37 @@ Qed.
     - Model has no access to sidecar store or signing key
     - HMAC is cryptographically secure *)
 
+(** ** HMAC Security Axiom
+    
+    We assume HMAC-SHA256 is a secure message authentication code.
+    This means: given only the message and the MAC output, no efficient
+    adversary can produce a valid MAC for a different message without
+    knowing the key.
+    
+    This is a standard cryptographic assumption. The HMAC key is managed
+    by the runtime (TCB) and never exposed to the model context (C).
+    
+    In the Python implementation, this corresponds to:
+    - ProvenanceLabel._compute_signature() using HMAC-SHA256
+    - _RUNTIME_HMAC_KEY being a module-level secret
+    - The LLM having no access to the key *)
+
+Axiom hmac_secure : forall (key msg1 msg2 mac : nat),
+  mac = 0 -> (* placeholder: real HMAC computation *)
+  msg1 <> msg2 ->
+  (* Cannot forge MAC for msg2 given MAC for msg1 without key *)
+  True. (* Formal statement simplified; see paper §5 for full argument *)
+
+(** ** TCB Integrity Axiom
+    
+    The runtime monitor, sidecar store, policy engine, and bridge
+    manager are not compromised. If the runtime itself is compromised,
+    all guarantees are void. *)
+
+Axiom tcb_integrity : forall (state : State),
+  (* The TCB components maintain their invariants *)
+  True. (* Placeholder: full formalization requires modeling TCB boundaries *)
+
 
 (* ================================================================= *)
 (** ** Transition Relation (PR-C5) *)
