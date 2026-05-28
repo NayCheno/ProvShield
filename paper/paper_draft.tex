@@ -954,7 +954,6 @@ pytest -q
 
 # Smoke test (Level 1)
 python artifact/scripts/run_smoke_test.py
-  \item \textbf{Evaluation harness}: 780 scenarios (530 attack, 250 benign) across 6 attack suites and 5 benign task categories, with 9 defense configurations including 3 baseline variants. Additional 80 high-manipulation scenarios with multi-turn business framing.
 # Expanded evaluation (Level 2)
 python eval/scripts/run_expanded_eval.py
 
@@ -963,6 +962,20 @@ python artifact/scripts/analyze_results.py \
   --results-dir eval/results \
   --output-dir eval/results/tables
 \end{lstlisting}
+
+
+\subsection{Baseline Implementation Details}
+\label{sec:baseline-impl}
+
+Each baseline variant is implemented in \texttt{eval/scripts/baselines.py} and applied to the same 780-scenario evaluation set as ProvShield. We describe the implementation and tuning of each.
+
+\paragraph{Fides-style IFC.} We approximate Fides's runtime approach by rendering provenance labels (e.g., \texttt{[EXTERNAL]}, \texttt{[TOOL\_OUTPUT]}) in the system prompt alongside a policy instruction. The model is asked to self-enforce the IFC policy. This is a prompt-only approximation---not a faithful reproduction of Fides's runtime enforcement---and serves to test whether prompt-visible labels can serve as an authority boundary.
+
+\paragraph{Causal attribution.} For each scenario, we compare the tool call produced by the LLM with external content present against a reference where external content is absent. If the tool name, destination, or payload digest changes, the call is flagged as injection-influenced and denied. This implements a counterfactual testing approach inspired by AttriGuard~\cite{attriguard_agentwatcher}. The key limitation is that influence is not authority: a benign tool call summarizing a webpage is legitimately influenced by external content.
+
+\paragraph{MCP security.} We scan tool metadata (descriptions, parameter schemas) for suspicious patterns such as requests to include credentials, execute arbitrary code, or modify system configuration. This implements a pattern-based metadata scanner inspired by MCP Safety Audit~\cite{mcp_safety_audit}. The key limitation is that it cannot detect content-level injection at runtime or tool-output laundering.
+
+\paragraph{Tuning protocol.} All baselines use default parameters without scenario-specific tuning. Pattern thresholds for causal attribution and MCP security are calibrated on a 32-scenario subset before application to the full evaluation set. No baseline receives access to ProvShield's sidecar store, policy engine, or capability tokens.
 
 %% ======================================================================
 \section{Conclusion}
