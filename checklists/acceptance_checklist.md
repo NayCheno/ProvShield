@@ -64,7 +64,7 @@
 - [x] Novelty over Fides / MCPSHIELD explicit. → Comparison table exists; paper updated with honest claims.
 - [x] Strong baselines included. → 9 defenses in expanded eval: ProvShield + 8 baselines. Strong baselines (Fides IFC, causal attribution, MCP security) show 4.9–5.1% ASR (no better than no defense).
 - [x] Adaptive attacks included. → 120 adaptive white-box scenarios + 80 high-manipulation scenarios.
-- [x] Results support claims. → Expanded eval (780 scenarios), multi-model (3 models), direct-call adversary (23 scenarios), high-manipulation (80 scenarios). All with 95% CI.
+- [x] Results support claims. → Expanded eval (780 scenarios), multi-model (3 models), direct-call adversary (101 scenarios, 8 effect types), high-manipulation (80 scenarios). All with 95% CI.
 - [x] Artifact appendix included. → Docker + Python 3.13 aligned; three reproducibility levels documented.
 - [x] Failure analysis. → docs/failure_analysis.md with residual risk analysis.
 - [x] LaTeX tables generated. → eval/results/tables/*.tex (attack, utility, ablation, per-suite).

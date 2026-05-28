@@ -1,4 +1,4 @@
-.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all lint
+.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all lint compile-check artifact-check
 
 PYTHON ?= python
 RESULTS_DIR ?= eval/results
@@ -12,6 +12,38 @@ check:
 
 lint:
 	$(PYTHON) -m pytest tests/ -q --tb=short
+
+# ---------------------------------------------------------------------------
+# Compile check — all Python scripts must compile cleanly
+# ---------------------------------------------------------------------------
+compile-check:
+	@echo "Checking eval scripts..."
+	@for f in eval/scripts/*.py; do $(PYTHON) -m py_compile "$$f" || exit 1; done
+	@echo "Checking artifact scripts..."
+	@for f in artifact/scripts/*.py; do $(PYTHON) -m py_compile "$$f" || exit 1; done
+	@echo "Checking tools..."
+	@for f in tools/*.py; do $(PYTHON) -m py_compile "$$f" || exit 1; done
+	@echo "Checking tests..."
+	@for f in tests/*.py; do $(PYTHON) -m py_compile "$$f" || exit 1; done
+	@echo "All scripts compile cleanly."
+
+# ---------------------------------------------------------------------------
+# Artifact check — full validation for submission
+# ---------------------------------------------------------------------------
+artifact-check: check compile-check
+	@echo "Running smoke test..."
+	$(PYTHON) artifact/scripts/run_smoke_test.py
+	@echo "Running table generation..."
+	$(PYTHON) artifact/scripts/analyze_results.py \
+		--results-dir $(RESULTS_DIR) \
+		--output-dir $(RESULTS_DIR)/tables
+	@echo "Running audit replay..."
+	@if [ -f "$(RESULTS_DIR)/traces.jsonl" ]; then \
+		$(PYTHON) tools/replay_audit.py --trace $(RESULTS_DIR)/traces.jsonl --policy artifact/configs/default_policy.yaml; \
+	else \
+		echo "No traces.jsonl found — skipping replay."; \
+	fi
+	@echo "Artifact check complete."
 
 # ---------------------------------------------------------------------------
 # Level 1: Smoke test — 10 scenarios, ~10s

@@ -406,7 +406,7 @@ We acknowledge the following limitations:
 
 2. **Limited model coverage.** We evaluate on three models from the same family (mimo-v2). Cross-family evaluation (e.g., GPT-4, Claude, Gemini, open-source models) would strengthen generalizability.
 
-3. **Small direct-call adversary.** The direct-call evaluation uses 23 scenarios. While these cover all critical effects, a larger suite would provide stronger evidence.
+3. **Small direct-call adversary.** The direct-call evaluation uses 101 scenarios across 8 effect types. While these cover all critical effects, a larger suite would provide stronger evidence.
 
 4. **Simulated user study.** Bridge confirmation is tested with programmatic acceptance, not real users. A real-user study would reveal social engineering risks in the bridge UI.
 
@@ -422,6 +422,6 @@ All attack scenarios in our benchmark are synthetic and designed for controlled 
 
 Tool-using LLM agents face a fundamental security challenge: authority laundering. Low-authority observations—webpages, emails, RAG documents, tool metadata, skill instructions, tool outputs—are transformed by the LLM planner into high-authority tool effects. Existing defenses that rely on model self-policing, text classification, or generic confirmation fail because they address the wrong layer.
 
-ProvShield addresses authority laundering with a runtime authority firewall. It treats the LLM as an untrusted planner, enforces source-to-sink authority policies at the tool execution boundary, and requires intent-bound declassification capabilities for high-risk effects. The formal model mechanizes core safety properties under explicit TCB assumptions. The evaluation demonstrates 0.6% ASR (88% reduction), 100% conditional block rate across three models, 95.7% direct-call block rate, and 92.4% benign task completion.
+ProvShield addresses authority laundering with a runtime authority firewall. It treats the LLM as an untrusted planner, enforces source-to-sink authority policies at the tool execution boundary, and requires intent-bound declassification capabilities for high-risk effects. The formal model mechanizes core safety properties under explicit TCB assumptions. The evaluation demonstrates 0.6% ASR (88% reduction), 100% conditional block rate across three models, 100% direct-call block rate (101/101 scenarios across 8 effect types), and 92.4% benign task completion.
 
 ProvShield's approach is complementary to, not a replacement for, model-level defenses. Prompt hardening and input filtering reduce the LLM manipulation rate; ProvShield provides the runtime guarantee that even when manipulation succeeds, unauthorized high-risk effects cannot execute. Future work includes cross-model evaluation, real-user studies, stronger adaptive attacks, and enterprise deployment with audited tool registries.

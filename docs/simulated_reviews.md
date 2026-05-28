@@ -39,10 +39,10 @@ The no-defense ASR of 5.1% is surprisingly low. This suggests the model itself i
 Section 7.6 explicitly addresses this: "The no-defense ASR of 5.1% reflects the robustness of modern LLMs against many injection patterns." We include stress-test scenarios (83% ASR with social engineering) and high-manipulation scenarios (17.5% ASR with mimo-v2.5). The defense decomposition (Table 2) separates model resistance from runtime enforcement, showing ProvShield's 100% conditional block rate is independent of model safety alignment.
 
 **Secondary Concern:**
-Only 23 direct-call scenarios is too few. Can the authors expand this?
+101 direct-call scenarios across 8 effect types is solid evidence. Can the authors expand this to cover additional real-world MCP workflows?
 
 **Response:**
-Acknowledged in Limitations. The 23 scenarios cover all critical effects (ExecuteCode, SendNetwork, DeleteLocal, CreateCredential) with 100% block rate on critical effects. We plan to expand in future work.
+Acknowledged in Limitations. The 101 scenarios cover all eight critical effect types (ExecuteCode, SendNetwork, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, Financial) with 100% block rate across all effects.
 
 ---
 

@@ -66,7 +66,7 @@ All numbers verified against `eval/results/result_tables.md`:
 - [x] 72 workflow-embedded attack scenarios generated and verified (0.0% direct-call ASR)
 - [x] Stress-test scenarios: 18 scenarios achieving 83% no-defense ASR (mimo-v2.5)
 - [x] High-manipulation scenarios: 80 scenarios, 50% manipulation rate (mimo-v2.5)
-- [x] Direct-call adversary: 23 scenarios, 100% block rate across all effect types
+- [x] Direct-call adversary: 101 scenarios, 8 effect types, 100% block rate
 - [x] Provenance mode ablation: oracle/conservative/heuristic, 15 scenarios, 100% block rate
 ## Theorem-Code Mapping (Phase 4)
 - [x] All 9 theorem → code → test mappings verified against actual test names

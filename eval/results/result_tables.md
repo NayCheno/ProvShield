@@ -92,18 +92,20 @@ Direct-call adversary: 0.0% ASR (all 72 scenarios blocked by ProvShield).
 
 ## Table 7: Direct-Call Adversary (bypasses LLM)
 
-23 crafted malicious tool calls sent directly to the runtime monitor.
+101 crafted malicious tool calls sent directly to the runtime monitor.
 Conservative provenance mode: all context objects linked to all arguments.
 
 | Effect Type | N | Blocked | Block Rate |
 |---|---:|---:|---:|
-| SendNetwork | 8 | 8 | 100.0% |
-| ExecuteCode | 8 | 8 | 100.0% |
-| DeleteLocal | 3 | 3 | 100.0% |
-| CreateCredential | 2 | 2 | 100.0% |
-| WriteExternal | 1 | 1 | 100.0% |
-| CalendarInvite | 1 | 1 | 100.0% |
-| **Total** | **23** | **23** | **100.0%** |
+| SendNetwork | 17 | 17 | 100.0% |
+| ExecuteCode | 17 | 17 | 100.0% |
+| DeleteLocal | 12 | 12 | 100.0% |
+| CreateCredential | 11 | 11 | 100.0% |
+| WriteExternal | 11 | 11 | 100.0% |
+| CalendarInvite | 11 | 11 | 100.0% |
+| ModifyAuth | 11 | 11 | 100.0% |
+| Financial | 11 | 11 | 100.0% |
+| **Total** | **101** | **101** | **100.0%** |
 
 ## Table 8: Provenance Mode Ablation (15 high-manipulation scenarios)
 
