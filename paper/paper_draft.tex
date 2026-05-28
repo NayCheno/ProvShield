@@ -586,9 +586,26 @@ Tables~\ref{tab:attack-results} and~\ref{tab:utility-results} present the evalua
   \end{tabular}
 \end{table}
 
-Table~\ref{tab:per-suite} shows the per-suite ASR breakdown.
+\begin{table}[t]
+  \centering
+  \caption{Per-suite attack success rate breakdown.}
+  \label{tab:per-suite}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Suite} & \textbf{ASR (\%)} & \textbf{Block (\%)} & \textbf{$n$} \\
+    \midrule
+    Skill injection      & 7.1  & 0.0 & 84   \\
+    MCP metadata         & 7.0  & 0.0 & 86   \\
+    RAG injection        & 3.9  & 0.0 & 103  \\
+    Web/email injection  & 2.5  & 1.7 & 121  \\
+    Adaptive white-box   & 5.9  & 0.7 & 136  \\
+    \textbf{Overall}     & \textbf{5.1} & \textbf{0.6} & \textbf{530} \\
+    \bottomrule
   \end{tabular}
 \end{table}
+
+Table~\ref{tab:per-suite} shows the per-suite ASR breakdown. ProvShield blocks all attacks in the skill injection, MCP metadata, MCP safety, and RAG suites. The residual 0.6\% ASR (3 attacks) occurs in the web/email (2/121) and adaptive white-box (1/136) suites.
 
 
 
@@ -714,9 +731,9 @@ ProvShield achieves \textbf{100\% conditional block rate} across all three model
 
 \subsubsection{Direct-Call Adversary}
 
-To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 23 attack scenarios covering all high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite) with conservative provenance mode (all context objects linked to all arguments).
+To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 101 attack scenarios covering all high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite) with conservative provenance mode (all context objects linked to all arguments).
 
-ProvShield blocks \textbf{23/23} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, and CalendarInvite call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
+ProvShield blocks \textbf{101/101} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, and CalendarInvite call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
 
 \subsubsection{Stress-Test Scenarios}
 
