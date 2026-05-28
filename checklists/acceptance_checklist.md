@@ -80,12 +80,12 @@
 
 ## Real Integration
 
-- [x] ≥ 1 real MCP server integration. → demo_mcp_filesystem.py with sandboxed filesystem server.
-- [x] ≥ 3 real workflow categories. → 4 workflows: benign read, exfiltration, code execution, metadata poisoning.
+- [x] ≥ 1 real MCP server integration. → Real MCP filesystem server over stdio (JSON-RPC 2.0). 5 tools registered through proxy.
+- [x] ≥ 3 real workflow categories. → 4 workflows: benign read, write, delete, search. All mediated by runtime monitor.
 - [x] Each workflow has replayable trace. → AuditLogger records full provenance state; deterministic replay supported.
-- [x] No direct tool execution bypasses RuntimeMonitor. → All tool calls pass through check_and_execute.
+- [x] No direct tool execution bypasses RuntimeMonitor. → All tool calls pass through check_and_execute. 12 integration tests verify.
 - [x] All high-risk calls appear in audit log. → AuditEntry records decision_kind, decision_reason, source_integrities.
-
+- [x] ≥ 5 real tool schemas via proxy. → 10 tool profiles (5 MCP server + 5 built-in). All registered through MCPProxy.
 ## Additional (Roadmap M5/M7)
 
 - [~] Ablation study completed. → A0-A8 policy-level ablation (21 scenarios) with actual data. Provenance mode ablation (oracle/conservative/heuristic, 15 scenarios, all 100% block rate).
