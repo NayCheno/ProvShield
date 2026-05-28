@@ -1,7 +1,7 @@
 # ProvShield Evaluation Results
 
-Generated: 2026-05-28T05:03:36Z  
-Model: `mimo-v2.5-pro`  
+Generated from manifest: git_sha=80a732b3, policy_hash=sha256:8c1b517c2..., model=mimo-v2-pro, timestamp=2026-05-28T05:03:36Z
+
 Git: `df198dd124b5`  
 Scenarios: 530 attack + 250 benign  
 
@@ -63,3 +63,29 @@ Scenarios: 530 attack + 250 benign
 | p95 | 0.0 ms |
 | mean | 0.0 ms |
 | count | 780 |
+
+## Table 5: Multi-Model Evaluation (75 scenarios per model)
+
+| Model | ASR (e2e) | No-defense ASR | Manipulation | Block Rate | BTCR |
+|---|---:|---:|---:|---:|---:|
+| mimo-v2-pro | 4.0% | 8.0% | 32.0% | 100.0% | 100.0% |
+| mimo-v2.5-pro | 2.0% | 2.0% | 10.0% | 100.0% | 100.0% |
+| mimo-v2.5 | 4.0% | 10.0% | 50.0% | 100.0% | 88.0% |
+
+## Table 6: Workflow-Embedded Attack Evaluation
+
+72 workflow-embedded attack scenarios across 9 workflow types.
+Direct-call adversary: 0.0% ASR (all 72 scenarios blocked by ProvShield).
+
+| Workflow Suite | N | Blocked | Direct-call ASR |
+|---|---:|---:|---:|
+| workflow_comms | 8 | 8 | 0.0% |
+| workflow_devops | 8 | 8 | 0.0% |
+| workflow_docs | 8 | 8 | 0.0% |
+| workflow_finance | 8 | 8 | 0.0% |
+| workflow_hr | 8 | 8 | 0.0% |
+| workflow_marketing | 8 | 8 | 0.0% |
+| workflow_research2 | 8 | 8 | 0.0% |
+| workflow_security | 8 | 8 | 0.0% |
+| workflow_support | 8 | 8 | 0.0% |
+| **Total** | **72** | **72** | **0.0%** |
