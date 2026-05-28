@@ -512,17 +512,17 @@ Our evaluation is organized around a central question: \emph{Does ProvShield pre
 
 We evaluate ProvShield along three axes: security (attack blocking), utility (benign task completion), and performance (runtime overhead).
 
-\subsection{Attack Suites}
+\subsection{Authority-Laundering Attack Suites}
 \label{sec:eval-attacks}
 
-We evaluate against six attack categories:
+We evaluate against six authority-laundering classes:
 \begin{enumerate}
-  \item \textbf{Skill injection}~\cite{skillinject}: malicious instructions embedded in skill files.
-  \item \textbf{MCP metadata poisoning}~\cite{mcptox}: tool descriptions that attempt to exfiltrate credentials or influence future tool calls.
+  \item \textbf{Observation-to-send (Skill injection)}~\cite{skillinject}: malicious instructions embedded in skill files laundered into send/write effects.
+  \item \textbf{Metadata-to-credential (MCP metadata poisoning)}~\cite{mcptox}: tool descriptions that attempt to exfiltrate credentials or modify authority.
   \item \textbf{MCP safety scenarios}~\cite{mcp_safety_audit}: demonstrated exploits against MCP-connected LLM agents including code execution, remote access, and credential theft.
-  \item \textbf{Web/email prompt injection}~\cite{greshake2023indirect}: indirect injection through retrieved web pages and email content.
-  \item \textbf{RAG injection}: adversarial documents injected into retrieval-augmented generation pipelines.
+  \item \textbf{Observation-to-send (Web/email/RAG injection)}~\cite{greshake2023indirect}: indirect injection through retrieved web pages, email content, and RAG documents.
   \item \textbf{Adaptive white-box attacks}: attackers with knowledge of the policy and label syntax who attempt to craft inputs that bypass enforcement~\cite{attriguard_agentwatcher}.
+  \item \textbf{Direct-call adversary}: a fully compromised planner that directly issues attack tool calls, testing the runtime's upper-bound guarantee.
 \end{enumerate}
 
 \subsection{Baselines}
@@ -894,7 +894,7 @@ The evaluation artifact is available as an open-source repository containing:
 \begin{itemize}
   \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy with JSON-RPC support, skill loader with HMAC verification, three provenance modes: oracle, conservative, heuristic).
   \item \textbf{Evaluation harness}: 780 scenarios (530 attack, 250 benign) across 6 attack suites and 5 benign task categories, with 9 defense configurations including 3 strong baselines. Additional 80 high-manipulation scenarios with multi-turn business framing.
-  \item \textbf{Direct-call adversary}: 23 crafted malicious tool calls sent directly to the runtime monitor (bypassing LLM), covering all high-risk effect types.
+  \item \textbf{Direct-call adversary}: 101 crafted malicious tool calls sent directly to the runtime monitor (bypassing LLM), covering all 8 high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, Financial).
   \item \textbf{MCP integration demo}: Real filesystem MCP server with 4 replayable workflows (benign read, exfiltration, code execution, metadata poisoning).
   \item \textbf{Policy configuration}: Declarative YAML policy defining source-to-sink rules for all effect types.
   \item \textbf{Formal model}: Coq formalization with transition system, reachable-state invariants, and safety property proofs (compiles with coqc 9.0).
