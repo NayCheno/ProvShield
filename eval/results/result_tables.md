@@ -1,6 +1,6 @@
 # ProvShield Evaluation Results
 
-Generated from manifest: git_sha=80a732b3, policy_hash=sha256:8c1b517c2..., model=mimo-v2-pro, timestamp=2026-05-28T05:03:36Z
+Generated from manifest: git_sha=3b6f389, policy_hash=sha256:8c1b517c2..., model=mimo-v2-pro, timestamp=2026-05-28T05:03:36Z, updated=2026-05-28T12:00:00Z
 
 Scenarios: 530 attack + 250 benign
 
