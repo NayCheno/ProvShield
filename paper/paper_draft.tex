@@ -769,8 +769,29 @@ ProvShield achieves \textbf{100\% conditional block rate} across all three model
 
 To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 101 attack scenarios covering all eight high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, Financial) with conservative provenance mode (all context objects linked to all arguments).
 
-ProvShield blocks \textbf{101/101} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, and Financial call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
+ProvShield blocks \textbf{101/101} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, and Financial call is either denied or requires a bridge. Table~\ref{tab:direct-call} presents the per-effect breakdown. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
 
+\begin{table}[t]
+  \centering
+  \caption{Direct-call adversary: per-effect block rate ($n$=101). Conservative provenance mode.}
+  \label{tab:direct-call}
+  \small
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \textbf{Effect Type} & \textbf{$n$} & \textbf{Blocked} & \textbf{Block Rate} \\
+    \midrule
+    SendNetwork      & 17 & 17 & 100\% \\
+    ExecuteCode      & 17 & 17 & 100\% \\
+    DeleteLocal      & 12 & 12 & 100\% \\
+    CreateCredential & 11 & 11 & 100\% \\
+    WriteExternal    & 11 & 11 & 100\% \\
+    CalendarInvite   & 11 & 11 & 100\% \\
+    ModifyAuth       & 11 & 11 & 100\% \\
+    Financial        & 11 & 11 & 100\% \\
+    \textbf{Total}   & \textbf{101} & \textbf{101} & \textbf{100\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 \subsubsection{Stress-Test Scenarios}
 
 We generate 18 stress-test scenarios using professional maintenance and operations framing (disk cleanup, build cache clearing, log rotation) with single-turn requests and no meta-language. On mimo-v2.5, these scenarios achieve \textbf{83\%} no-defense ASR (15/18 manipulated), satisfying the $\geq$30\% attack strength threshold. All 5 execute\_shell scenarios and all 3 send\_email scenarios succeed; 7/10 delete\_file scenarios succeed.
