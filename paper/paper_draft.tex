@@ -25,11 +25,11 @@
 
 %%
 %% --- Paper metadata ---------------------------------------------------
-\title{ProvShield: Provenance-Typed Runtime Enforcement for MCP and Skill-Based LLM Agents}
+\title{Preventing Authority Laundering in Tool-Using LLM Agents}
 
 \author{Author Names Omitted for Review}
 
-\keywords{LLM agents, prompt injection, provenance, information-flow control, capability tokens, MCP security}
+\keywords{LLM agents, authority laundering, prompt injection, runtime enforcement, capability tokens, MCP security, declassification}
 
 \begin{CCSXML}
 <ccs2012>
@@ -58,11 +58,12 @@
 \begin{document}
 
 \begin{abstract}
-We present \textbf{ProvShield}, a provenance-typed runtime enforcement system for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves authorization to the runtime. Content entering the agent is assigned unforgeable sidecar provenance labels that track integrity and confidentiality. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor checks whether the proposed action, destination, payload, and capability token satisfy a source-to-sink policy. For high-risk effects, ProvShield requires a bound user-intent bridge that is specific to the action, sink, destination, payload digest, principal, and expiration.
+Tool-using LLM agents do not merely generate text; they exercise delegated authority. They read private data, invoke MCP tools, load skills, write files, send emails, and execute code. This changes the security problem: an attacker does not need to compromise the model as software---it is enough to launder a low-authority observation into a high-authority tool action. We call this \emph{authority laundering}: the process by which a low-authority source---such as a webpage, email, retrieved document, MCP tool description, skill file, or tool output---is transformed by an LLM planner into a high-risk tool effect without proper authorization.
 
-We formalize ProvShield with a labeled transition system and prove label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, low-integrity control prevention for high-risk effects, and bridge non-replay under the stated trusted computing base. We implement ProvShield as an MCP proxy with JSON-RPC support, skill loader with HMAC verification, context builder, policy engine, bridge manager, and audit logger. We evaluate it on 780 scenarios (530 attack, 250 benign) spanning skill injection, MCP metadata poisoning, web/email prompt injection, RAG injection, and adaptive white-box attacks against nine defense configurations---including three strong baselines (Fides-style IFC, causal attribution, MCP security)---and 72 workflow-embedded attack scenarios across 9 workflow types. ProvShield achieves 0.6\% attack success rate (88\% reduction from no defense) with 92.4\% benign task completion and 100\% conditional block rate across three model variants.
+We present \textbf{ProvShield}, a runtime authority firewall for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves all authorization decisions to the runtime. Each content object entering the agent is assigned an HMAC-keyed sidecar provenance label tracking authority origin. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor verifies that the proposed action, destination, payload, and capability satisfy a source-to-sink authority policy. For high-risk effects, ProvShield requires an \emph{intent-bound declassification capability}: a one-time, cryptographically bound authorization specific to the exact action, sink, destination, payload digest, principal, and expiration---not a generic user confirmation.
+
+ProvShield achieves 0.6\% ASR (95\% CI [0.2\%, 1.7\%]), an 88\% reduction from the no-defense baseline, while maintaining 92.4\% BTCR. Its conditional block rate is 100\%: every attack tool call the LLM generates is stopped by the runtime. Direct-call adversary evaluation with a fully compromised planner confirms 95.7\% block rate with conservative provenance.
 \end{abstract}
-
 \maketitle
 
 %% ======================================================================
