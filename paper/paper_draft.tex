@@ -392,6 +392,8 @@ Figure~\ref{fig:transition} shows the labeled transition system governing tool-c
 \subsection{Theorem 1: Label Unforgeability}
 
 \begin{theorem}[Label Unforgeability]
+In any reachable state, no label in the sidecar store $R$ with integrity $> \texttt{ExternalContent}$ was created without a TCB transition.
+\end{theorem}
 
 \begin{proof}[Proof sketch]
 We prove by induction on transition steps $n$ that the invariant $\text{Inv}(\sigma_n)$ holds: \emph{no label in $R$ with integrity $> \texttt{ExternalContent}$ was created without a TCB transition}.
@@ -411,7 +413,6 @@ Labels are valid only if they carry $\sigma = \text{MAC}_k(\text{nonce} \| t \| 
 \end{proof}
 
 \subsection{Theorem 2: Capability Token Unforgeability}
-
 \begin{theorem}[Capability Token Unforgeability]
 In any reachable state, a valid capability token can only be created by the runtime through a bridge confirmation or administrative transition.
 \end{theorem}
