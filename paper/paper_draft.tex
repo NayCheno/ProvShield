@@ -348,7 +348,7 @@ A successful bridge creates a capability token~\cite{miller2006capabilities,denn
 \section{Formal Model}
 \label{sec:formal}
 
-We mechanize the core of ProvShield's authority model as a labeled transition system and prove safety properties about runtime-observable tool execution. We prove these properties for the mechanized core and sketch extensions for the full policy surface.
+We mechanize the core of ProvShield's authority model as a labeled transition system and prove safety properties about runtime-observable tool execution. The formal guarantees are organized into three tiers: (1)~\emph{mechanized}: the transition relation and reachable-state invariants are verified by Coq (coqc 9.0); (2)~\emph{proof sketch}: unforgeability and policy-level properties are proved by induction on transitions, with the HMAC security assumption stated explicitly; and (3)~\emph{assumption}: TCB integrity, key secrecy, and tool effect accuracy are deployment assumptions validated by unit tests rather than formal proof.
 
 We define runtime state as:
 \begin{equation}
