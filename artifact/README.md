@@ -195,6 +195,13 @@ To ensure reproducible results:
 - Prompts and model versions are stored in each run manifest.
 - Policy version hash is recorded in every audit entry.
 - Normalized tool call traces are stored alongside decisions.
+## HMAC Key Lifecycle
+
+ProvShield uses HMAC-SHA256 to sign provenance labels and capability tokens. The key lifecycle is:
+
+- **Development/test mode:** Set `PROVSHIELD_HMAC_KEY` environment variable to a hex-encoded 32-byte key for deterministic replay.
+- **Production mode:** The key is generated at runtime via `secrets.token_bytes(32)` and stored only in the TCB (trusted computing base). The model never has access to this key.
+- **Audit replay:** For cross-process replay, the same key must be used. Export the key from a run's manifest and set it for replay.
 
 ## Docker Usage
 

@@ -12,12 +12,13 @@ from typing import Optional
 
 # Module-level runtime signing key (PR-4: HMAC instead of plain SHA-256)
 # This key lives in the TCB — the model cannot access it.
-_RUNTIME_HMAC_KEY: bytes = secrets.token_bytes(32)
-
-
-# ---------------------------------------------------------------------------
-# Integrity lattice  (higher value = higher trust)
-# ---------------------------------------------------------------------------
+# For reproducible artifacts and audit replay, set PROVSHIELD_HMAC_KEY env var
+# to a hex-encoded key. In production, the key is generated at runtime and
+# never exposed to the model context.
+_RUNTIME_HMAC_KEY: bytes = (
+    bytes.fromhex(k) if (k := __import__("os").environ.get("PROVSHIELD_HMAC_KEY"))
+    else secrets.token_bytes(32)
+)
 
 class Integrity(IntEnum):
     UNSKILLED = 0        # UntrustedSkill
