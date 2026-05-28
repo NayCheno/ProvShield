@@ -1,0 +1,12 @@
+services:
+  provshield:
+    build:
+      context: ../..
+      dockerfile: artifact/docker/Dockerfile
+    volumes:
+      - ../../:/provshield
+    working_dir: /provshield
+    environment:
+      - PROVSHIELD_POLICY=artifact/configs/default_policy.yaml
+      - PROVSHIELD_SEED=42
+    command: make -f artifact/Makefile smoke
