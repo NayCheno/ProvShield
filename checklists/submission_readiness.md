@@ -9,7 +9,7 @@
 - [x] Design — provenance labels, effect-typed tools, runtime monitor, bridge, capability tokens
 - [x] Formal Model — state definition, transitions, 5 theorems with proof sketches
 - [x] Implementation — 6 components described
-- [x] Evaluation — 780 scenarios, 6 defenses, per-suite breakdown, ablation, failure analysis
+- [x] Evaluation — 780 scenarios, 9 defenses (including 3 strong baselines), per-suite breakdown, ablation, failure analysis, multi-model evaluation
 - [x] Related Work — prompt injection, IFC, capability security, taint tracking, MCP security, skill security, attribution
 - [x] Discussion — conservative policy, social engineering, model influence, deployment
 - [x] Limitations — model influence, social engineering, conservative policy, residual attacks, TCB assumptions, evaluation scope, formal proofs
@@ -37,7 +37,7 @@ All numbers verified against `eval/results/result_tables.md`:
 
 ## Artifact
 
-- [x] Smoke test runs (123 tests pass — 118 unit + 5 MCP integration)
+- [x] Smoke test runs (129 tests pass — 124 unit + 5 MCP integration)
 - [x] Docker support (Dockerfile present)
 - [x] CI workflow (.github/workflows/ci.yml)
 - [x] Audit log schema (JSON Schema)
