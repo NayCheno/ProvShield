@@ -295,9 +295,9 @@ We compare ProvShield against eight baselines:
 | Input firewall | Pattern classifier filters suspicious input before it reaches the model | Pre-model |
 | Static allowlist | Tools restricted to a fixed set; no dynamic policy | Tool-level |
 | Generic confirmation | User confirms all writes; confirmation does not bind destination or payload | User-level |
-| Fides-style IFC | Information-flow labels rendered in prompt; model self-enforces | Prompt-level |
-| Causal attribution | Post-hoc counterfactual comparison of tool calls with and without external content | Post-hoc |
-| MCP security | Metadata scanner inspects tool metadata for suspicious patterns | Metadata-level |
+| Fides-style IFC | Prompt-rendered IFC approximation: labels in prompt, model self-enforces | Prompt-level |
+| Causal attribution | Heuristic counterfactual comparison of tool calls with/without external content | Post-hoc |
+| MCP security | Pattern-based metadata scanner for suspicious tool descriptions | Metadata-level |
 
 ### 7.4 Metrics
 
