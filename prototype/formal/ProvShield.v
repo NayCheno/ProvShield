@@ -472,7 +472,7 @@ Axiom hmac_secure : forall (key msg1 msg2 mac : nat),
     manager are not compromised. If the runtime itself is compromised,
     all guarantees are void. *)
 
-Axiom tcb_integrity : forall (state : State),
+Axiom tcb_integrity : forall (state : RuntimeState),
   (* The TCB components maintain their invariants *)
   True. (* Placeholder: full formalization requires modeling TCB boundaries *)
 
