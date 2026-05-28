@@ -30,7 +30,7 @@
 - [x] Payload swap attacks fail. → C1: complete_bridge uses original call with original payload digest.
 - [x] Untrusted MCP metadata cannot authorize privileged effects. → C2: UNKNOWN_HIGH_RISK default; MCP integration test passes; MCP demo confirms blocking.
 - [~] Untrusted skills cannot modify policy or authority. → HMAC verification; not real supply chain attestation.
-- [x] Adaptive white-box ASR is at most 10%. → Expanded eval: 0.2% ASR across 125 adaptive scenarios. 95% CI [0.0%, 0.8%].
+- [x] Adaptive white-box ASR is at most 10%. → Expanded eval: 0.7% ASR across 136 adaptive white-box scenarios. 1 attack succeeded out of 136. Well within 10% threshold.
 - [x] Direct-call adversary ASR ≤ 1%. → 22/23 (95.7%) blocked with conservative provenance mode. All critical effects (ExecuteCode, SendNetwork, DeleteLocal, CreateCredential) 100% blocked. Single bypass is write_file tool profile classification issue.
 
 ## Utility
