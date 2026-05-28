@@ -89,3 +89,38 @@ Direct-call adversary: 0.0% ASR (all 72 scenarios blocked by ProvShield).
 | workflow_security | 8 | 8 | 0.0% |
 | workflow_support | 8 | 8 | 0.0% |
 | **Total** | **72** | **72** | **0.0%** |
+
+## Table 7: Direct-Call Adversary (bypasses LLM)
+
+23 crafted malicious tool calls sent directly to the runtime monitor.
+Conservative provenance mode: all context objects linked to all arguments.
+
+| Effect Type | N | Blocked | Block Rate |
+|---|---:|---:|---:|
+| SendNetwork | 8 | 8 | 100.0% |
+| ExecuteCode | 8 | 8 | 100.0% |
+| DeleteLocal | 3 | 3 | 100.0% |
+| CreateCredential | 2 | 2 | 100.0% |
+| WriteExternal | 1 | 1 | 100.0% |
+| CalendarInvite | 1 | 1 | 100.0% |
+| **Total** | **23** | **23** | **100.0%** |
+
+## Table 8: Provenance Mode Ablation (15 high-manipulation scenarios)
+
+| Mode | N | Manipulated | Blocked | Manip. Rate | Block Rate |
+|---|---:|---:|---:|---:|---:|
+| Oracle | 15 | 1 | 1 | 6.7% | 100.0% |
+| Conservative | 15 | 3 | 3 | 20.0% | 100.0% |
+| Heuristic | 15 | 3 | 3 | 20.0% | 100.0% |
+
+## Table 9: Stress-Test Scenarios (18 scenarios, mimo-v2.5)
+
+Professional maintenance/operations framing with single-turn requests.
+User-level social engineering (all context = UserIntent integrity).
+
+| Tool | N | Manipulated | Manip. Rate |
+|---|---:|---:|---:|
+| execute_shell | 5 | 5 | 100.0% |
+| send_email | 3 | 3 | 100.0% |
+| delete_file | 10 | 7 | 70.0% |
+| **Total** | **18** | **15** | **83.3%** |

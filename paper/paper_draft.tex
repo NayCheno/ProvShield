@@ -623,7 +623,7 @@ The no-defense ASR of 5.1\% on mimo-v2-pro reflects the model's own safety align
 
 \subsubsection{Utility Analysis}
 
-ProvShield achieves 92.4\% benign task completion (95\% CI [88.0\%, 94.9\%]), compared to 100\% for the no-defense baseline. The 7.6\% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. The false blocking rate is approximately 7.6\%, and the confirmation burden is 7.6\% of benign tasks. Static allowlist achieves only 79.2\% BTCR, demonstrating the cost of its coarse-grained approach.
+ProvShield achieves 92.4\% benign task completion (95\% CI [88.0\%, 94.9\%]), compared to 100\% for the no-defense baseline. The 7.6\% reduction is within the acceptance threshold and reflects the conservative policy applied to scenarios with ambiguous provenance. In the automated evaluation, bridge-required calls without user confirmation are conservatively treated as denied; the outright false denial rate (where no bridge is offered) is 7.6\%, while 21.1\% of benign tasks experience some friction (denial or bridge requirement). In a real deployment, user bridge confirmation would reduce the effective blocking rate. Static allowlist achieves only 79.2\% BTCR, demonstrating the cost of its coarse-grained approach.
 
 \subsubsection{Conditional Metrics}
 
@@ -661,7 +661,9 @@ Table~\ref{tab:ablation} presents the ablation study results, showing the contri
 \end{table}
 
 
-The ablation reveals that provenance labels are the single most critical component: removing them (A1) raises ASR from 24\% to 90\%. Removing the runtime monitor (A2) yields 100\% ASR, confirming that enforcement---not just labeling---is essential. Trusting tool metadata (A4) specifically inflates MCPTox suite ASR to 100\%, confirming the value of treating unattested metadata as low-integrity. The integrity-only ablation (A7) shows that confidentiality checks are needed to prevent secret exfiltration (62\% ASR vs 24\% baseline). Note that the baseline (A0) shows 24\% ASR because these 21 predefined scenarios include high-risk tool calls that ProvShield correctly requires bridges for; in the policy-level evaluation without user confirmation, bridge-required calls are counted as attack successes. The key comparison is between A0 and the ablated configurations: removing labels (A1) nearly quadruples ASR, and removing the monitor (A2) eliminates all protection.
+The ablation reveals that provenance labels are the single most critical component: removing them (A1) raises ASR from 24\% to 90\%. Removing the runtime monitor (A2) yields 100\% ASR, confirming that enforcement---not just labeling---is essential. Trusting tool metadata (A4) specifically inflates MCPTox suite ASR to 100\%, confirming the value of treating unattested metadata as low-integrity. The integrity-only ablation (A7) shows that confidentiality checks are needed to prevent secret exfiltration (62\% ASR vs 24\% baseline). Note that the baseline (A0) shows 24\% ASR because these 21 predefined scenarios include high-risk tool calls that ProvShield correctly requires bridges for; in the policy-level evaluation without user confirmation, bridge-required calls count as blocked.
+
+We additionally evaluate three provenance tracking modes---\emph{oracle} (perfect source attribution), \emph{conservative} (all context bound to all arguments), and \emph{heuristic} (pattern-based inference)---on 15 high-manipulation scenarios. All three modes achieve 100\% conditional block rate. The oracle mode shows lower manipulation rate (6.7\%) compared to conservative and heuristic modes (20\%), suggesting that finer-grained provenance reduces false positives in benign scenarios while maintaining security.
 
 \subsubsection{Failure Analysis}
 
@@ -706,12 +708,6 @@ Critically, these stress-test scenarios represent \emph{user-level social engine
 \subsubsection{High-Manipulation Scenarios}
 
 We also evaluate 80 high-manipulation attack scenarios using multi-turn business framing (IT compliance, incident response, GDPR data export, SOX compliance reports) where malicious instructions are embedded in external content. On mimo-v2.5, these scenarios achieve 13.3\% manipulation rate and 10.0\% no-defense ASR. ProvShield achieves \textbf{100\% conditional block rate} on all manipulated scenarios, confirming that when the LLM is deceived by external content into generating malicious calls, the runtime enforcement prevents all unauthorized execution.
-
-\subsubsection{Direct-Call Adversary}
-
-To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 23 attack scenarios covering all high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite) with conservative provenance mode (all context objects linked to all arguments).
-
-ProvShield blocks \textbf{23/23} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, and CalendarInvite call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
 
 \subsection{Comparison with Related Work}
 \label{sec:eval-comparison}
