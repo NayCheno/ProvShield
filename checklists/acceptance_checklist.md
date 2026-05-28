@@ -73,7 +73,7 @@
 
 ## Attack Strength
 
-- [~] No-defense ASR ≥ 30% in at least one configuration. → Standard eval: 5.1% (mimo-v2-pro), 10% (mimo-v2.5). High-manipulation: 17.5% (mimo-v2.5, 40 scenarios). Model safety alignment limits no-defense ASR.
+- [~] No-defense ASR ≥ 30% in at least one configuration. → Standard eval: 5.1% (mimo-v2-pro), 10% (mimo-v2.5). High-manipulation: 17.5% (mimo-v2.5, 40 scenarios). Stress-test: 83% (mimo-v2.5, 18 scenarios, user-level social engineering). Model safety alignment limits standard no-defense ASR. Stress-test confirms attack strength when social engineering is used.
 - [x] LLM manipulation rate ≥ 40% in at least one configuration. → mimo-v2.5: 50% manipulation rate (75 scenarios).
 - [x] ProvShield direct-call ASR ≤ 1%. → 22/23 (95.7%) blocked. Single bypass is tool profile classification.
 - [x] ProvShield conditional malicious-call block rate ≥ 99%. → 100% across all models and scenarios.
@@ -88,7 +88,7 @@
 
 ## Additional (Roadmap M5/M7)
 
-- [~] Ablation study completed. → A0-A8 ablation exists (policy-level, 21 scenarios). Provenance mode ablation implemented but not yet run through LLM eval.
+- [~] Ablation study completed. → A0-A8 policy-level ablation (21 scenarios) with actual data. Provenance mode ablation (oracle/conservative/heuristic, 15 scenarios, all 100% block rate).
 - [x] Failure analysis completed. → docs/failure_analysis.md.
 - [x] LLM-based evaluation completed. → Expanded eval: 780 scenarios (530 attack + 250 benign), mimo-v2-pro.
 - [x] Mechanized proofs. → Coq file compiles with coqc 9.0. Transition relation + reachable invariant proven.

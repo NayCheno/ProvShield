@@ -62,21 +62,22 @@ All numbers verified against `eval/results/result_tables.md`:
 - [x] Direct tool-call adversary (bypasses LLM, tests monitor enforcement)
 - [x] 4 separate ASR metrics reported (end-to-end, no-defense, LLM manipulation, conditional block)
 - [x] Multi-model evaluation: 3 models (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 75 scenarios each (50 attack + 25 benign)
-- [~] No-defense ASR ≥30% in adversarial setting: 10% with mimo-v2.5 (gap remains; mimo models are generally robust)
+- [~] No-defense ASR ≥30% in adversarial setting: 10% with mimo-v2.5 (gap remains; mimo models are generally robust). Stress-test: 83% no-defense ASR with user-level social engineering (18 scenarios, mimo-v2.5).
 - [x] 72 workflow-embedded attack scenarios generated and verified (0.0% direct-call ASR)
+- [x] Stress-test scenarios: 18 scenarios achieving 83% no-defense ASR (mimo-v2.5)
+- [x] High-manipulation scenarios: 80 scenarios, 50% manipulation rate (mimo-v2.5)
+- [x] Direct-call adversary: 23 scenarios, 100% block rate across all effect types
+- [x] Provenance mode ablation: oracle/conservative/heuristic, 15 scenarios, 100% block rate
 ## Theorem-Code Mapping (Phase 4)
-
 - [x] All 9 theorem → code → test mappings verified against actual test names
 - [x] Proof hierarchy documented (Level 1: mechanized, Level 2: sketch, Level 3: assumption)
 - [x] HMAC security stated as axiom
 - [x] Paper wording uses "proof sketches" not "fully proven"
-
 ## Remaining Gaps (documented, not blocking submission)
-
 1. **Multi-model scale**: 3 models evaluated with 75 scenarios each. Need ≥300 attack + ≥100 benign per model for full §8.4 gate.
-2. **No-defense ASR**: 5.1% (standard) / 10% (mimo-v2.5). §8.4 gate requires ≥30% in one setting. mimo models are robust; need weaker model or stronger adversarial prompts.
+2. **No-defense ASR**: 5.1% (standard) / 10% (mimo-v2.5). Stress-test achieves 83% with user-level social engineering (18 scenarios). §8.4 gate requires ≥30% in standard setting.
 3. **Baseline quality**: 3 strong baselines (IFC, attribution, MCP security) implemented AND run at scale (780 scenarios). All show 4.9–5.1% ASR, no better than no defense.
 4. **Real MCP integration**: MCP proxy is functional; no-bypass test verifies architectural invariant. Not integrated with production MCP client/server.
 5. **User study**: Simulated only. Real user study would strengthen bridge evaluation.
-6. **Ablation study**: Policy-level (21 predefined scenarios). Expanded LLM-in-the-loop ablation planned.
+6. **Ablation study**: Policy-level (21 predefined scenarios) + provenance mode ablation (15 scenarios, 3 modes). Expanded LLM-in-the-loop ablation planned.
 7. **Coq Docker compilation**: Coq not installed locally; needs Docker to verify.

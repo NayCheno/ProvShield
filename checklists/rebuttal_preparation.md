@@ -48,9 +48,9 @@ Anticipated reviewer questions and prepared responses for the ProvShield paper.
 - We acknowledge this as a key limitation (Section 10).
 - The core contribution (runtime enforcement) is model-agnostic: it operates on tool calls, not model internals. The monitor's behavior is deterministic and does not depend on the LLM.
 - The LLM manipulation rate (14.9%) varies by model; a weaker model would have higher manipulation, making ProvShield's runtime enforcement more critical.
-- We are actively evaluating with additional models and plan to include multi-model results in the camera-ready version.
-
-**Evidence:** Section 10 (Limitations), Section 7.4.
+- Multi-model evaluation completed: 3 models (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 75 scenarios each (50 attack + 25 benign). ProvShield achieves 100% conditional block rate across all models.
+- mimo-v2.5 achieves 50% manipulation rate (vs. 14.9% for mimo-v2-pro), confirming that model susceptibility varies significantly.
+**Evidence:** Section 7.4 (Multi-Model Evaluation), Table 6 (multi-model results).
 
 ## Q5: The formal proofs are proof sketches, not fully mechanized
 
