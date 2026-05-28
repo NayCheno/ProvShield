@@ -2,7 +2,7 @@
 
 ## 1. Positioning thesis
 
-ProvShield is not another prompt-injection detector. It is a runtime enforcement system that treats LLM output as an untrusted proposal and checks whether the proposed tool call is permitted by provenance-typed source-to-sink policy.
+ProvShield addresses *authority laundering*: the process by which a low-authority observation is transformed by an LLM planner into a high-authority tool effect. It is not another prompt-injection detector. It is a runtime authority firewall that treats LLM output as an untrusted proposal and checks whether the proposed tool call has sufficient authority to execute.
 
 ## 2. Comparison table
 
