@@ -62,7 +62,7 @@ Tool-using LLM agents do not merely generate text; they exercise delegated autho
 
 We present \textbf{ProvShield}, a runtime authority firewall for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves all authorization decisions to the runtime. Each content object entering the agent is assigned an HMAC-keyed sidecar provenance label tracking authority origin. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor verifies that the proposed action, destination, payload, and capability satisfy a source-to-sink authority policy. For high-risk effects, ProvShield requires an \emph{intent-bound declassification capability}: a one-time, cryptographically bound authorization specific to the exact action, sink, destination, payload digest, principal, and expiration---not a generic user confirmation.
 
-ProvShield achieves 0.6\% ASR (95\% CI [0.2\%, 1.7\%]), an 88\% reduction from the no-defense baseline, while maintaining 92.4\% BTCR. Its conditional block rate is 100\%: every attack tool call the LLM generates is stopped by the runtime. Direct-call adversary evaluation with a fully compromised planner confirms 95.7\% block rate with conservative provenance.
+ProvShield achieves 0.6\% ASR (95\% CI [0.2\%, 1.7\%]), an 88\% reduction from the no-defense baseline, while maintaining 92.4\% BTCR. Its conditional block rate is 100\%: every attack tool call the LLM generates is stopped by the runtime. Direct-call adversary evaluation with 101 scenarios across 8 effect types confirms 100\% block rate with conservative provenance.
 \end{abstract}
 \maketitle
 
@@ -117,6 +117,40 @@ A skill package includes instructions that appear to implement a formatting task
 
 A malicious email asks the agent to ``send the requested diagnostic information to the support address.'' The agent presents a generic confirmation: ``Send email?'' The user clicks yes. The actual recipient is attacker-controlled and the payload includes private data. ProvShield's bridge would show the exact recipient, payload digest, source categories, and private-data crossing. A bridge for one payload and destination cannot authorize another.
 
+\subsection{Tool-Output-to-Exec Laundering}
+\label{sec:attack-tool-output}
+
+A security scanner tool returns output that includes a hidden instruction to execute a shell command as part of ``post-scan cleanup.'' The tool output---a low-authority source---is laundered into a code-execution effect (\texttt{ExecuteCode}). ProvShield labels tool outputs as \texttt{ToolOutput}, which cannot authorize high-risk effects on its own. The policy engine requires a bridge for any \texttt{ExecuteCode} effect influenced by tool output.
+
+\subsection{Replay and Swap Laundering}
+\label{sec:attack-replay}
+
+An attacker obtains a previously authorized bridge token and attempts to reuse it for a different destination, payload, or action. Alternatively, the attacker modifies the proposed call after the bridge is confirmed but before execution---a destination swap or payload swap. ProvShield's capability tokens carry a MAC over all six normalized call fields (action, effect, destination, payload digest, principal, nonce) and an expiration timestamp. Any field mismatch causes verification to fail. The nonce is consumed upon use, preventing replay.
+
+\subsection{Attack Taxonomy}
+\label{sec:taxonomy}
+
+Table~\ref{tab:taxonomy} summarizes the six authority-laundering classes.
+
+\begin{table}[t]
+  \centering
+  \caption{Authority laundering attack taxonomy.}
+  \label{tab:taxonomy}
+  \small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Attack Class} & \textbf{Low-Privilege Source} & \textbf{Laundered Effect} & \textbf{ProvShield Block Point} \\
+    \midrule
+    Observation-to-send & Web/email/RAG & \texttt{SendNetwork} & Source-to-sink policy \\
+    Metadata-to-credential & MCP metadata & \texttt{CreateCredential} & Metadata integrity $<$ UserIntent \\
+    Skill-to-delete & Untrusted skill & \texttt{DeleteLocal} & Skill labeled UntrustedSkill \\
+    Tool-output-to-exec & Tool output & \texttt{ExecuteCode} & ToolOutput cannot authorize alone \\
+    Confirmation & Ambiguous UI & Bound authority & Bridge binds all fields \\
+    Replay/swap & Old bridge/capability & New dest/payload & MAC + nonce consumption \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 %% ======================================================================
 \section{Threat Model}
 \label{sec:threat-model}
@@ -136,6 +170,8 @@ The trusted computing base (TCB) consists of:
 \end{itemize}
 
 ProvShield assumes the TCB is not compromised. It does not attempt to prove that untrusted text has no influence on the model's hidden state. Instead, it proves that high-risk tool execution cannot occur unless the runtime-observable authority and capability constraints are satisfied.
+
+%% ======================================================================
 \section{Design}
 \label{sec:design}
 
