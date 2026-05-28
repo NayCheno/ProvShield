@@ -212,9 +212,30 @@ def main():
     scenarios = attack_scenarios + benign_scenarios
     print(f"Scenarios: {len(attack_scenarios)} attack + {len(benign_scenarios)} benign = {len(scenarios)}")
 
-    all_results = {}
+    # Load existing results for resumption
+    output_path = _root / "eval" / "results" / "multi_model_eval_results.json"
+    existing = {}
+    if output_path.exists():
+        try:
+            with open(output_path) as f:
+                existing = json.load(f)
+        except Exception:
+            pass
+    all_results = existing.get("results", {})
+    prev_n = existing.get("scenarios_per_model", 0)
+    # Only reuse results if scenario count matches
+    if prev_n != len(scenarios):
+        all_results = {}
+    completed_models = {k.replace("_standard", "").replace("_adversarial", "") for k in all_results}
 
     for model in MODELS:
+        if f"{model}_standard" in all_results:
+            print(f"\n  Skipping {model} (already completed)")
+            metrics = all_results[f"{model}_standard"]
+            print(f"  ASR (end-to-end):     {metrics['asr_end_to_end']:.1%}")
+            print(f"  ASR (no-defense):     {metrics['asr_no_defense']:.1%}")
+            continue
+
         print(f"\n{'='*60}")
         print(f" Model: {model}")
         print(f"{'='*60}")
@@ -236,6 +257,15 @@ def main():
         print(f"  Cond. block rate:     {metrics['ps_block_rate_given_attack_tool']:.1%}")
         print(f"  BTCR:                 {metrics['benign_completion_rate']:.1%}")
 
+        # Save after each model
+        output = {
+            "models": MODELS, "api": BASE_URL,
+            "scenarios_per_model": len(scenarios), "results": all_results,
+        }
+        with open(output_path, "w") as f:
+            json.dump(output, f, indent=2)
+        print(f"  (saved)")
+
         # Adversarial mode
         if args.adversarial:
             print(f"  ▸ Adversarial mode ({len(scenarios)} scenarios)...")
@@ -252,17 +282,20 @@ def main():
             print(f"  ASR (no-defense):     {adv_metrics['asr_no_defense']:.1%}")
             print(f"  LLM manipulation:     {adv_metrics['llm_manipulation_rate']:.1%}")
 
-    # Save results
+            # Save after adversarial too
+            output["results"] = all_results
+            with open(output_path, "w") as f:
+                json.dump(output, f, indent=2)
+
+    # Final save
     output = {
-        "models": MODELS,
-        "api": BASE_URL,
-        "scenarios_per_model": len(scenarios),
-        "results": all_results,
+        "models": MODELS, "api": BASE_URL,
+        "scenarios_per_model": len(scenarios), "results": all_results,
     }
-    output_path = _root / "eval" / "results" / "multi_model_eval_results.json"
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
     print(f"\nResults saved to {output_path}")
+
 
     # Summary table
     print(f"\n{'='*64}")
