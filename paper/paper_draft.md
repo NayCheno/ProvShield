@@ -1,7 +1,7 @@
 # Preventing Authority Laundering in Tool-Using LLM Agents
 
 > Draft version: v1.0 (CCF-A rewrite)
-> Status: 780 scenarios, 9 defense configurations (including 3 strong baselines), 3-model evaluation, direct-call adversary (23 scenarios, 95.7% blocked), high-manipulation (80 scenarios), mechanized core (Coq 9.0). ProvShield 0.6% ASR (88% reduction), 92.4% BTCR, 100% conditional block rate across all models.
+> Status: 780 scenarios, 9 defense configurations (including 3 strong baselines), 3-model evaluation, direct-call adversary (101 scenarios, 100% blocked), high-manipulation (80 scenarios), mechanized core (Coq 9.0). ProvShield 0.6% ASR (88% reduction), 92.4% BTCR, 100% conditional block rate across all models.
 
 ## Abstract
 
@@ -360,7 +360,7 @@ The three strong baselines perform no better than no defense (4.9–5.1% ASR). *
 
 To test the runtime's upper-bound guarantee, we evaluate a direct-call adversary: the planner is fully compromised and directly issues attack tool calls, bypassing LLM generation entirely. This tests whether the runtime can block authority laundering even when there is no model manipulation to detect.
 
-Across 23 direct-call scenarios covering all critical effects (ExecuteCode, SendNetwork, DeleteLocal, CreateCredential), ProvShield blocks **22/23 (95.7%)** with conservative provenance mode. The single bypass is a tool profile classification issue for the `write_file` tool, not a fundamental enforcement gap. All critical effects (code execution, network send, deletion, credential creation) are blocked at 100%. This result confirms that ProvShield's authority enforcement operates at the runtime level, independent of the planner.
+Across 101 direct-call scenarios covering all eight effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, Financial) with conservative provenance mode, ProvShield blocks **101/101 (100%)**. Every effect type achieves 100% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, and Financial call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
 
 ### 7.9 Utility
 

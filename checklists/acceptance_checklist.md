@@ -12,7 +12,7 @@
 > Positioning memo: paper/positioning_authority_laundering.md
 > Expanded eval: 780 scenarios (530 attack + 250 benign), 95% Wilson CI.
 > High-manipulation eval: 80 scenarios, mimo-v2.5.
-> Direct-call adversary: 23 scenarios, conservative provenance mode.
+> Direct-call adversary: 101 scenarios, conservative provenance mode, 100% blocked.
 > Multi-model: 3 models, 75 scenarios each.
 > MCP integration demo: 4 replayable workflows.
 > Coq: mechanized core compiles with coqc 9.0.
@@ -30,7 +30,7 @@
 - [x] Untrusted MCP metadata cannot authorize privileged effects. → C2: UNKNOWN_HIGH_RISK default; MCP integration test passes; MCP demo confirms blocking.
 - [~] Untrusted skills cannot modify policy or authority. → HMAC verification; not real supply chain attestation.
 - [x] Adaptive white-box ASR is at most 10%. → Expanded eval: 0.7% ASR across 136 adaptive white-box scenarios. 1 attack succeeded out of 136. Well within 10% threshold.
-- [x] Direct-call adversary ASR ≤ 1%. → 22/23 (95.7%) blocked with conservative provenance mode. All critical effects (ExecuteCode, SendNetwork, DeleteLocal, CreateCredential) 100% blocked. Single bypass is write_file tool profile classification issue.
+- [x] Direct-call adversary ASR ≤ 1%. → 101/101 (100%) blocked with conservative provenance mode. All 8 effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite, ModifyAuth, Financial) 100% blocked.
 
 ## Utility
 
@@ -74,8 +74,7 @@
 
 - [~] No-defense ASR ≥ 30% in at least one configuration. → Standard eval: 5.1% (mimo-v2-pro), 10% (mimo-v2.5). High-manipulation: 17.5% (mimo-v2.5, 40 scenarios). Stress-test: 83% (mimo-v2.5, 18 scenarios, user-level social engineering). Model safety alignment limits standard no-defense ASR. Stress-test confirms attack strength when social engineering is used.
 - [x] LLM manipulation rate ≥ 40% in at least one configuration. → mimo-v2.5: 50% manipulation rate (75 scenarios).
-- [x] ProvShield direct-call ASR ≤ 1%. → 22/23 (95.7%) blocked. Single bypass is tool profile classification.
-- [x] ProvShield conditional malicious-call block rate ≥ 99%. → 100% across all models and scenarios.
+- [x] ProvShield direct-call ASR ≤ 1%. → 101/101 (100%) blocked with conservative provenance mode. All 8 effect types 100% blocked.
 
 ## Real Integration
 
@@ -103,5 +102,5 @@
 - [x] Coq compilation. → coqc 9.0 produces ProvShield.vo cleanly.
 - [x] Confidence intervals. → Wilson score 95% CI on all metrics.
 - [x] Provenance modes. → oracle, conservative, heuristic implemented. Exported as ProvenanceMode enum.
-- [x] Direct-call adversary. → eval/scripts/run_adversarial_direct.py (23 scenarios, 95.7% blocked).
+- [x] Direct-call adversary. → eval/scripts/run_adversarial_direct.py (101 scenarios, 100% blocked, 8 effect types).
 - [x] High-manipulation scenarios. → eval/scripts/generate_highmanip_scenarios.py (80 scenarios).
