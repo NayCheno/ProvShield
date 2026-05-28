@@ -18,6 +18,7 @@ from .labels import (
 )
 from .policy import PolicyEngine
 from .store import SidecarProvenanceStore, LabeledObject, ProvenanceGraph
+from .taint import ProvenanceMode
 from .tokens import CapabilityTokenStore
 from .types import (
     EFFECT_SINK_MAP,
@@ -27,6 +28,7 @@ from .types import (
     NormalizedToolCall,
     Sink,
 )
+
 
 
 # Tool profile registry (maps tool names to their declared effects)
@@ -120,12 +122,14 @@ class RuntimeMonitor:
         token_store: Optional[CapabilityTokenStore] = None,
         audit_log: Optional[AuditLogger] = None,
         bridge_manager: Optional[BridgeManager] = None,
+        provenance_mode: ProvenanceMode = ProvenanceMode.HEURISTIC,
     ) -> None:
         self.policy_engine = policy_engine or PolicyEngine()
         self.provenance_store = provenance_store or SidecarProvenanceStore()
         self.token_store = token_store or CapabilityTokenStore()
         self.audit_log = audit_log or AuditLogger()
         self.bridge_manager = bridge_manager or BridgeManager(self.token_store)
+        self.provenance_mode = provenance_mode
         self._latencies: list[float] = []
 
     def check_and_execute(
@@ -141,8 +145,12 @@ class RuntimeMonitor:
         # PR-C3: If no explicit argument_sources, use taint propagation
         if call.argument_sources is None:
             from .taint import ArgumentBuilder
-            builder = ArgumentBuilder(self.provenance_store)
-            inferred = builder.build_sources(call.tool_name, call.arguments)
+            builder = ArgumentBuilder(self.provenance_store, self.provenance_mode)
+            explicit = proposed_call.get("argument_sources")
+            inferred = builder.build_sources(
+                call.tool_name, call.arguments,
+                explicit_sources=explicit if isinstance(explicit, dict) else None,
+            )
             if inferred:
                 pairs = []
                 for arg_key, obj_ids in inferred.items():
