@@ -97,8 +97,9 @@ make all
 | `rag_injection` | ~75 | Delayed triggers and poisoned retrieval objectives |
 | `adaptive_white_box` | ~75 | Label spoofing, bridge replay, destination/payload swap, policy probing |
 | `workflow_embedded` | 88 | Attacks embedded in legitimate workflows (45 strong + 22 targeted + 21 high-rate) |
+| `high_manipulation` | 80 | Multi-turn business-framed attacks (IT compliance, incident response, GDPR, SOX) with higher LLM manipulation rate |
 
-**Total attack scenarios: 530** (including 88 workflow-embedded strong attacks).
+**Total attack scenarios: 610** (including 88 workflow-embedded and 80 high-manipulation scenarios).
 
 ### Benign Tasks
 
