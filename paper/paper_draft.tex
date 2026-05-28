@@ -537,10 +537,10 @@ Table~\ref{tab:per-suite} shows the per-suite ASR breakdown. ProvShield blocks a
   \begin{tikzpicture}[scale=0.85]
     % Axes
     \draw[->] (0,0) -- (7.5,0) node[right] {\small Defense};
-    \draw[->] (0,0) -- (0,5.5) node[above] {\small ASR (\%)};
+    \draw[->] (0,0) -- (0,6.5) node[above] {\small ASR (\%)};
 
     % Y-axis labels
-    \foreach \y/\lbl in {0/0, 1/0.5, 2/1.0, 3/1.5, 4/2.0, 5/2.5} {
+    \foreach \y/\lbl in {0/0, 1/1, 2/2, 3/3, 4/4, 5/5, 6/6} {
       \draw (-0.1,\y) -- (0.1,\y) node[left, font=\scriptsize] {\lbl};
     }
 
@@ -549,22 +549,22 @@ Table~\ref{tab:per-suite} shows the per-suite ASR breakdown. ProvShield blocks a
       \node[below, font=\scriptsize, text width=1.2cm, align=center] at (\x, -0.1) {\lbl};
     }
 
-    % Bars (scaled: 3.0% = 5cm)
-    \fill[gray!30] (0.5, 0) rectangle (0.9, 4.67);  % No defense 2.8%
-    \fill[gray!30] (1.7, 0) rectangle (2.1, 1.83);  % Prompt hard 1.1%
-    \fill[gray!30] (2.9, 0) rectangle (3.3, 3.17);  % Firewall 1.9%
-    \fill[gray!30] (4.1, 0) rectangle (4.5, 4.67);  % Confirm 2.8%
+    % Bars (1 unit = 1%)
+    \fill[gray!30] (0.5, 0) rectangle (0.9, 5.1);   % No defense 5.1%
+    \fill[gray!30] (1.7, 0) rectangle (2.1, 1.9);   % Prompt hard 1.9%
+    \fill[gray!30] (2.9, 0) rectangle (3.3, 3.4);   % Firewall 3.4%
+    \fill[gray!30] (4.1, 0) rectangle (4.5, 5.1);   % Confirm 5.1%
     \fill[gray!30] (5.3, 0) rectangle (5.7, 0.0);   % Allowlist 0%
-    \fill[black!70] (6.5, 0) rectangle (6.9, 0.0);   % ProvShield 0%
+    \fill[black!70] (6.5, 0) rectangle (6.9, 0.6);   % ProvShield 0.6%
 
     % Legend
-    \fill[gray!30] (0.5, 5.8) rectangle (0.9, 6.1);
-    \node[right, font=\scriptsize] at (1.0, 5.95) {Baselines};
-    \fill[black!70] (3.0, 5.8) rectangle (3.4, 6.1);
-    \node[right, font=\scriptsize] at (3.5, 5.95) {ProvShield};
+    \fill[gray!30] (0.5, 6.8) rectangle (0.9, 7.1);
+    \node[right, font=\scriptsize] at (1.0, 6.95) {Baselines};
+    \fill[black!70] (3.0, 6.8) rectangle (3.4, 7.1);
+    \node[right, font=\scriptsize] at (3.5, 6.95) {ProvShield};
   \end{tikzpicture}
-  \caption{Attack success rate by defense across 530 attack scenarios. ProvShield achieves 0.6\% ASR compared to 5.1\% for no defense (88\% reduction). Static allowlist also achieves 0\% ASR but at the cost of 20.8\% false blocking (79.2\% BTCR).}
-  \Description{Bar chart comparing attack success rate across six defenses. No defense and generic confirmation are at 5.1\%, input firewall at 1.9\%, prompt hardening at 1.1\%, static allowlist and ProvShield at 0\%.}
+  \caption{Attack success rate by defense across 530 attack scenarios. ProvShield achieves 0.6\% ASR compared to 5.1\% for no defense (88\% reduction). Static allowlist achieves 0\% ASR but at the cost of 20.8\% false blocking (79.2\% BTCR).}
+  \Description{Bar chart comparing attack success rate across six defenses. No defense and generic confirmation are at 5.1\%, input firewall at 3.4\%, prompt hardening at 1.9\%, static allowlist at 0\%, and ProvShield at 0.6\%.}
   \label{fig:asr-comparison}
 \end{figure}
 
