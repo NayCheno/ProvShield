@@ -332,7 +332,7 @@ Figure~\ref{fig:bridge-flow} illustrates the bridge interaction flow.
     \draw[arr] (present) -- (reject);
     \draw[arr] (present) -- (confirm);
     \draw[arr] (confirm) -- (token);
-    \draw[arr] (token) -- node[right,font=\scriptsize] {bound to\\call} (exec);
+    \draw[arr] (token) -- node[right,font=\scriptsize] {bound to call} (exec);
   \end{tikzpicture}
   \caption{Bridge interaction flow. When the monitor detects a high-risk effect influenced by low-integrity sources, it requires a user-intent bridge. The bridge binds the exact action, destination, payload digest, and provenance sources. A one-time capability token authorizes only the specific normalized call.}
   \Description{Flowchart showing the bridge interaction: LLM proposes tool call, Monitor checks policy, and either DENYs or requires a Bridge. The Bridge presents action details to the user, who can reject (DENY) or confirm (mint capability token, then execute).}
