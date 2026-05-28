@@ -9,7 +9,7 @@
 - [x] Design — provenance labels, effect-typed tools, runtime monitor, bridge, capability tokens
 - [x] Formal Model — state definition, transitions, 5 theorems with proof sketches
 - [x] Implementation — 6 components described
-- [x] Evaluation — 780 scenarios, 9 defenses (including 3 strong baselines), per-suite breakdown, ablation, failure analysis, multi-model evaluation
+- [x] Evaluation — 780 scenarios, 9 defenses (including 3 baseline variants), per-suite breakdown, ablation, failure analysis, multi-model evaluation
 - [x] Related Work — prompt injection, IFC, capability security, taint tracking, MCP security, skill security, attribution
 - [x] Discussion — conservative policy, social engineering, model influence, deployment
 - [x] Limitations — model influence, social engineering, conservative policy, residual attacks, TCB assumptions, evaluation scope, formal proofs
@@ -49,7 +49,7 @@ All numbers verified against `eval/results/result_tables.md`:
 - [x] Test isolation (conftest.py resets TOOL_PROFILES between tests)
 - [x] Manifest metadata in LaTeX table captions (git sha 80a732b, policy hash 8c1b517c)
 
-## Strong Baselines (Phase 2)
+## Baseline Variants (Phase 2)
 
 - [x] Fides-style IFC baseline (prompt-rendered labels + policy prompt)
 - [x] Causal attribution baseline (injection-pattern-based causal ablation)
@@ -76,7 +76,7 @@ All numbers verified against `eval/results/result_tables.md`:
 ## Remaining Gaps (documented, not blocking submission)
 1. **Multi-model scale**: 3 models evaluated with 75 scenarios each. Need ≥300 attack + ≥100 benign per model for full §8.4 gate.
 2. **No-defense ASR**: 5.1% (standard) / 10% (mimo-v2.5). Stress-test achieves 83% with user-level social engineering (18 scenarios). §8.4 gate requires ≥30% in standard setting.
-3. **Baseline quality**: 3 strong baselines (IFC, attribution, MCP security) implemented AND run at scale (780 scenarios). All show 4.9–5.1% ASR, no better than no defense.
+3. **Baseline quality**: 3 baseline variants (IFC, attribution, MCP security) implemented AND run at scale (780 scenarios). All show 4.9–5.1% ASR, no better than no defense.
 4. **Real MCP integration**: MCP proxy is functional; no-bypass test verifies architectural invariant. Not integrated with production MCP client/server.
 5. **User study**: Simulated only. Real user study would strengthen bridge evaluation.
 6. **Ablation study**: Policy-level (21 predefined scenarios) + provenance mode ablation (15 scenarios, 3 modes). Expanded LLM-in-the-loop ablation planned.

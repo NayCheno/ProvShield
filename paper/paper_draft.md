@@ -1,7 +1,7 @@
 # Preventing Authority Laundering in Tool-Using LLM Agents
 
 > Draft version: v1.0 (CCF-A rewrite)
-> Status: 780 scenarios, 9 defense configurations (including 3 strong baselines), 3-model evaluation, direct-call adversary (101 scenarios, 100% blocked), high-manipulation (80 scenarios), mechanized core (Coq 9.0). ProvShield 0.6% ASR (88% reduction), 92.4% BTCR, 100% conditional block rate across all models.
+> Status: 780 scenarios, 9 defense configurations (including 3 baseline variants), 3-model evaluation, direct-call adversary (101 scenarios, 100% blocked), high-manipulation (80 scenarios), mechanized core (Coq 9.0). ProvShield 0.6% ASR (88% reduction), 92.4% BTCR, 100% conditional block rate across all models.
 
 ## Abstract
 
@@ -9,7 +9,7 @@ Tool-using LLM agents do not merely generate text; they exercise delegated autho
 
 We present **ProvShield**, a runtime authority firewall for MCP and skill-based LLM agents. ProvShield treats the LLM as an untrusted planner and moves all authorization decisions to the runtime. Each content object entering the agent is assigned an HMAC-keyed sidecar provenance label tracking authority origin. Tools are declared with effect types and sinks. Before any tool call executes, a runtime monitor verifies that the proposed action, destination, payload, and capability satisfy a source-to-sink authority policy. For high-risk effects, ProvShield requires an *intent-bound declassification capability*: a one-time, cryptographically bound authorization specific to the exact action, sink, destination, payload digest, principal, and expiration—not a generic user confirmation.
 
-We formalize ProvShield with a labeled transition system and mechanize its core properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay, under explicit trusted computing base assumptions. We implement ProvShield as an MCP proxy, skill loader, policy engine, bridge manager, and audit logger. We evaluate on 780 scenarios (530 attack, 250 benign) spanning six authority-laundering classes against nine defense configurations—including three strong baselines (Fides-style IFC, causal attribution, MCP security)—and 72 workflow-embedded strong attacks. ProvShield achieves 0.6% ASR (95% CI [0.2%, 1.7%]), an 88% reduction from the no-defense baseline, while maintaining 92.4% BTCR. Its conditional block rate is 100%: every attack tool call the LLM generates is stopped by the runtime. Direct-call adversary evaluation with a fully compromised planner confirms 95.7% block rate with conservative provenance.
+We formalize ProvShield with a labeled transition system and mechanize its core properties: label unforgeability, capability-token unforgeability, no unauthorized secret exfiltration, no low-integrity control of high-risk effects, and bridge non-replay, under explicit trusted computing base assumptions. We implement ProvShield as an MCP proxy, skill loader, policy engine, bridge manager, and audit logger. We evaluate on 780 scenarios (530 attack, 250 benign) spanning six authority-laundering classes against nine defense configurations—including three baseline variants (Fides-style IFC, causal attribution, MCP security)—and 72 workflow-embedded strong attacks. ProvShield achieves 0.6% ASR (95% CI [0.2%, 1.7%]), an 88% reduction from the no-defense baseline, wh…
 
 ## 1. Introduction
 
@@ -354,7 +354,7 @@ The no-defense ASR of 5.1% reflects the robustness of modern LLMs against many i
 
 Prompt hardening reduces ASR to 1.9% but cannot defend against contextual or metadata-based attacks. Input firewall achieves 3.4% ASR but fails when attacks are embedded in legitimate content. Generic confirmation provides no protection (5.1% ASR, identical to no defense) because it does not bind the specific destination or payload—enabling confirmation laundering. Static allowlist achieves 0.0% ASR but at the cost of 20.8% false blocking (79.2% BTCR).
 
-The three strong baselines perform no better than no defense (4.9–5.1% ASR). **Fides-style IFC** renders provenance labels in the prompt and relies on the model to self-enforce, but the model ignores the labels under injection pressure—demonstrating that prompt-side IFC cannot serve as an authority boundary. **Causal attribution** compares tool calls with and without external content to identify injection-driven calls, but the threshold-based filtering fails to distinguish malicious from benign influenced calls—influence is not authority. **MCP security** scans tool metadata for suspicious patterns but does not address content-level injection or runtime tool-output laundering.
+The three baseline variants perform no better than no defense (4.9–5.1% ASR). **Fides-style IFC** (prompt-rendered labels with model self-enforcement) ignores the labels under injection pressure—demonstrating that prompt-side IFC cannot serve as an authority boundary. **Causal attribution** (heuristic counterfactual comparison) fails to distinguish malicious from benign influenced calls—influence is not authority. **MCP security** (pattern-based metadata scanner) does not address content-level injection or runtime tool-output laundering.
 
 ### 7.8 Direct-Call Adversary
 

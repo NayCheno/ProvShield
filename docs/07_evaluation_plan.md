@@ -69,7 +69,7 @@
 | Static allowlist | Only selected tools allowed. |
 | Generic confirmation | Confirm all high-risk tools without provenance binding. |
 | Fides-style IFC | If reproducible, implement comparable confidentiality/integrity IFC. |
-| Causal attribution monitor | Optional strong baseline if available. |
+| Causal attribution monitor | Baseline variant: counterfactual comparison of tool calls with/without external content. |
 
 ## 5. Metrics
 

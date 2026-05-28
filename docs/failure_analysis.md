@@ -60,9 +60,9 @@ The evaluation uses conservative taint: all context objects are bound to all arg
 
 ### Risk 4: Baseline Quality
 
-~~The baselines are implemented as rule-based functions, not real systems.~~ Three strong baselines implemented: Fides-style IFC (prompt-rendered labels), causal attribution (counterfactual testing), and MCP security (metadata scanner). All evaluated at scale (780 scenarios each).
+~~The baselines are implemented as rule-based functions, not real systems.~~ Three baseline variants implemented: Fides-style IFC (prompt-rendered labels), causal attribution (counterfactual testing), and MCP security (metadata scanner). All evaluated at scale (780 scenarios each).
 
-**Mitigation (completed):** Strong baselines show 4.9-5.1% ASR (no better than no defense), confirming that prompt-side and post-hoc defenses are insufficient.
+**Mitigation (completed):** Baseline variants show 4.9-5.1% ASR (no better than no defense), confirming that prompt-side and post-hoc defenses are insufficient.
 
 ### Risk 5: Formal Proof Status
 
@@ -75,5 +75,5 @@ The Coq formalization compiles with coqc 9.0 and includes the transition relatio
 1. **Test with multiple LLMs** to separate model safety from runtime enforcement → Done: 3 models evaluated (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 75 scenarios each. 100% conditional block rate across all models.
 2. **Implement oracle/heuristic provenance modes** and report as ablation → Done: oracle, conservative, and heuristic modes implemented and tested on 15 high-manipulation scenarios. All achieve 100% block rate.
 3. **Strengthen attack prompts** to increase manipulation rate for weaker models → Done: stress-test scenarios achieve 83% no-defense ASR on mimo-v2.5; high-manipulation scenarios achieve 50% manipulation rate on mimo-v2.5.
-4. **Add at least one strong baseline** (real IFC or attribution) → Done: Fides-style IFC, causal attribution, and MCP security baselines implemented and evaluated at scale (780 scenarios each). All show 4.9-5.1% ASR (no better than no defense).
+4. **Add at least one baseline variant** (real IFC or attribution) → Done: Fides-style IFC, causal attribution, and MCP security baselines implemented and evaluated at scale (780 scenarios each). All show 4.9-5.1% ASR (no better than no defense).
 5. **Document proof status honestly** in the paper (sketches, not fully mechanized) → Done: paper uses "proof sketches" terminology; theorem-code mapping documents proof hierarchy (mechanized core / proof sketch / TCB assumption).
