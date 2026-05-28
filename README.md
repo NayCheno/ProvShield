@@ -1,10 +1,12 @@
-# ProvShield / Provenance-Typed Agent Runtime 研究包
+# ProvShield: Preventing Authority Laundering in Tool-Using LLM Agents
 
-本压缩包是一个可直接启动的研究项目骨架，目标是把“面向 MCP 与 Skills 的不可伪造 provenance-typed runtime enforcement”推进到 CCF-A 安全会议可投稿级别。
+本仓库是 ProvShield 研究包，目标是把"面向 MCP 与 Skills 的 authority laundering 防御"推进到 CCF-A 安全会议可投稿级别。
 
 ## 核心主张
 
-LLM agent 的 prompt injection 失败不是单纯的文本过滤失败，而是 **低完整性来源对高风险工具 sink 的非法影响**。ProvShield 将模型视为不可信 planner，在 runtime 外部维护不可伪造 provenance label、capability token、effect-typed tool call 和 user-intent bridge，从而在执行工具前强制阻断未授权的数据流与控制流。
+
+工具型 LLM agent 的 prompt injection 本质上不是文本过滤失败，而是 **权限洗白（authority laundering）**：低权限来源（网页、邮件、RAG 文档、MCP metadata、skill 文件、tool output）通过模型规划过程被转换成高权限工具行为。ProvShield 将模型视为不可信 planner，在 runtime 外部维护不可伪造 provenance label、capability token、effect-typed tool call 和 intent-bound declassification capability，从而在执行工具前强制阻断未授权的 authority laundering。
+
 
 ## 包结构
 
@@ -34,6 +36,6 @@ provshield_package/
 
 ## 当前状态
 
-这是 **ProvShield research package v0.3**（research prototype）。代码主线已完成关键阻塞修复（C1–C5），包含 780 场景 LLM-in-the-loop 评测（530 attack + 250 benign，mimo-v2-pro），ProvShield ASR 0.6%（95% CI [0.2%, 1.7%]），BTCR 92.4%（95% CI [88.0%, 94.9%]）。Coq 形式化可编译（coqc 9.0），Docker 可复现。
+这是 **ProvShield research package v1.0**（CCF-A rewrite）。论文已重构为 authority laundering 框架，包含 780 场景 LLM-in-the-loop 评测（530 attack + 250 benign），101 场景 direct-call adversary（100% block rate），3 模型评测，mechanized core（Coq 9.0）。ProvShield ASR 0.6%（95% CI [0.2%, 1.7%]），BTCR 92.4%，conditional block rate 100%。
 
-**投稿成熟度：** 当前为强 workshop / CCF-B 级别。主要待补强项：multi-model evaluation、stronger baselines、benchmark attack strength、proof claim discipline。详见审查报告与 roadmap。
+**投稿成熟度：** CCF-A rewrite v1.0。论文已完成 authority laundering 重写，实验数据满足最低投稿阈值。详见 `checklists/acceptance_checklist.md` 和 `docs/simulated_reviews.md`。
