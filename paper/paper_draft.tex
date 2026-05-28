@@ -259,6 +259,40 @@ The bridge presentation to the user includes:
   \item a short expiration window (default: 30 seconds).
 \end{itemize}
 
+Figure~\ref{fig:bridge-flow} illustrates the bridge interaction flow.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.7cm and 1.0cm,
+    box/.style={draw, rounded corners, minimum width=1.8cm, minimum height=0.5cm, font=\small, align=center},
+    arr/.style={-{Stealth[length=2mm]}, thick},
+    every node/.style={font=\small}
+  ]
+    \node[box] (llm) {LLM proposes\\tool call};
+    \node[box, below=0.7cm of llm] (mon) {Monitor\\checks policy};
+    \node[box, below left=0.7cm and 0.5cm of mon] (deny) {DENY\\(audit)};
+    \node[box, below right=0.7cm and 0.5cm of mon] (bridge) {Bridge\\required};
+    \node[box, below=0.7cm of bridge] (present) {Present action,\\destination, payload\\digest, sources};
+    \node[box, below left=0.7cm and 0.3cm of present] (reject) {User rejects\\→ DENY};
+    \node[box, below right=0.7cm and 0.3cm of present] (confirm) {User confirms};
+    \node[box, below=0.7cm of confirm] (token) {Mint capability\\token (MAC)};
+    \node[box, below=0.7cm of token] (exec) {Execute\\tool};
+
+    \draw[arr] (llm) -- (mon);
+    \draw[arr] (mon) -- node[left,font=\scriptsize] {low-risk} (deny);
+    \draw[arr] (mon) -- node[right,font=\scriptsize] {high-risk} (bridge);
+    \draw[arr] (bridge) -- (present);
+    \draw[arr] (present) -- (reject);
+    \draw[arr] (present) -- (confirm);
+    \draw[arr] (confirm) -- (token);
+    \draw[arr] (token) -- node[right,font=\scriptsize] {bound to\\call} (exec);
+  \end{tikzpicture}
+  \caption{Bridge interaction flow. When the monitor detects a high-risk effect influenced by low-integrity sources, it requires a user-intent bridge. The bridge binds the exact action, destination, payload digest, and provenance sources. A one-time capability token authorizes only the specific normalized call.}
+  \Description{Flowchart showing the bridge interaction: LLM proposes tool call, Monitor checks policy, and either DENYs or requires a Bridge. The Bridge presents action details to the user, who can reject (DENY) or confirm (mint capability token, then execute).}
+  \label{fig:bridge-flow}
+\end{figure}
+
 \subsection{Capability Tokens}
 \label{sec:tokens}
 
@@ -763,18 +797,19 @@ ProvShield has several limitations that we state explicitly.
 The evaluation artifact is available as an open-source repository containing:
 
 \begin{itemize}
-  \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy with JSON-RPC support, skill loader with HMAC verification).
-  \item \textbf{Evaluation harness}: 780 scenarios (530 attack, 250 benign) across 6 attack suites and 5 benign task categories, with 6 defense configurations.
+  \item \textbf{Prototype}: Python implementation of all ProvShield components (policy engine, monitor, bridge manager, sidecar store, audit logger, MCP proxy with JSON-RPC support, skill loader with HMAC verification, three provenance modes: oracle, conservative, heuristic).
+  \item \textbf{Evaluation harness}: 780 scenarios (530 attack, 250 benign) across 6 attack suites and 5 benign task categories, with 9 defense configurations including 3 strong baselines. Additional 80 high-manipulation scenarios with multi-turn business framing.
+  \item \textbf{Direct-call adversary}: 23 crafted malicious tool calls sent directly to the runtime monitor (bypassing LLM), covering all high-risk effect types.
+  \item \textbf{MCP integration demo}: Real filesystem MCP server with 4 replayable workflows (benign read, exfiltration, code execution, metadata poisoning).
   \item \textbf{Policy configuration}: Declarative YAML policy defining source-to-sink rules for all effect types.
   \item \textbf{Formal model}: Coq formalization with transition system, reachable-state invariants, and safety property proofs (compiles with coqc 9.0).
-  \item \textbf{Audit log schema}: JSON Schema for reproducible audit traces.
-  \item \textbf{Smoke test}: Cross-platform Python script verifying 122 unit tests and 10 integration scenarios in $\sim$10 seconds.
+  \item \textbf{Audit log schema}: JSON Schema for reproducible audit traces with deterministic replay.
+  \item \textbf{Smoke test}: Cross-platform Python script verifying 134 unit tests and integration scenarios in $\sim$10\,s.
   \item \textbf{Docker support}: Dockerfile for reproducible execution.
   \item \textbf{CI}: GitHub Actions workflow for automated testing.
 \end{itemize}
-\paragraph{Reproducibility.} The artifact supports three levels: (1) smoke test (122 unit tests, $\sim$10\,s), (2) full evaluation (780 scenarios with all defenses, $\sim$60\,min depending on LLM API), and (3) table generation for the paper. Random seeds are fixed per scenario (default: 42). All credentials and documents are synthetic.
 
-\paragraph{Running.}
+\paragraph{Reproducibility.} The artifact supports three levels: (1) smoke test (134 unit tests, $\sim$10\,s), (2) full evaluation (780 scenarios with all defenses, $\sim$60\,min depending on LLM API), and (3) table generation for the paper. Random seeds are fixed per scenario (default: 42). All credentials and documents are synthetic.
 \begin{lstlisting}[language=bash]
 # Install
 pip install -r requirements.txt
