@@ -5,19 +5,18 @@
 - `[~]` = **Partially verified** — evidence exists but has known issues (see notes)
 - `[ ]` = **Not verified** — no current evidence or evidence is stale/inconsistent
 
-> Updated 2026-05-28 after comprehensive verification.
+> Updated 2026-05-28 after CCF-A authority laundering rewrite.
+> Paper reframed around authority laundering (not provenance-typed enforcement).
+> Claim discipline: checklists/claim_discipline.md
+> Simulated reviews: docs/simulated_reviews.md
+> Positioning memo: paper/positioning_authority_laundering.md
 > Expanded eval: 780 scenarios (530 attack + 250 benign), 95% Wilson CI.
 > High-manipulation eval: 80 scenarios, mimo-v2.5.
 > Direct-call adversary: 23 scenarios, conservative provenance mode.
 > Multi-model: 3 models, 75 scenarios each.
 > MCP integration demo: 4 replayable workflows.
-> Coq: coqc 9.0 verified — ProvShield.vo compiled cleanly.
+> Coq: mechanized core compiles with coqc 9.0.
 > Docker: `make -f artifact/Makefile check` passes (122 tests in container).
-> Provenance modes: oracle, conservative, heuristic implemented and tested (134 unit tests).
-> Theorem mapping: docs/theorem_code_mapping.md
-> Failure analysis: docs/failure_analysis.md
-> MCP integration: tests/test_mcp_integration.py (4 tests)
-> Tool manifest: artifact/configs/tool_effect_manifest.yaml
 
 ## Security
 
