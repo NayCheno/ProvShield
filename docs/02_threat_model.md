@@ -2,11 +2,11 @@
 
 ## 1. Security objective
 
-Prevent low-integrity or confidentially restricted sources from causing unauthorized high-impact tool effects in an LLM agent runtime.
+Prevent authority laundering: the process by which a low-authority observation is transformed by an LLM planner into a high-authority tool effect without proper authorization.
 
-The target property is not “the model never reads malicious text.” The target property is:
+The target property is not "the model never reads malicious text." The target property is:
 
-> Even if the model reads or follows malicious low-integrity content, the runtime prevents unauthorized execution of high-risk tool invocations.
+> Even if the planner is fully compromised, the runtime prevents unauthorized execution of high-risk tool effects.
 
 ## 2. Assets
 
