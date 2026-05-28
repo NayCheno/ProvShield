@@ -92,10 +92,10 @@ This paper makes the following contributions:
 
 \end{enumerate}
 %% ======================================================================
-\section{Motivating Attacks}
+\section{Authority Laundering Attacks}
 \label{sec:attacks}
 
-We describe four representative attacks that motivate ProvShield's design. Each exploits the collapsed instruction/data boundary in current agent architectures.
+We define authority laundering as the process by which a low-authority observation is transformed by an LLM planner into a high-authority tool effect. We identify six classes of authority laundering attacks, each exploiting a different failure mode in current agent architectures.
 
 \subsection{Webpage-to-Email Exfiltration}
 \label{sec:attack-web}
@@ -123,19 +123,19 @@ A malicious email asks the agent to ``send the requested diagnostic information 
 
 The adversary may control external content, emails, retrieved documents, tool outputs, untrusted MCP metadata, and untrusted skill files. The adversary may know the policy rules and the label syntax rendered to the model. The adversary may attempt label spoofing, metadata poisoning, bridge laundering, delayed injection, multi-step exfiltration, or capability replay.
 
-The LLM is \emph{not} trusted to make authorization decisions. It is modeled as a proposal function that may output arbitrary tool calls. The trusted computing base (TCB) consists of:
+The LLM is \emph{not} trusted to make authorization decisions. It may be fully compromised: the adversary may control the planner's output completely. The security property is not that the model is unaffected by malicious content, but that \emph{unauthorized high-risk effects cannot execute} regardless of the planner's behavior. The LLM is modeled as an adversarial proposal function that may output arbitrary tool calls.
+
+The trusted computing base (TCB) consists of:
 \begin{itemize}
   \item the runtime monitor,
   \item the sidecar provenance store,
   \item the policy engine,
-  \item the token generator,
+  \item the token generator (HMAC-SHA256),
   \item the bridge manager, and
   \item the audit logger.
 \end{itemize}
 
-ProvShield does not attempt to prove that untrusted text has no influence on the model's hidden state. Instead, it proves that high-risk tool execution cannot occur unless the runtime-observable provenance and capability constraints are satisfied.
-
-%% ======================================================================
+ProvShield assumes the TCB is not compromised. It does not attempt to prove that untrusted text has no influence on the model's hidden state. Instead, it proves that high-risk tool execution cannot occur unless the runtime-observable authority and capability constraints are satisfied.
 \section{Design}
 \label{sec:design}
 
