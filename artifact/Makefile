@@ -1,8 +1,9 @@
-.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all lint compile-check artifact-check
+.PHONY: smoke eval eval-subset eval-expanded paper replay clean install check all lint compile-check artifact-check coq-check
 
 PYTHON ?= python
 RESULTS_DIR ?= eval/results
 SEED ?= 42
+PROVSHIELD_ROOT ?= $(CURDIR)
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
@@ -45,14 +46,21 @@ artifact-check: check compile-check
 	fi
 	@echo "Artifact check complete."
 
+
+# ---------------------------------------------------------------------------
+# Coq formalization verification (requires Docker with coqorg/coq:latest)
+# ---------------------------------------------------------------------------
+coq-check:
+	@echo "Verifying Coq formalization via Docker..."
+	@docker run --rm -v "$(PROVSHIELD_ROOT):/provshield" -w /provshield coqorg/coq:latest sh -c \
+		"sed 's/From Stdlib/From Coq/g' prototype/formal/ProvShield.v > /tmp/ProvShield.v && coqc /tmp/ProvShield.v && echo 'COQC: ProvShield.v compiles successfully'"
+	@echo "Coq verification complete."
+
 # ---------------------------------------------------------------------------
 # Level 1: Smoke test — 10 scenarios, ~10s
 # ---------------------------------------------------------------------------
 smoke:
 	$(PYTHON) artifact/scripts/run_smoke_test.py
-
-# ---------------------------------------------------------------------------
-# Level 2: Standard evaluation — 32 scenarios + baselines
 # ---------------------------------------------------------------------------
 eval:
 	$(PYTHON) eval/scripts/run_evaluation.py
