@@ -691,6 +691,25 @@ Among baselines, prompt hardening reduces ASR to 1.9\% but cannot defend against
 
 The three prompt-side and post-hoc baseline variants---Fides-style IFC (prompt-rendered labels with model self-enforcement), causal attribution (counterfactual injection-pattern comparison), and MCP security (metadata pattern scanner)---perform no better than no defense (4.9--5.1\% ASR). Fides-style IFC renders provenance labels in the prompt and relies on the model to self-enforce, but the model ignores the labels under injection pressure. Causal attribution compares tool calls with and without external content to identify injection-driven calls, but the threshold-based filtering fails to distinguish malicious from benign influenced calls. MCP security scans tool metadata for suspicious patterns but does not address content-level injection. These results confirm that prompt-side and post-hoc defenses are insufficient against the attack patterns in our benchmark; runtime enforcement is required.
 
+Table~\ref{tab:baseline-failures} summarizes representative failure modes for each baseline variant.
+
+\begin{table}[t]
+  \centering
+  \caption{Representative baseline failure modes. Each baseline variant fails on at least one authority-laundering class that ProvShield blocks.}
+  \label{tab:baseline-failures}
+  \small
+  \begin{tabular}{@{}p{2.2cm}p{2.2cm}p{3.2cm}@{}}
+    \toprule
+    \textbf{Baseline} & \textbf{Fails On} & \textbf{Failure Mechanism} \\
+    \midrule
+    Fides-style IFC & Skill injection, RAG injection & Model ignores prompt-rendered labels under injection pressure \\
+    Causal attribution & MCP metadata, adaptive white-box & Cannot distinguish benign influence from malicious injection \\
+    MCP security & Web/email injection, tool-output-to-exec & Only inspects metadata registration; misses runtime content \\
+    Prompt hardening & Metadata poisoning, delayed injection & Depends on model obedience; fails on contextual attacks \\
+    Generic confirmation & Confirmation laundering & Does not bind destination, payload, or provenance source \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 The no-defense ASR of 5.1\% on mimo-v2-pro reflects the model's own safety alignment. Cross-model evaluation reveals that model susceptibility varies significantly: mimo-v2.5 achieves 50\% manipulation rate (vs.\ 14.9\% for mimo-v2-pro) and 10\% no-defense ASR. High-manipulation scenarios with multi-turn business framing push the no-defense ASR to 17.5\% on mimo-v2.5. While this is below the 30\% threshold that would demonstrate the full attack surface, the 100\% conditional block rate across all models and all attack configurations confirms that ProvShield's runtime enforcement provides defense-in-depth: even when the model's safety alignment is bypassed, the runtime prevents all unauthorized execution. The low absolute no-defense ASR is a feature of modern LLM safety training, not a limitation of our evaluation; ProvShield's value is in providing a complementary defense layer that operates independently of the model's safety alignment.
 
 \subsubsection{Utility Analysis}
