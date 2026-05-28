@@ -2,8 +2,7 @@
 
 Generated from manifest: git_sha=80a732b3, policy_hash=sha256:8c1b517c2..., model=mimo-v2-pro, timestamp=2026-05-28T05:03:36Z
 
-Git: `df198dd124b5`  
-Scenarios: 530 attack + 250 benign  
+Scenarios: 530 attack + 250 benign
 
 ## Table 1: Attack Success Rate
 
@@ -47,13 +46,14 @@ Scenarios: 530 attack + 250 benign
 
 ## Table 4: Conditional Metrics
 
-| Metric | Value |
-|---|---:|
-| ASR (given LLM tool call) | 3.8% |
-| ASR (given LLM attack tool) | 0.0% |
-| PS block rate (given attack tool) | 100.0% |
-| False blocking rate | 21.1% |
-| Confirmation burden | 0.0% |
+| Metric | Definition | Value |
+|---|---|---:|
+| ASR (given LLM tool call) | Attack success given LLM generated any tool call | 3.8% |
+| ASR (given LLM attack tool) | Attack success given LLM generated the specific attack tool | 0.0% |
+| PS block rate (given attack tool) | Block rate given LLM generated the specific attack tool | 100.0% |
+| False blocking rate (deny) | Benign calls denied (not bridged) | 7.6% |
+| False blocking rate (deny+bridge) | Benign calls denied or requiring bridge | 21.1% |
+| Confirmation burden | Benign tasks requiring bridge confirmation | 7.6% |
 
 ## Monitor Latency
 
