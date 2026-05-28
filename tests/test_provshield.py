@@ -822,6 +822,7 @@ class TestPrincipalBoundTokens:
             expires_at=time.time() + 300,
             nonce="nonce-001",
         )
+        token.signature = token.compute_signature()
 
         call_same_principal = NormalizedToolCall(
             tool_name="send_email",
@@ -2135,6 +2136,236 @@ class TestHMACLabelSignature:
         l2 = make_label("ExternalContent", "Public", "web")
         assert l1.nonce != l2.nonce
         assert l1.runtime_signature != l2.runtime_signature
+
+
+
+class TestTokenHMACSignature:
+    """Test that capability tokens use HMAC-SHA256 and resist forgery."""
+
+    def test_minted_token_has_valid_signature(self):
+        """Tokens minted by the store carry a valid HMAC signature."""
+        from provshield.tokens import CapabilityTokenStore
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        assert token.signature != ""
+        assert token.verify_signature() is True
+
+    def test_tampered_destination_fails_signature(self):
+        """Changing destination invalidates the token signature."""
+        from provshield.tokens import CapabilityTokenStore
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        # Tamper with destination
+        token.destination = "evil@attacker.com"
+        assert token.verify_signature() is False
+
+    def test_tampered_payload_fails_signature(self):
+        """Changing payload digest invalidates the token signature."""
+        from provshield.tokens import CapabilityTokenStore
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        token.payload_digest = "sha256:evil"
+        assert token.verify_signature() is False
+
+    def test_tampered_principal_fails_signature(self):
+        """Changing principal invalidates the token signature."""
+        from provshield.tokens import CapabilityTokenStore
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        token.principal = "user-bob"
+        assert token.verify_signature() is False
+
+    def test_tampered_action_fails_signature(self):
+        """Changing action invalidates the token signature."""
+        from provshield.tokens import CapabilityTokenStore
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        token.action = "ExecuteCode"
+        assert token.verify_signature() is False
+
+    def test_forged_signature_rejected(self):
+        """A token with a fabricated signature fails verification."""
+        from provshield.tokens import CapabilityToken
+        import time
+        token = CapabilityToken(
+            token_id="tok_forged",
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user",
+            expires_at=time.time() + 300,
+            nonce="nonce-forged",
+            signature="0" * 64,  # fabricated
+        )
+        assert token.verify_signature() is False
+
+    def test_empty_signature_rejected(self):
+        """A token with no signature fails verification."""
+        from provshield.tokens import CapabilityToken
+        import time
+        token = CapabilityToken(
+            token_id="tok_empty",
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user",
+            expires_at=time.time() + 300,
+            nonce="nonce-empty",
+            signature="",
+        )
+        assert token.verify_signature() is False
+
+    def test_destination_swap_blocks_match(self):
+        """Token minted for destination A does not match call to destination B."""
+        from provshield.tokens import CapabilityTokenStore
+        from provshield.types import NormalizedToolCall, Effect, Sink
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        call_to_bob = NormalizedToolCall(
+            tool_name="send_email",
+            arguments={"to": "bob@evil.com", "body": "report"},
+            effect=Effect.SEND_NETWORK,
+            sink=Sink.NETWORK_SEND,
+            destination="bob@evil.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        assert token.matches(call_to_bob) is False
+
+    def test_payload_swap_blocks_match(self):
+        """Token minted for payload A does not match call with payload B."""
+        from provshield.tokens import CapabilityTokenStore
+        from provshield.types import NormalizedToolCall, Effect, Sink
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:payload_a",
+            principal="user-alice",
+        )
+        call_different = NormalizedToolCall(
+            tool_name="send_email",
+            arguments={"to": "alice@example.com", "body": "DIFFERENT"},
+            effect=Effect.SEND_NETWORK,
+            sink=Sink.NETWORK_SEND,
+            destination="alice@example.com",
+            payload_digest="sha256:payload_b",
+            principal="user-alice",
+        )
+        assert token.matches(call_different) is False
+
+    def test_consumed_token_rejected(self):
+        """A consumed token cannot be reused."""
+        from provshield.tokens import CapabilityTokenStore
+        from provshield.types import NormalizedToolCall, Effect, Sink
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        call = NormalizedToolCall(
+            tool_name="send_email",
+            arguments={"to": "alice@example.com", "body": "report"},
+            effect=Effect.SEND_NETWORK,
+            sink=Sink.NETWORK_SEND,
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        # First match succeeds
+        assert token.matches(call) is True
+        token.consume()
+        # After consumption, match fails
+        assert token.matches(call) is False
+
+    def test_expired_token_rejected(self):
+        """An expired token does not match."""
+        from provshield.tokens import CapabilityTokenStore
+        from provshield.types import NormalizedToolCall, Effect, Sink
+        store = CapabilityTokenStore()
+        token = store.mint(
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+            ttl_seconds=0.001,  # expires almost immediately
+        )
+        import time
+        time.sleep(0.01)
+        call = NormalizedToolCall(
+            tool_name="send_email",
+            arguments={"to": "alice@example.com", "body": "report"},
+            effect=Effect.SEND_NETWORK,
+            sink=Sink.NETWORK_SEND,
+            destination="alice@example.com",
+            payload_digest="sha256:abc123",
+            principal="user-alice",
+        )
+        assert token.matches(call) is False
+
+    def test_model_cannot_forge_token(self):
+        """Model-generated text cannot create a valid token (no access to HMAC key)."""
+        from provshield.tokens import CapabilityToken
+        import time
+        # Simulate model trying to forge a token with guessed signature
+        forged = CapabilityToken(
+            token_id="model_forged",
+            action="SendNetwork",
+            sink="NetworkSendSink",
+            destination="evil@attacker.com",
+            payload_digest="sha256:stolen",
+            principal="user",
+            expires_at=time.time() + 300,
+            nonce="guessed-nonce",
+            signature="a" * 64,  # model guesses a hex string
+        )
+        assert forged.verify_signature() is False
+        # Model cannot enter runtime token store
+        store = CapabilityTokenStore()
+        assert store.get_token("model_forged") is None
 
 
 # ---------------------------------------------------------------------------
