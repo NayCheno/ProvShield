@@ -1,6 +1,6 @@
 {
   "schema_version": "3.0.0",
-  "git_sha": "df198dd124b5214cea8b38050aaf5c456b01def4",
+  "git_sha": "80a732b38c6760e04fe572ade1e1c9b1d432ec18",
   "git_dirty": true,
   "command": "python eval/scripts/run_expanded_eval.py",
   "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
@@ -12,7 +12,7 @@
     "benign": 250
   },
   "timestamp_utc": "2026-05-28T05:03:36Z",
-  "model_id": "mimo-v2.5-pro",
+  "model_id": "mimo-v2-pro",
   "provshield_version": "0.1.0",
   "defenses_evaluated": [
     "ProvShield",

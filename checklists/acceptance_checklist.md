@@ -57,7 +57,7 @@
 ## Paper
 
 - [x] Novelty over Fides / MCPSHIELD explicit. → Comparison table exists; paper updated with honest claims.
-- [x] Strong baselines included. → 6 defenses in expanded eval (no_defense, prompt_hardening, input_firewall, generic_confirmation, static_allowlist, ProvShield).
+- [x] Strong baselines included. → 9 defenses in expanded eval: ProvShield + 8 baselines (no_defense, prompt_hardening, input_firewall, generic_confirmation, static_allowlist, fides_ifc, causal_attribution, mcp_security). Strong baselines show 4.9–5.1% ASR (no better than no defense).
 - [x] Adaptive attacks included. → 120 adaptive white-box scenarios in expanded eval.
 - [x] Results support claims. → Expanded eval with 780 scenarios, 95% CI, paired scenarios, manifest.
 - [x] Artifact appendix included. → Docker + Python 3.13 aligned; three reproducibility levels documented.
@@ -71,8 +71,8 @@
 - [x] LLM-based evaluation completed. → Expanded eval: 780 scenarios (530 attack + 250 benign), mimo-v2-pro.
 - [x] Mechanized proofs. → Coq file compiles with coqc 9.0. Transition relation + reachable invariant proven.
 - [ ] User study. → Simulated only (not real users).
-- [~] Stronger baselines (Fides/AttriGuard). → 6 defenses; not real IFC/attribution implementations.
-- [x] Raw trace output. → evaluate_provshield() outputs raw_trace; traces.jsonl generated.
+- [x] Stronger baselines (Fides/AttriGuard). → 9 defenses total. Fides IFC, causal attribution, MCP security implemented and evaluated at scale (780 scenarios). All show 4.9–5.1% ASR, no better than no defense.
+- [x] Multi-model evaluation. → 3 models (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 75 scenarios each. ProvShield 100% conditional block rate across all models.
 - [x] Tool effect manifest. → artifact/configs/tool_effect_manifest.yaml.
 - [x] MCP integration test. → tests/test_mcp_integration.py (4 tests).
 - [x] CI workflow. → .github/workflows/ci.yml (pytest + smoke + replay).

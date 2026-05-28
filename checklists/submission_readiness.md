@@ -61,8 +61,8 @@ All numbers verified against `eval/results/result_tables.md`:
 - [x] Adversarial LLM mode script (eval/scripts/run_adversarial_eval.py)
 - [x] Direct tool-call adversary (bypasses LLM, tests monitor enforcement)
 - [x] 4 separate ASR metrics reported (end-to-end, no-defense, LLM manipulation, conditional block)
-- [x] Multi-model evaluation: 3 models (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 10 scenarios each
-- [~] No-defense ASR ≥30% in adversarial setting: 10% with compliance_focused prompt (gap remains; mimo-v2 models are robust)
+- [x] Multi-model evaluation: 3 models (mimo-v2-pro, mimo-v2.5-pro, mimo-v2.5), 75 scenarios each (50 attack + 25 benign)
+- [~] No-defense ASR ≥30% in adversarial setting: 10% with mimo-v2.5 (gap remains; mimo models are generally robust)
 - [x] 72 workflow-embedded attack scenarios generated and verified (0.0% direct-call ASR)
 ## Theorem-Code Mapping (Phase 4)
 
@@ -73,9 +73,9 @@ All numbers verified against `eval/results/result_tables.md`:
 
 ## Remaining Gaps (documented, not blocking submission)
 
-1. **Multi-model scale**: 3 models evaluated but only 10 scenarios each (API rate limits). Need ≥300 attack + ≥100 benign per model for full §8.4 gate.
-2. **No-defense ASR**: 5.1% (standard) / 10% (adversarial compliance_focused). §8.4 gate requires ≥30% in one setting. mimo-v2 models are robust; need weaker model or stronger adversarial prompts.
-3. **Baseline quality**: 3 strong baselines (IFC, attribution, MCP security) implemented but not yet run against scenarios at scale.
+1. **Multi-model scale**: 3 models evaluated with 75 scenarios each. Need ≥300 attack + ≥100 benign per model for full §8.4 gate.
+2. **No-defense ASR**: 5.1% (standard) / 10% (mimo-v2.5). §8.4 gate requires ≥30% in one setting. mimo models are robust; need weaker model or stronger adversarial prompts.
+3. **Baseline quality**: 3 strong baselines (IFC, attribution, MCP security) implemented AND run at scale (780 scenarios). All show 4.9–5.1% ASR, no better than no defense.
 4. **Real MCP integration**: MCP proxy is functional; no-bypass test verifies architectural invariant. Not integrated with production MCP client/server.
 5. **User study**: Simulated only. Real user study would strengthen bridge evaluation.
 6. **Ablation study**: Policy-level (21 predefined scenarios). Expanded LLM-in-the-loop ablation planned.
