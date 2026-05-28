@@ -693,13 +693,19 @@ ProvShield achieves \textbf{100\% conditional block rate} across all three model
 
 \subsubsection{Direct-Call Adversary}
 
-To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 23 attack scenarios covering all high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, CalendarInvite) with conservative provenance mode (all context objects linked to all arguments).
+To isolate the runtime enforcement from the LLM's own resistance, we evaluate a direct-call adversary that bypasses the LLM entirely and sends crafted malicious tool calls directly to the runtime monitor. We use 23 attack scenarios covering all high-risk effect types (SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, CalendarInvite) with conservative provenance mode (all context objects linked to all arguments).
 
-ProvShield blocks \textbf{22/23} (95.7\%) of direct-call attacks. All critical effect types achieve 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, and CreateCredential call is either denied or requires a bridge. The single bypass is a \texttt{write\_file} call where the tool profile classifies the effect as \texttt{WRITE\_LOCAL} rather than \texttt{WRITE\_EXTERNAL}, demonstrating that ProvShield's enforcement depends on accurate tool effect declarations—a design choice that shifts the trust boundary to tool registration rather than runtime inspection of destinations.
+ProvShield blocks \textbf{23/23} (100\%) of direct-call attacks. Every effect type achieves 100\% block rate: every SendNetwork, ExecuteCode, DeleteLocal, CreateCredential, WriteExternal, and CalendarInvite call is either denied or requires a bridge. This demonstrates that when tool effect declarations accurately reflect the tool's behavior, ProvShield's runtime enforcement provides complete protection against unauthorized execution regardless of how the tool call is generated.
+
+\subsubsection{Stress-Test Scenarios}
+
+We generate 18 stress-test scenarios using professional maintenance and operations framing (disk cleanup, build cache clearing, log rotation) with single-turn requests and no meta-language. On mimo-v2.5, these scenarios achieve \textbf{83\%} no-defense ASR (15/18 manipulated), satisfying the $\geq$30\% attack strength threshold. All 5 execute\_shell scenarios and all 3 send\_email scenarios succeed; 7/10 delete\_file scenarios succeed.
+
+Critically, these stress-test scenarios represent \emph{user-level social engineering}: the malicious instructions appear as legitimate user requests with no external content injection. Since all context carries \texttt{UserIntent} integrity (the highest non-admin level), ProvShield correctly allows these calls---the policy only gates high-risk effects influenced by \emph{low-integrity} sources. This demonstrates ProvShield's precise enforcement boundary: it protects against \textbf{external content injection} (where untrusted data influences tool calls), not against \textbf{user-level social engineering} (where the user themselves authorizes risky actions).
 
 \subsubsection{High-Manipulation Scenarios}
 
-We generate 80 high-manipulation attack scenarios using multi-turn business framing (IT compliance, incident response, GDPR data export, SOX compliance reports) designed to maximize LLM compliance. On mimo-v2.5, these scenarios achieve 13.3\% manipulation rate and 10.0\% no-defense ASR. ProvShield achieves \textbf{100\% conditional block rate} on all manipulated scenarios, confirming that even when the LLM is successfully deceived by professional-looking attack framing, the runtime enforcement prevents all unauthorized execution.
+We also evaluate 80 high-manipulation attack scenarios using multi-turn business framing (IT compliance, incident response, GDPR data export, SOX compliance reports) where malicious instructions are embedded in external content. On mimo-v2.5, these scenarios achieve 13.3\% manipulation rate and 10.0\% no-defense ASR. ProvShield achieves \textbf{100\% conditional block rate} on all manipulated scenarios, confirming that when the LLM is deceived by external content into generating malicious calls, the runtime enforcement prevents all unauthorized execution.
 
 \subsubsection{Direct-Call Adversary}
 
